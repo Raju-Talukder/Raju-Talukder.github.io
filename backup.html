@@ -4,9 +4,7 @@ title: Home
 ---
 </div>
 </div>
-
 <!-- We've temporary closed main-content and container to have a full width intro -->
-
 <!-- Home Jumbotron
 ================================================== -->
 <section class="intro">
@@ -52,8 +50,7 @@ title: Home
                     <h2><span>Blog Posts</span></h2>
                 </div>
                 <div class="masonrygrid row listrecent">
-                    {% assign posts_to_display = site.posts | where: "featured", false | sort: "date" | reverse | limit: 6 %}
-                    {% for post in posts_to_display %}
+                    {% for post in paginator.posts %}
                     {% unless post.featured == true %}
                     {% include postbox.html %}
                     {% endunless %}
@@ -73,5 +70,3 @@ title: Home
                 {% include sidebar.html %}
             </div>
         </section>
-    </div>
-</div>
