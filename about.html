@@ -2,12 +2,76 @@
 layout: page
 title: About
 ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="{{ site.baseurl }}/assets/images/favicon.ico">
+    <title>{{ page.title }} | {{ site.name }}</title>
 
-<div class="slider">
-  <img src="/assets/images/john.jpg" alt="Slide 1">
-  <img src="/assets/images/john.jpg" alt="Slide 2">
-  <img src="/assets/images/john.jpg" alt="Slide 3">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+    <style>
+        .swiper-container {
+            width: 100%;
+            height: 400px;
+        }
+
+        .swiper-slide {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .swiper-slide img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+
+    {% seo %}
+</head>
+
+<body class="{{ layout }}">
+
+<header class="navbar navbar-toggleable-md navbar-light bg-white fixed-top mediumnavigation">
+    <!-- ... your header content ... -->
+</header>
+
+<div class="site-content">
+    <div class="container">
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img src="/assets/images/john.jpg" alt="Slide 1">
+                </div>
+                <div class="swiper-slide">
+                    <img src="/assets/images/john.jpg" alt="Slide 2">
+                </div>
+                <div class="swiper-slide">
+                    <img src="/assets/images/john.jpg" alt="Slide 3">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-  <br><br>
-  <h1>Hi, I am <span>John.</span></h1>
+
+<br><br>
+<h1>Hi, I am <span>John.</span></h1>
 <p><span style="font-size:20pt;">Cyber Security Researcher</span></p>
+
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper('.swiper-container', {
+        loop: true,
+        autoplay: {
+            delay: 3000,
+        },
+    });
+</script>
+
+</body>
+</html>
