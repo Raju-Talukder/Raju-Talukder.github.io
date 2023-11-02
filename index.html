@@ -50,18 +50,14 @@ title: Home
                     <h2><span>Blog Posts</span></h2>
                 </div>
                 <div class="masonrygrid row listrecent">
-                    {% for post in paginator.posts %}
-                    {% unless post.featured == true %}
-                    {% include postbox.html %}
-                    {% endunless %}
+                    {% assign posts_to_display = site.posts | where: "featured", false | sort: "date" | reverse | limit: 6 %}
+                    {% for post in posts_to_display %}
+                      {% unless post.featured == true %}
+                      {% include postbox.html %}
+                      {% endunless %}
                     {% endfor %}
                 </div>
-                <!-- {% assign posts_to_display = site.posts | where: "featured", false | sort: "date" | reverse | limit: 6 %}
-                {% for post in posts_to_display %}
-                  {% unless post.featured == true %}
-                  {% include postbox.html %}
-                  {% endunless %}
-                {% endfor %} -->
+
                 <!-- Pagination -->
                 <div class="bottompagination">
         <span class="navigation" role="navigation">
