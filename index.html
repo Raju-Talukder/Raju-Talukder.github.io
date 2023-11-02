@@ -38,35 +38,35 @@ title: Home
         </section>
 
         <!-- Posts Index
-================================================== -->
-{% if paginator.previous_page %}
-{% if paginator.previous_page > 0 %}
-<div id="jumptopageof"></div>
-{% endif %}
-{% endif %}
-<section class="recent-posts row">
-<div class="col-sm-8">
-  <div class="section-title">
-    <h2><span>Blog Posts</span></h2>
-  </div>
-  <div class="masonrygrid row listrecent">
-    {% assign posts_to_display = site.posts | where: "featured", false | sort: "date" | reverse | limit: 6 %}
-    {% for post in posts_to_display %}
-      {% unless post.featured == true %}
-      {% include postbox.html %}
-      {% endunless %}
-    {% endfor %}
-  </div>
-  <!-- Pagination -->
-  <div class="bottompagination">
-    <span class="navigation" role="navigation">
-      {% include pagination.html %}
-    </span>
-  </div>
-</div>
+        ================================================== -->
+        {% if paginator.previous_page %}
+        {% if paginator.previous_page > 0 %}
+        <div id="jumptopageof"></div>
+        {% endif %}
+        {% endif %}
+        <section class="recent-posts row">
+            <div class="col-sm-8">
+                <div class="section-title">
+                    <h2><span>Blog Posts</span></h2>
+                </div>
+                <div class="masonrygrid row listrecent">
+                    {% for post in paginator.posts %}
+                    {% unless post.featured == true %}
+                    {% include postbox.html %}
+                    {% endunless %}
+                    {% endfor %}
+                </div>
 
-<!-- Sidebar -->
-<div class="col-sm-4">
-  {% include sidebar.html %}
-</div>
-</section>
+                <!-- Pagination -->
+                <div class="bottompagination">
+        <span class="navigation" role="navigation">
+            {% include pagination.html %}
+        </span>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-sm-4">
+                {% include sidebar.html %}
+            </div>
+        </section>
