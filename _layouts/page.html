@@ -1,0 +1,19 @@
+---
+layout: default
+---
+<section>
+    <div class="section-title">
+        <center><h2><span>{{ page.title }}</span></h2></center>
+    </div>
+
+    <div class="article-post">
+        {{content}}
+    </div>
+    {% if page.comments == true %}
+    <div id="comments">
+        <div>
+            {% include disqus.html %}
+        </div>
+    </div>
+    {% endif %}
+</section>
