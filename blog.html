@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Home
+title: Blog
 ---
 </div>
 </div>
@@ -51,9 +51,9 @@ title: Home
                 </div>
                 <div class="masonrygrid row listrecent">
                     {% for post in paginator.posts %}
-                    {% unless post.featured == true %}
-                    {% include postbox.html %}
-                    {% endunless %}
+                        {% unless post.featured == true %}
+                        {% include postbox.html %}
+                        {% endunless %}
                     {% endfor %}
                 </div>
 
