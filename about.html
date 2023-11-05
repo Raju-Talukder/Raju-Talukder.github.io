@@ -3,16 +3,16 @@ layout: page
 title: About
 ---
 <Style>
-/* Add this CSS to style your repositories section */
+/* Add this CSS to style your compact repositories section */
 .github-repositories {
     background-color: #f7f7f7;
-    padding: 50px 0;
+    padding: 20px 0;
 }
 
 .section-title {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: #333;
     text-align: center;
 }
@@ -30,66 +30,60 @@ title: About
     border: 1px solid #e3e3e3;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: calc(25% - 20px); /* Four columns with spacing */
-    margin-bottom: 20px;
-    padding: 20px;
-    min-height: 300px; /* Fixed height for each card */
+    width: calc(16.6667% - 10px); /* Six columns with spacing */
+    margin-bottom: 10px;
+    padding: 10px;
+    height: 200px; /* Fixed height for each card */
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
     text-align: justify;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.repository-list .repository-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.repository-list .repository-image {
+.repository-list .repository-card .repository-image {
     max-width: 100%;
-    max-height: 100px;
-    margin-right: 20px;
+    max-height: 80px;
+    margin-right: 10px;
 }
 
-.repository-list .repository-content {
+.repository-list .repository-card .repository-content {
     flex-grow: 1;
 }
 
-.repository-list .repository-name {
-    font-size: 18px;
+.repository-list .repository-card .repository-name {
+    font-size: 16px;
     font-weight: 500;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    color: #007bff;
 }
 
-.repository-list .repository-description {
+.repository-list .repository-card .repository-description {
     color: #555;
-    margin-bottom: 10px;
-    font-size: 14px;
-    font-weight: 400;
+    margin-bottom: 5px;
 }
 
-.repository-list .repository-link {
+.repository-list .repository-card .repository-link {
     text-align: center;
+    margin-top: auto;
 }
 
-.repository-list .repository-link a {
+.repository-list .repository-card .repository-link a {
     text-decoration: none;
     background-color: #007bff;
     color: #fff;
-    padding: 10px 20px;
+    padding: 5px 10px;
     border-radius: 5px;
     font-weight: 600;
     transition: background-color 0.3s;
 }
 
-.repository-list .repository-link a:hover {
+.repository-list .repository-card .repository-link a:hover {
     background-color: #0056b3;
 }
-
 
 </Style>
 
@@ -100,20 +94,12 @@ title: About
 
 
 <section class="github-repositories">
-  <div class="repository-card col-12 col-md-4 col-lg-20">
-    <div class="repository-image">
-        <img src="owner-avatar-url" alt="Owner's Avatar">
-    </div>
-    <div class="repository-content">
-        <h3 class="repository-name">Repository Name</h3>
-        <p class="repository-description">Brief repository description goes here.</p>
-        <p class="repository-language">Primary Language: JavaScript</p>
-        <div class="repository-link">
-            <a href="#">View on GitHub</a>
-        </div>
-    </div>
-</div>
-
+  <div class="container">
+      <h2 class="section-title">My GitHub Repositories</h2>
+      <div class="repository-list row">
+          <!-- Repositories will be listed here dynamically -->
+      </div>
+  </div>
 </section>
 
 
@@ -121,7 +107,7 @@ title: About
 
 
 
-<!-- <script>
+<script>
   const githubUsername = 'Raju-Talukder';
   fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated`)
         .then(response => response.json())
@@ -140,23 +126,6 @@ title: About
             });
         })
         .catch(error => console.error(error));
-</script> -->
-
-
-<script>
-  fetch('https://api.github.com/users/Raju-Talukder/repos')
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(repository => {
-            const repositoryCard = document.createElement('div');
-            repositoryCard.classList.add('repository-card', 'col-12', 'col-md-4', 'col-lg-20');
-
-            // Create the repository card content dynamically
-
-            // Append the repository card to the container
-            document.querySelector('.repository-list').appendChild(repositoryCard);
-        });
-    })
-    .catch(error => console.error('Error:', error));
-
 </script>
+
+
