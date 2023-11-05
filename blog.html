@@ -2,7 +2,11 @@
 layout: default
 title: Blog
 ---
-
+</div>
+</div>
+<!-- We've temporarily closed main-content and container to have a full-width intro -->
+<!-- Home Jumbotron
+================================================== -->
 <section class="intro">
     <center>
         <img src="/assets/images/john.jpg" style="border-radius: 50%" height="90px" width="240px" alt="A picture of the author.">
@@ -18,30 +22,19 @@ title: Blog
 <!-- We reopen main-content and container -->
 <div class="container">
     <div class="main-content">
-        <!-- Posts Index
+        <!-- Blog Posts
         ================================================== -->
-        {% if paginator.previous_page %}
-        {% if paginator.previous_page > 0 %}
-        <div id="jumptopageof"></div>
-        {% endif %}
-        {% endif %}
         <section class="recent-posts row">
             <div class="col-sm-8">
                 <div class="section-title">
                     <h2><span>Blog Posts</span></h2>
                 </div>
                 <div class="masonrygrid row listrecent">
-                    {% for post in paginator.posts %}
+                    {% assign recent_posts = site.posts | sort: "date" | reverse %}
+                    {% for post in recent_posts %}
                         {% include postbox.html %}
                     {% endfor %}
-                </div>
-
-                <!-- Pagination -->
-                <!-- <div class="bottompagination">
-                    <span class="navigation" role="navigation">
-                        {% include pagination.html %}
-                    </span>
-                </div> -->
+                </div>                              
             </div>
 
             <!-- Sidebar -->
