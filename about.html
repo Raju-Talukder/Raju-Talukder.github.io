@@ -100,12 +100,20 @@ title: About
 
 
 <section class="github-repositories">
-  <div class="container">
-      <h2 class="section-title">My GitHub Repositories</h2>
-      <div class="repository-list row">
-          <!-- Repositories will be listed here dynamically -->
-      </div>
-  </div>
+  <div class="repository-card col-12 col-md-4 col-lg-20">
+    <div class="repository-image">
+        <img src="owner-avatar-url" alt="Owner's Avatar">
+    </div>
+    <div class="repository-content">
+        <h3 class="repository-name">Repository Name</h3>
+        <p class="repository-description">Brief repository description goes here.</p>
+        <p class="repository-language">Primary Language: JavaScript</p>
+        <div class="repository-link">
+            <a href="#">View on GitHub</a>
+        </div>
+    </div>
+</div>
+
 </section>
 
 
@@ -113,7 +121,7 @@ title: About
 
 
 
-<script>
+<!-- <script>
   const githubUsername = 'Raju-Talukder';
   fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated`)
         .then(response => response.json())
@@ -132,4 +140,23 @@ title: About
             });
         })
         .catch(error => console.error(error));
+</script> -->
+
+
+<script>
+  fetch('https://api.github.com/users/Raju-Talukder/repos')
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(repository => {
+            const repositoryCard = document.createElement('div');
+            repositoryCard.classList.add('repository-card', 'col-12', 'col-md-4', 'col-lg-20');
+
+            // Create the repository card content dynamically
+
+            // Append the repository card to the container
+            document.querySelector('.repository-list').appendChild(repositoryCard);
+        });
+    })
+    .catch(error => console.error('Error:', error));
+
 </script>
