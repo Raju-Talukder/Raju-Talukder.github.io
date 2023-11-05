@@ -2,6 +2,51 @@
 layout: page
 title: About
 ---
+<Style>
+  /* Add this CSS to style your repositories section */
+.github-repositories {
+    background-color: #f7f7f7;
+    padding: 50px 0;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.repository-list {
+    list-style: none;
+    padding: 0;
+}
+
+.repository-list li {
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.repository-list li a {
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.repository-list li a:hover {
+    color: #0056b3;
+}
+
+.repository-description {
+    font-size: 16px;
+    color: #444;
+    margin-top: 10px;
+}
+
+</Style>
 
 <img src="/assets/images/john.jpg" alt="A picture of John.">
   <br><br>
@@ -9,27 +54,25 @@ title: About
 <p><span style="font-size:20pt;">Cyber Security Researcher.</span></p>
 <section class="github-repositories">
   <div class="container">
-      <h2>My GitHub Repositories</h2>
-      <ul id="repository-list">
+      <h2 class="section-title">My GitHub Repositories</h2>
+      <div class="repository-list">
           <!-- Repositories will be listed here dynamically -->
-      </ul>
+      </div>
   </div>
 </section>
 
 
-<script>
-  // Replace with your GitHub username
-  const githubUsername = 'Raju-Talukder';
 
-  // Fetch GitHub repositories using the GitHub API
+<script>
+  const githubUsername = 'Raju-Talukder';
   fetch(`https://api.github.com/users/${githubUsername}/repos`)
       .then(response => response.json())
       .then(repositories => {
-          const repositoryList = document.getElementById('repository-list');
-
+          const repositoryList = document.querySelector('.repository-list')
           repositories.forEach(repo => {
               const listItem = document.createElement('li');
-              listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a> - ${repo.description}`;
+              listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>
+                  <p class="repository-description">${repo.description || 'No description available.'}</p>`;
               repositoryList.appendChild(listItem);
           });
       })
