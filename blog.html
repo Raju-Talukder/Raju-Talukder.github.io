@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Blog
+title: Home
 ---
 </div>
 </div>
@@ -9,13 +9,14 @@ title: Blog
 ================================================== -->
 <section class="intro">
     <center>
-        <img src="/assets/images/john.jpg" style="border-radius: 50%" height="90px" width="240px" alt="A picture of author.">
+        <img src="/assets/images/john.jpg" style="border-radius: 50%"
+             height="90px" width="240px" alt="A picture of author.">
         <br><br>
         <h1 style="color:white">Hi, I am <span>John Doe.</span></h1>
         <br>
-        <h3> Cyber Security Researcher</h3>
+        <h3> Web designer and Developer</h3>
         <br>
-        <a href="{{ site.baseurl }}/about" class="btn" style="color:white">View More about me</a>
+        <a href="/about/" class="btn" style="color:white">View More about me</a>
     </center>
 </section>
 
@@ -24,7 +25,7 @@ title: Blog
     <div class="main-content">
         <!-- Featured
         ================================================== -->
-        <section class="featured-posts">
+        <!-- <section class="featured-posts">
             <div class="section-title">
                 <h2><span>Featured Blog!</span></h2>
             </div>
@@ -35,7 +36,7 @@ title: Blog
                 {% endif %}
                 {% endfor %}
             </div>
-        </section>
+        </section> -->
 
         <!-- Posts Index
         ================================================== -->
@@ -51,9 +52,9 @@ title: Blog
                 </div>
                 <div class="masonrygrid row listrecent">
                     {% for post in paginator.posts %}
-                        {% unless post.featured == true %}
-                        {% include postbox.html %}
-                        {% endunless %}
+                    {% unless post.featured == true %}
+                    {% include postbox.html %}
+                    {% endunless %}
                     {% endfor %}
                 </div>
 
@@ -70,5 +71,3 @@ title: Blog
                 {% include sidebar.html %}
             </div>
         </section>
-    </div>
-</div>
