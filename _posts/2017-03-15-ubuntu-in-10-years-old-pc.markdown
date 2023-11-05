@@ -2,7 +2,7 @@
 layout: post
 cover: assets/images/1.jpg
 title: Ubuntu in old PC
-date: 2017-03-15 12:00:00 +0545
+date: 2023-11-15 12:00:00 +0545
 categories: blog
 author: john
 featured: true

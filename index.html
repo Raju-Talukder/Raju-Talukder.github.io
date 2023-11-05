@@ -29,12 +29,12 @@ title: Home
                 <h2><span>Featured Blog!</span></h2>
             </div>
             <div class="row listfeaturedtag">
-                {% for post in site.posts %}
-                {% if post.featured == true %}
-                {% include featuredbox.html %}
-                {% endif %}
+                {% assign featured_posts = site.posts | where: "featured", true | sort: "date" | reverse | limit: 4 %}
+                {% for post in featured_posts %}
+                    {% include featuredbox.html %}
                 {% endfor %}
             </div>
+            
         </section>
 
         <!-- Posts Index
