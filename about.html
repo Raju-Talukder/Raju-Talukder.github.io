@@ -7,73 +7,31 @@ title: About
   <br><br>
   <h1>Hi, I am <span>John.</span></h1>
 <p><span style="font-size:20pt;">Cyber Security Researcher.</span></p>
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-        }
+<section class="github-repositories">
+  <div class="container">
+      <h2>My GitHub Repositories</h2>
+      <ul id="repository-list">
+          <!-- Repositories will be listed here dynamically -->
+      </ul>
+  </div>
+</section>
 
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-        }
 
-        section {
-            background-color: #fff;
-            padding: 20px;
-            margin: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+<script>
+  // Replace with your GitHub username
+  const githubUsername = 'your-username';
 
-        h2 {
-            color: #333;
-        }
+  // Fetch GitHub repositories using the GitHub API
+  fetch(`https://api.github.com/users/${githubUsername}/repos`)
+      .then(response => response.json())
+      .then(repositories => {
+          const repositoryList = document.getElementById('repository-list');
 
-        ul {
-            list-style-type: square;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>About Me</h1>
-    </header>
-    <div class="container">
-        <section id="education">
-            <h2>Education Background</h2>
-            <ul>
-                <li><strong>Degree:</strong> Your Degree, University Name, Graduation Year</li>
-                <li><strong>Other Education:</strong> Additional Education, Institution, Year</li>
-            </ul>
-        </section>
-
-        <section id="certifications">
-            <h2>Vendor Certifications</h2>
-            <ul>
-                <li><strong>Certification 1:</strong> Certification Name, Year</li>
-                <li><strong>Certification 2:</strong> Certification Name, Year</li>
-            </ul>
-        </section>
-
-        <section id="work-experience">
-            <h2>Work Experience</h2>
-            <p>
-                Describe your work experience here, including your roles, responsibilities, and achievements.
-            </p>
-        </section>
-    </div>
-</body>
-</html>
+          repositories.forEach(repo => {
+              const listItem = document.createElement('li');
+              listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a> - ${repo.description}`;
+              repositoryList.appendChild(listItem);
+          });
+      })
+      .catch(error => console.error(error));
+</script>
