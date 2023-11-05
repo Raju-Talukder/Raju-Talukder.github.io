@@ -30,13 +30,16 @@ title: About
     border: 1px solid #e3e3e3;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: calc(33.33% - 20px); /* Three columns with spacing */
+    width: calc(25% - 20px); /* Four columns with spacing */
     margin-bottom: 20px;
     padding: 20px;
     min-height: 300px; /* Fixed height for each card */
     display: flex;
     flex-direction: column;
     transition: transform 0.2s, box-shadow 0.2s;
+    text-align: justify;
+    font-size: 14px;
+    font-weight: 400;
 }
 
 .repository-list .repository-card:hover {
@@ -45,13 +48,12 @@ title: About
 }
 
 .repository-list .repository-name {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     margin-bottom: 10px;
 }
 
 .repository-list .repository-description {
-    font-size: 16px;
     color: #555;
     margin-bottom: 10px;
     flex-grow: 1; /* Allow description to grow within the fixed height */
