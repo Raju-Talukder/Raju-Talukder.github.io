@@ -13,6 +13,8 @@ title: About
     font-size: 28px;
     font-weight: 600;
     margin-bottom: 20px;
+    color: #333;
+    text-align: center;
 }
 
 .repository-list {
@@ -20,30 +22,51 @@ title: About
     padding: 0;
 }
 
-.repository-list li {
-    border: 1px solid #d1d1d1;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    padding: 15px;
+.repository-list .repository-card {
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e3e3e3;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.repository-list li a {
-    font-size: 18px;
+.repository-list .repository-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.repository-list .repository-name {
+    font-size: 20px;
     font-weight: 600;
-    text-decoration: none;
-    color: #007bff;
+    margin-bottom: 10px;
 }
 
-.repository-list li a:hover {
-    color: #0056b3;
-}
-
-.repository-description {
+.repository-list .repository-description {
     font-size: 16px;
-    color: #444;
-    margin-top: 10px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.repository-list .repository-link {
+    text-align: center;
+}
+
+.repository-list .repository-link a {
+    text-decoration: none;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.repository-list .repository-link a:hover {
+    background-color: #0056b3;
 }
 
 </Style>
@@ -52,10 +75,12 @@ title: About
   <br><br>
   <h1>Hi, I am <span>John.</span></h1>
 <p><span style="font-size:20pt;">Cyber Security Researcher.</span></p>
+
+
 <section class="github-repositories">
   <div class="container">
       <h2 class="section-title">My GitHub Repositories</h2>
-      <div class="repository-list">
+      <div class="repository-list row">
           <!-- Repositories will be listed here dynamically -->
       </div>
   </div>
@@ -63,18 +88,24 @@ title: About
 
 
 
+
 <script>
   const githubUsername = 'Raju-Talukder';
-  fetch(`https://api.github.com/users/${githubUsername}/repos`)
-      .then(response => response.json())
-      .then(repositories => {
-          const repositoryList = document.querySelector('.repository-list')
-          repositories.forEach(repo => {
-              const listItem = document.createElement('li');
-              listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>
-                  <p class="repository-description">${repo.description || 'No description available.'}</p>`;
-              repositoryList.appendChild(listItem);
-          });
-      })
-      .catch(error => console.error(error));
+  fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated`)
+        .then(response => response.json())
+        .then(repositories => {
+            const repositoryList = document.querySelector('.repository-list');
+            repositories.forEach(repo => {
+                const repositoryCard = document.createElement('div');
+                repositoryCard.classList.add('repository-card');
+                repositoryCard.innerHTML = `
+                    <div class="repository-name">${repo.name}</div>
+                    <div class="repository-description">${repo.description || 'No description available.'}</div>
+                    <div class="repository-link">
+                        <a href="${repo.html_url}" target="_blank">View on GitHub</a>
+                    </div>`;
+                repositoryList.appendChild(repositoryCard);
+            });
+        })
+        .catch(error => console.error(error));
 </script>
