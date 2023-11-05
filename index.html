@@ -4,16 +4,16 @@ title: Home
 ---
 </div>
 </div>
-<!-- We've temporary closed main-content and container to have a full width intro -->
+<!-- We've temporarily closed main-content and container to have a full-width intro -->
 <!-- Home Jumbotron
 ================================================== -->
 <section class="intro">
     <center>
-        <img src="/assets/images/john.jpg" style="border-radius: 50%" height="90px" width="240px" alt="A picture of author.">
+        <img src="/assets/images/john.jpg" style="border-radius: 50%" height="90px" width="240px" alt="A picture of the author.">
         <br><br>
         <h1 style="color:white">Hi, I am <span>John Doe.</span></h1>
         <br>
-        <h3> Cyber Security Researcher</h3>
+        <h3>Cyber Security Researcher</h3>
         <br>
         <a href="{{ site.baseurl }}/about" class="btn" style="color:white">View More about me</a>
     </center>
@@ -39,11 +39,6 @@ title: Home
 
         <!-- Posts Index
         ================================================== -->
-        {% if paginator.previous_page %}
-        {% if paginator.previous_page > 0 %}
-        <div id="jumptopageof"></div>
-        {% endif %}
-        {% endif %}
         <section class="recent-posts row">
             <div class="col-sm-8">
                 <div class="section-title">
@@ -55,14 +50,6 @@ title: Home
                         {% include postbox.html %}
                       {% endunless %}
                     {% endfor %}
-                  </div>
-                  
-
-                <!-- Pagination -->
-                <div class="bottompagination">
-        <span class="navigation" role="navigation">
-            {% include pagination.html %}
-        </span>
                 </div>
             </div>
 
