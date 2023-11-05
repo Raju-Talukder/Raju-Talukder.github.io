@@ -2,7 +2,7 @@
 layout: post
 cover:  assets/images/4.jpg
 title: Automating the Newspaper download
-date: 2016-10-03 00:00:00 +0545
+date: 2019-10-03
 categories: blog
 author: john
 summary: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod

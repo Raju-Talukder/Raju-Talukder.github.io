@@ -2,7 +2,7 @@
 layout: post
 cover:  assets/images/2.jpg
 title: List github repo in your blog
-date: 2017-04-15 12:00:00 +0545
+date: 2017-04-15
 categories: blog
 author: john
 featured: true
