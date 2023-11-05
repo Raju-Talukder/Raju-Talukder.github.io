@@ -20,6 +20,9 @@ title: About
 .repository-list {
     list-style: none;
     padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .repository-list .repository-card {
@@ -27,9 +30,10 @@ title: About
     border: 1px solid #e3e3e3;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: calc(33.33% - 20px); /* Three columns with spacing */
     margin-bottom: 20px;
     padding: 20px;
-    height: 300px; /* Fixed height for each card */
+    min-height: 300px; /* Fixed height for each card */
     display: flex;
     flex-direction: column;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -71,6 +75,7 @@ title: About
     background-color: #0056b3;
 }
 
+
 </Style>
 
 <img src="/assets/images/john.jpg" alt="A picture of John.">
@@ -87,6 +92,7 @@ title: About
       </div>
   </div>
 </section>
+
 
 
 
