@@ -22,22 +22,32 @@ title: Blog
 <!-- We reopen main-content and container -->
 <div class="container">
     <div class="main-content">
+        <!-- Posts Index
+        ================================================== -->
+        {% if paginator.previous_page %}
+        {% if paginator.previous_page > 0 %}
+        <div id="jumptopageof"></div>
+        {% endif %}
+        {% endif %}
         <section class="recent-posts row">
             <div class="col-sm-8">
                 <div class="section-title">
                     <h2><span>Blog Posts</span></h2>
                 </div>
                 <div class="masonrygrid row listrecent">
-                    {% assign recent_posts = site.posts | sort: "date" | reverse %}
-                    {% for post in recent_posts %}
-                        {% include postbox.html %}
+                    {% for post in paginator.posts %}
+                    <!-- {% unless post.featured == true %} -->
+                    {% include postbox.html %}
+                    {% endunless %}
                     {% endfor %}
-                </div>      
+                </div>
+
+                <!-- Pagination -->
                 <div class="bottompagination">
-                    <span class="navigation" role="navigation">
-                        {% include pagination.html %}
-                    </span>
-                </div>                        
+        <span class="navigation" role="navigation">
+            {% include pagination.html %}
+        </span>
+                </div>
             </div>
 
             <!-- Sidebar -->
