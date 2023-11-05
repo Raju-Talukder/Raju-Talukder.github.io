@@ -3,7 +3,7 @@ layout: page
 title: About
 ---
 <Style>
-  /* Add this CSS to style your repositories section */
+/* Add this CSS to style your repositories section */
 .github-repositories {
     background-color: #f7f7f7;
     padding: 50px 0;
@@ -29,6 +29,7 @@ title: About
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     padding: 20px;
+    height: 300px; /* Fixed height for each card */
     display: flex;
     flex-direction: column;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -49,6 +50,7 @@ title: About
     font-size: 16px;
     color: #555;
     margin-bottom: 10px;
+    flex-grow: 1; /* Allow description to grow within the fixed height */
 }
 
 .repository-list .repository-link {
@@ -85,6 +87,7 @@ title: About
       </div>
   </div>
 </section>
+
 
 
 
