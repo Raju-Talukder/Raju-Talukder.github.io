@@ -28,17 +28,41 @@ title: Blog
                     <h2><span>Blog Posts</span></h2>
                 </div>
                 <div class="masonrygrid row listrecent">
-                    {% assign recent_posts = site.posts | sort: "date" | reverse %}
-                    {% for post in recent_posts %}
+                    {% for post in paginator.posts %}
                         {% include postbox.html %}
                     {% endfor %}
-                </div>      
+                </div>
+            
+                <!-- Pagination -->
                 <div class="bottompagination">
                     <span class="navigation" role="navigation">
-                        {% include pagination.html %}
+                        {% if paginator.total_pages > 1 %}
+                            <ul class="pagination">
+                                {% if paginator.previous_page %}
+                                    <li class="previous">
+                                        <a href="{{ paginator.previous_page_path }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% for page in (1..paginator.total_pages) %}
+                                    <li class="page-item {% if page == paginator.page %}active{% endif %}">
+                                        <a href="{{ paginator.page_path | prepend: site.baseurl | replace: '//', '/' }}">{{ page }}</a>
+                                    </li>
+                                {% endfor %}
+                                {% if paginator.next_page %}
+                                    <li class="next">
+                                        <a href="{{ paginator.next_page_path }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
                     </span>
-                </div>                        
+                </div>
             </div>
+            
 
             <!-- Sidebar -->
             <div class="col-sm-4">
