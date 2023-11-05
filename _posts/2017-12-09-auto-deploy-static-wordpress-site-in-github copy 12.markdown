@@ -1,10 +1,11 @@
 ---
 layout: post
-cover:  assets/images/4.jpg
-title: Automating the Newspaper download
-date: 2018-10-03
+cover:  assets/images/3.jpg
+title: Auto deploy your static site in github
+date: 2023-01-05
 categories: blog
 author: john
+featured: false
 summary: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 ---
 

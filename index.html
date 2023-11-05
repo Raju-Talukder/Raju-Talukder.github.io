@@ -46,11 +46,11 @@ title: Home
                     <h2><span>Blog Posts</span></h2>
                 </div>
                 <div class="masonrygrid row listrecent">
-                    {% assign recent_posts = site.posts | sort: "date" | reverse %}
+                    {% assign recent_posts = site.posts | where: "featured", false | sort: "date" | reverse %}
                     {% for post in recent_posts limit: 6 %}
                         {% include postbox.html %}
                     {% endfor %}
-                </div>                
+                </div>                              
             </div>
 
             <!-- Sidebar -->
