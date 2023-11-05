@@ -30,11 +30,12 @@ title: Home
             </div>
             <div class="row listfeaturedtag">
                 {% assign featured_posts = site.posts | where: "featured", true %}
-                {% assign sorted_featured_posts = featured_posts | sort: "date" | reverse | limit: 4 %}
-                {% for post in sorted_featured_posts %}
+                {% assign sorted_featured_posts = featured_posts | sort: "date" | reverse %}
+                {% for post in sorted_featured_posts limit: 4 %}
                     {% include featuredbox.html %}
                 {% endfor %}
-            </div>                       
+            </div>
+                                  
         </section>
 
         <!-- Blog Posts
