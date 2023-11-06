@@ -70,7 +70,102 @@ title: About
 .repository-card:hover .repository-link {
   background-color: #0056b3;
 }
+        /* Global Styles */
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
 
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.section {
+    padding: 20px 0; /* Reduce the top and bottom padding to 20px */
+    text-align: center;
+}
+
+/* Education Section Styles */
+.education-entry {
+    display: flex;
+    align-items: center;
+    margin: 10px 0; /* Reduce the top and bottom margin to 10px */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px; /* Reduce the padding to 10px */
+}
+
+
+.education-logo {
+    width: 100px; /* Adjust the width as needed */
+    margin-right: 20px;
+}
+
+.education-logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+.education-details {
+    flex: 1;
+    text-align: left;
+}
+
+.university-name {
+    font-weight: bold;
+    font-size: 20px;
+    margin: 5px 0;
+}
+
+/* Justify all <p> tags within the education entry */
+.education-entry p {
+    font-size: 16px;
+    margin: 5px 0;
+    text-align: justify;
+}
+
+/* Icons using Font Awesome */
+.degree:before {
+    content: '\f19c'; /* Graduation Cap icon */
+    font-family: FontAwesome;
+    margin-right: 10px;
+}
+
+.cgpa:before {
+    content: '\f292'; /* Medal icon */
+    font-family: FontAwesome;
+    margin-right: 10px;
+}
+
+.degree-description:before {
+    content: '\f02d'; /* Graduation Hat icon (Different from "degree") */
+    font-family: FontAwesome;
+    margin-right: 10px;
+}
+
+department:before {
+    content: '\f19d'; /* University icon (Different from "degree") */
+    font-family: FontAwesome;
+    margin-right: 10px;
+}
+
+/* Customize the styling further to enhance attractiveness */
+/* Justify text within all <p> tags on the website */
+    p {
+    text-align: justify;
+}
+/* Additional CSS for the date range with calendar icon */
+.date-range {
+    font-size: 16px;
+    color: #333;
+    margin: 5px 0;
+    margin-right: 5px; /* Adjust the spacing as needed */
+    font-size: 16px;
+}
 </Style>
 
 <img src="/assets/images/john.jpg" alt="A picture of John.">
@@ -87,6 +182,132 @@ title: About
       </div>
   </div>
 </section>
+<section id="education" class="section education">
+  <div class="container">
+      <h2>Education</h2>
+      <div class="education-entry">
+          <div class="education-logo">
+              <img src="universitylogo.png" alt="University Logo">
+          </div>
+          <div class="education-details">
+              <p class="university-name">ABC International University</p>
+              <p class="department">Software Engineering</p>
+              <p class="date-range"><i class="fas fa-calendar"></i> 2017 - 2021</p>
+              <p class="degree">B.S.C. in Software Engineering Major in CyberSecurity</p>
+              <p class="degree-description">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+          </div>
+          
+      </div>
+      <div class="education-entry">
+          <div class="education-logo">
+              <img src="universitylogo.png" alt="University Logo">
+          </div>
+          <div class="education-details">
+              <p class="university-name">ABC International University</p>
+              <p class="department">Software Engineering</p>
+              <p class="date-range"><i class="fas fa-calendar"></i> 2017 - 2021</p>
+              <p class="degree">B.S.C. in Software Engineering Major in CyberSecurity</p>
+              <p class="degree-description">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+          </div>
+      </div>
+      <!-- Add more education entries as needed -->
+  </div>
+</section>
+
+
+  <section id="work-experience" class="section work-experience">
+      <div class="container">
+          <h2>Work Experience</h2>
+          <!-- Add your work experience details here -->
+          <div class="education-entry">
+              <div class="education-logo">
+                  <img src="universitylogo.png" alt="University Logo">
+              </div>
+              <div class="education-details">
+                  <p class="university-name">ABC International University</p>
+                  <p class="department">Software Engineering</p>
+                  <p class="date-range"><i class="fas fa-calendar"></i> 2017 - 2021</p>
+                  <p class="degree">B.S.C. in Software Engineering Major in CyberSecurity</p>
+                  <p class="degree-description">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+              </div>
+              
+          </div>
+          <div class="education-entry">
+              <div class="education-logo">
+                  <img src="universitylogo.png" alt="University Logo">
+              </div>
+              <div class="education-details">
+                  <p class="university-name">ABC International University</p>
+                  <p class="department">Software Engineering</p>
+                  <p class="date-range"><i class="fas fa-calendar"></i> 2017 - 2021</p>
+                  <p class="degree">B.S.C. in Software Engineering Major in CyberSecurity</p>
+                  <p class="degree-description">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <section id="certifications" class="section certifications">
+      <div class="container">
+          <h2>Vendor Certifications</h2>
+          <div class="education-entry">
+              <div class="education-logo">
+                  <img src="CEH_Badge.png" alt="University Logo">
+              </div>
+              <div class="education-details">
+                  <p class="university-name">Certified Ethical Hacker</p>
+                  <p class="department">EC-Council</p>
+                  <p class="date-range "><i class="fas fa-calendar"></i>     2021</p>
+                  <p class="degree">B.S.C. in Software Engineering Major in CyberSecurity</p>
+                  <p class="degree-description">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+              </div>
+              
+          </div>
+          <div class="education-entry">
+              <div class="education-logo">
+                  <img src="universitylogo.png" alt="University Logo">
+              </div>
+              <div class="education-details">
+                  <p class="university-name">ABC International University</p>
+                  <p class="department">Software Engineering</p>
+                  <p class="date-range"><i class="fas fa-calendar"></i> 2017 - 2021</p>
+                  <p class="degree">B.S.C. in Software Engineering Major in CyberSecurity</p>
+                  <p class="degree-description">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <section id="publications" class="section publications">
+      <div class="container">
+          <h2>Research Publications</h2>
+          <!-- Add your research publications here -->
+          <div class="education-entry">
+              <div class="education-logo">
+                  <img src="universitylogo.png" alt="University Logo">
+              </div>
+              <div class="education-details">
+                  <p class="university-name">ABC International University</p>
+                  <p class="department">Software Engineering</p>
+                  <p class="date-range"><i class="fas fa-calendar"></i> 2017 - 2021</p>
+                  <p class="degree">B.S.C. in Software Engineering Major in CyberSecurity</p>
+                  <p class="degree-description">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+              </div>
+          </div>
+          <div class="education-entry">
+              <div class="education-logo">
+                  <img src="universitylogo.png" alt="University Logo">
+              </div>
+              <div class="education-details">
+                  <p class="university-name">ABC International University</p>
+                  <p class="department">Software Engineering</p>
+                  <p class="date-range"><i class="fas fa-calendar"></i> 2017 - 2021</p>
+                  <p class="degree">B.S.C. in Software Engineering Major in CyberSecurity</p>
+                  <p class="degree-description">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+              </div>
+          </div>
+      </div>
+  </section>
 
 
 
@@ -114,4 +335,7 @@ title: About
         .catch(error => console.error(error));
 </script>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
