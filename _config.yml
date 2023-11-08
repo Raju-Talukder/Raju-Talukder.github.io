@@ -6,7 +6,7 @@ logo: /assets/images/logo.png
 favicon: /assets/images/favicon.ico
 paginate: 6
 baseurl:
-email: 'hello@john.doe'
+email: 'hello@raju.doe'
 google_analytics: UA-103662447-9
 disqus:
 sharethis:
@@ -15,9 +15,9 @@ sharethis:
 authors:
   raju:
     name: Raju
-    display_name: r@ju
-    image: /assets/images/john.jpg
-    email: hello@john.doe
+    display_name: raju
+    image: /assets/images/rajju.jpg
+    email: hello@raju.doe
     web: http://example.com
     twitter:
     description: Hi, I am John Doe.
@@ -44,16 +44,16 @@ highlighter: rouge
 
 # SEO
 twitter:
-  username: john
+  username: raju
   card: summary
 
 facebook:
   app_id:
-  publisher: john.com
+  publisher: raju.com
   admins:
 
 social:
-name: John Doe
+name: raju Doe
 links:
     - https://twitter.com/
     - https://www.facebook.com/
