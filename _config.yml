@@ -1,5 +1,5 @@
 # Site
-name: John Doe
+name: Raju Talukder
 description: Just another website
 meta_description: Just another website
 logo: /assets/images/logo.png
@@ -14,8 +14,8 @@ sharethis:
 # Authors
 authors:
   john:
-    name: john
-    display_name: John Doe
+    name: Raju
+    display_name: R@ju
     image: /assets/images/john.jpg
     email: hello@john.doe
     web: http://example.com
