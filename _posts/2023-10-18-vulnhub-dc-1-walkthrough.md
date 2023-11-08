@@ -1,14 +1,18 @@
 ---
 layout: post
-cover:  assets/images/dc-1-cover.png
+cover:  assets/images/dc-1/cover.png
 title: Vulnhub DC-1 Walkthrough 
 date: 2023-10-18
 categories: blog
-author: john
+author: R@ju
 featured: true
 ---
 
-# DC-1
+# Summary
+
+This box is relatively straightforward; there are publicly available exploits that make it even easier. To gain an initial foothold, all we need to do is identify the service and its version. Once we have this information, a quick search on Google or in the Searchsploit database provides us with a suitable exploit. The Metasploit framework offers a good exploit in many cases, which I utilized.
+
+For privilege escalation, we need to locate SUID binaries and abuse them. In this instance, there were two such binaries: 'exim4' and 'find.' The techniques and tactics for this type of privilege escalation are also publicly available.
 
 # Information Gathering
 
@@ -114,8 +118,5 @@ It worked, and I've achieved root access. It shows that my user is still 'www-da
 
 ![](/assets/images/dc-1/root.png)
 
-This box is relatively straightforward; there are publicly available exploits that make it even easier. To gain an initial foothold, all we need to do is identify the service and its version. Once we have this information, a quick search on Google or in the Searchsploit database provides us with a suitable exploit. The Metasploit framework offers a good exploit in many cases, which I utilized.
-
-For privilege escalation, we need to locate SUID binaries and abuse them. In this instance, there were two such binaries: 'exim4' and 'find.' The techniques and tactics for this type of privilege escalation are also publicly available.
 
 #h@ppyh@cking
