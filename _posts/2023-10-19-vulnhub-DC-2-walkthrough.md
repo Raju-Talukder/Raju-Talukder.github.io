@@ -6,10 +6,8 @@ date: 2023-10-19
 categories: blog
 author: raju
 featured: true
-summary: This box provided a valuable learning experience. To gain the initial foothold, I created a custom word list using the 'cwel' tools. After generating the word list, I executed WPScan with a password brute-force attack, which resulted in discovering two valid credentials for the web console. However, neither of these accounts had admin privileges, so we couldn't obtain a shell from there.
----
 
-# Summary
+---
 
 This box provided a valuable learning experience. To gain the initial foothold, I created a custom word list using the 'cwel' tools. After generating the word list, I executed WPScan with a password brute-force attack, which resulted in discovering two valid credentials for the web console. However, neither of these accounts had admin privileges, so we couldn't obtain a shell from there.
 
