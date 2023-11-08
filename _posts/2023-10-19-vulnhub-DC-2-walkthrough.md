@@ -6,6 +6,9 @@ date: 2023-10-19
 categories: blog
 author: Raju
 featured: true
+summary: This box provided a valuable learning experience. To gain the initial foothold, I created a custom word list using the 'cwel' tools. After generating the word list, I executed WPScan with a password brute-force attack, which resulted in discovering two valid credentials for the web console. However, neither of these accounts had admin privileges, so we couldn't obtain a shell from there.
+
+Next, we attempted SSH login, and Tom successfully logged into the machine. The default shell for the 'tom' user was 'rbash,' but we managed to escape from it using the 'vi' editor. This allowed us to access 'flag3.txt,' which contained a clue for switching to the 'jerry' user. We used the passwords obtained from WordPress for 'jerry,' and with 'jerry,' we ran 'git' as root. We successfully abused this to escalate privileges and gain root access.
 ---
 
 # Summary
