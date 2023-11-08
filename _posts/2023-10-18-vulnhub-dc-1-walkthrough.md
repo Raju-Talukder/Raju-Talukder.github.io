@@ -6,7 +6,7 @@ date: 2023-10-18
 categories: blog
 author: raju
 featured: true
-
+summary: This box is relatively straightforward; there are publicly available exploits that make it even easier. To gain an initial foothold, all we need to do is identify the service and its version. Once we have this information, a quick search on Google or in the Searchsploit database provides us with a suitable exploit. The Metasploit framework offers a good exploit in many cases, which I utilized.
 ---
 
 # Summary
