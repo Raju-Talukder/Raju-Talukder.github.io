@@ -53,19 +53,19 @@ From the Nmap results, various services confirmed that it's a Debian-based Linux
 
 - **Manual Inspection**
 
-![manual-inspection](assets/images/dc-1/manual-inspection.png)
+![manual-inspection]("{{ site.baseurl }}/assets/images/dc-1/manual-inspection.png")
 
 This site is built with the Drupal content management system, and our Nmap scan confirmed that it's running Drupal version 7. Rather than wasting time, I decided to search for publicly available exploits for Drupal 7. Using Searchsploit, I found a Metasploit exploit.
 
-![searchsploit](assets/images/dc-1/searchsploit.png)
+![searchsploit]("{{ site.baseurl }}/assets/images/dc-1/searchsploit.png")
 
 Let's proceed to Metasploit and check for exploits. While searching in Metasploit, I discovered a SQL injection vulnerability. Let's start by attempting this one first.
 
-![msf-search](assets/images/dc-1/msf-search.png)
+![msf-search]("{{ site.baseurl }}/assets/images/dc-1/msf-search.png")
 
 # Initial Foothold
 
-![Initial-foothold](assets/images/dc-1/Initial-foothold.png)
+![Initial-foothold]("{{ site.baseurl }}/assets/images/dc-1/Initial-foothold.png")
 
 This application is vulnerable to a SQL injection vulnerability, which allowed me to gain a remote shell on the machine. I've obtained the initial foothold, and now it's time to proceed with privilege escalation to gain root privileges.
 
@@ -113,7 +113,7 @@ uid=33(www-data) gid=33(www-data) euid=0(root) groups=0(root),33(www-data)
 
 It worked, and I've achieved root access. It shows that my user is still 'www-data', but my EUID is 0 (root), and my groups are 0 (root). This means I have all the permissions of the root user.
 
-![root](assets/images/dc-1/root.png)
+![root]("{{ site.baseurl }}/assets/images/dc-1/root.png")
 
 This box is relatively straightforward; there are publicly available exploits that make it even easier. To gain an initial foothold, all we need to do is identify the service and its version. Once we have this information, a quick search on Google or in the Searchsploit database provides us with a suitable exploit. The Metasploit framework offers a good exploit in many cases, which I utilized.
 
