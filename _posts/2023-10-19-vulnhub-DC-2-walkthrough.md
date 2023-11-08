@@ -22,7 +22,7 @@ First, I want to start with Nmap to identify the open ports and their associated
 # Nmap
 
 ```bash
-nmap -p- -sC -sV -oN nmap/dc-2 $IP --open
+ports=$(nmap -p- --min-rate=1000 -T4 $IP | grep ^[0-9] | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//) ; nmap -p$ports -sC -sV -oN nmap/service_scan $IP
 
 PORT     STATE SERVICE VERSION
 80/tcp   open  http    Apache httpd 2.4.10 ((Debian))

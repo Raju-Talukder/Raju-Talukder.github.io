@@ -4,7 +4,7 @@ cover:  assets/images/3.jpg
 title: Auto deploy your static site in github
 date: 2023-11-01
 categories: blog
-author: john
+author: raju
 featured: false
 summary: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 ---
