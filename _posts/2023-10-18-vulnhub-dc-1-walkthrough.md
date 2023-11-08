@@ -52,6 +52,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 From the Nmap results, various services confirmed that it's a Debian-based Linux machine. Only a few minimal ports are open, with the most promising one being port 80. Port 22 is also open, but I currently lack the credentials to attempt an SSH attack. Therefore, I will begin my investigation by focusing on the web server running on port 80. 
 
 - **Manual Inspection**
+![](/assets/images/dc-1/manual-inspection.png)
 
 ![manual-inspection]("{{ site.baseurl }}/assets/images/dc-1/manual-inspection.png")
 
