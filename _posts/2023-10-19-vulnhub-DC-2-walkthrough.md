@@ -5,7 +5,7 @@ title: Vulnhub DC-2 Walkthrough
 date: 2023-10-19
 categories: blog
 author: raju
-featured: true
+featured: false
 
 ---
 
