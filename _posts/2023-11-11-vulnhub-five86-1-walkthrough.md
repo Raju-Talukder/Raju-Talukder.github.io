@@ -3,7 +3,7 @@ layout: post
 cover:  assets/images/five86-1/cover.png
 title: Vulnhub Five86 1 Walkthrough 
 date: 2023-11-11
-categories: blog
+categories: Five86
 author: raju
 featured: true
 
@@ -14,8 +14,6 @@ There are two enabled HTTP services and one SSH service. One of the HTTP service
 # Information Gathering
 
 First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.
-
-**Nmap**
 
 ```bash
 ports=$(nmap -p- --min-rate=1000 -T4 $IP | grep ^[0-9] | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//) ; nmap -p$ports -sC -sV -oN nmap_service_scan $IP
@@ -37,7 +35,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 From the Nmap scan, we identified three open ports: SSH and two web servers. Port 80 has the 'robots.txt' file available, with a disallow entry. Port 10000 is also open, hosting Miniserv 1.920. Additionally, ports 22 and 80 confirmed that it's a Debian-based Linux system. I would like to begin by exploring the web servers, so let's dive into those.
 
-**Manual Inspection**
+## Manual Inspection
 
 ![](/assets/images/five86-1/1.png)
 
