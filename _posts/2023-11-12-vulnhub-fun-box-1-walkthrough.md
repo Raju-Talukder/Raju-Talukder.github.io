@@ -3,10 +3,9 @@ layout: post
 cover:  assets/images/fun-box-1/cover.png
 title: Vulnhub Funbox 1 Walkthrough 
 date: 2023-11-12
-categories: blog
+categories: Funbox Series
 author: raju
 featured: true
-
 ---
 
 I personally found this box quite interesting. To gain the initial foothold, I ran WPScan with a password list, using `rockyou.txt` which led to the discovery of two valid user credentials for the web console. One of these users also had SSH access to the box. However, obtaining the shell wasn't enough; there was an additional step to escape the rbash shell. For root access, post-enumeration was crucial, as there were multiple ways to achieve it. Some methods were relatively straightforward, while others required additional research. 
