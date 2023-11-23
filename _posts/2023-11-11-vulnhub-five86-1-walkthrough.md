@@ -3,7 +3,7 @@ layout: post
 cover:  assets/images/five86-1/cover.png
 title: Vulnhub Five86 1 Walkthrough 
 date: 2023-11-11
-categories: Five86
+categories: Five86-Series
 author: raju
 featured: true
 

@@ -3,7 +3,7 @@ layout: post
 cover:  assets/images/dc-1/cover.png
 title: Vulnhub DC-1 Walkthrough 
 date: 2023-10-18
-categories: blog
+categories: DC-Series
 author: raju
 featured: true
 

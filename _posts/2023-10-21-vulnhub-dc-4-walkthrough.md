@@ -3,7 +3,7 @@ layout: post
 cover:  assets/images/dc-4/cover.png
 title: Vulnhub DC-4 Walkthrough 
 date: 2023-10-21
-categories: blog
+categories: DC-Series
 author: raju
 featured: false
 ---

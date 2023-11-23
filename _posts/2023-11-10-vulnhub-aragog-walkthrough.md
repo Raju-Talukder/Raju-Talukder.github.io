@@ -3,7 +3,7 @@ layout: post
 cover:  assets/images/aragog/cover.png
 title: Vulnhub Aragog Walkthrough 
 date: 2023-11-10
-categories: blog
+categories: Harry-Potter-Series
 author: raju
 featured: true
 

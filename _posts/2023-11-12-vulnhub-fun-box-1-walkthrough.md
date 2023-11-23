@@ -3,7 +3,7 @@ layout: post
 cover:  assets/images/fun-box-1/cover.png
 title: Vulnhub Funbox 1 Walkthrough 
 date: 2023-11-12
-categories: Funbox Series
+categories: Funbox-Series
 author: raju
 featured: true
 ---
