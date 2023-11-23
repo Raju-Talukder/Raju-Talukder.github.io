@@ -18,8 +18,6 @@ For privilege escalation, we need to locate SUID binaries and abuse them. In thi
 
 First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.
 
-- **Nmap**
-
 ```bash
 ports=$(nmap -p- --min-rate=1000 -T4 $IP | grep ^[0-9] | cut -d '/' -f 1 | tr '\n' ',' | sed s/,$//) ; nmap -p$ports -sC -sV -oN nmap/service_scan $IP
 
