@@ -2,7 +2,7 @@
 layout: post
 cover:  assets/images/dc-5/cover.png
 title: Vulnhub DC-5 Walkthrough 
-date: 2023-10-21
+date: 2023-10-22
 categories: DC-Series
 author: raju
 featured: false
