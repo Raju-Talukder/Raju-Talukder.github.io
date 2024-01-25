@@ -1,12 +1,12 @@
 # Site
 name: Raju Talukder
-description: Just another website
-meta_description: Just another website
+description: Raju Talukder's blog
+meta_description: Raju Talukder's blog
 logo: /assets/images/logo.png
 favicon: /assets/images/favicon.ico
 paginate: 6
 baseurl:
-email: 'hello@raju.doe'
+email: 'rajutalukder70@gmail.com'
 google_analytics: UA-103662447-9
 disqus:
 sharethis:
@@ -16,11 +16,11 @@ authors:
   raju:
     name: Raju
     display_name: r@ju
-    image: /assets/images/raju.jpg
-    email: hello@raju.doe
-    web: http://example.com
+    image: /assets/images/raju.jpeg
+    email: rajutalukder70@gmail.com
+    web: https://raju-talukder.github.io/
     twitter:
-    description: Hi, I am John Doe.
+    description: Hi, I am Raju Talukder.
 
 # Plugins
 plugins:
@@ -49,13 +49,12 @@ twitter:
 
 facebook:
   app_id:
-  publisher: raju.com
+  publisher: https://raju-talukder.github.io/
   admins:
 
 social:
-name: raju Doe
+name: Raju Talukder
 links:
-    - https://twitter.com/
-    - https://www.facebook.com/
-    - https://www.linkedin.com/
-    - https://github.com/
+    - https://www.facebook.com/rajutalukder70/
+    - https://www.linkedin.com/in/rajutalukder
+    - https://github.com/Raju-Talukder
