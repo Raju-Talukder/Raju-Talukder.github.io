@@ -1,0 +1,173 @@
+<p>This box is pretty straightforward; nothing complex here. Enumeration is the key. We need to enumerate and use the gathered information at the perfect moment. From the Nmap scan, we found the SSH and HTTP ports open. By visiting the web server, we discovered it’s a WordPress application, and there is a vulnerable plugin, wp-file-manager, which is susceptible to an Unauthenticated Arbitrary File Upload vulnerability. This vulnerability gives us the initial foothold.</p>
+
+<p>For privilege escalation, the author of this box did not install WordPress in the usual place. We need to find out the configuration file, and from there, we can get the MySQL credentials. Logging into MySQL provides us with the hagrid98 user password hash. Using John, we decrypt the password and log in as the hagrid98 user. Then, we find the cronjob and modify the file to gain root access.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to begin with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   2048 48:df:48:37:25:94:c4:74:6b:2c:62:73:bf:b4:9f:a9 <span class="o">(</span>RSA<span class="o">)</span>
+|   256 1e:34:18:17:5e:17:95:8f:70:2f:80:a6:d5:b4:17:3e <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 3e:79:5f:55:55:3b:12:75:96:b4:3e:e3:83:7a:54:94 <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp open  http    Apache httpd 2.4.38 <span class="o">((</span>Debian<span class="o">))</span>
+|_http-server-header: Apache/2.4.38 <span class="o">(</span>Debian<span class="o">)</span>
+|_http-title: Site doesn<span class="s1">'t have a title (text/html).
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</span></code></pre></div></div>
+
+<p>From the Nmap scan, we found two publicly available ports: the first one being SSH, and the second one is HTTP. Both banners indicate it’s a Debian box. However, we did not gather much information from the Nmap results. Let’s manually check the application since we don’t have any credentials to work with SSH directly.</p>
+
+<p><strong>Manual Inspection</strong></p>
+
+<p><img src="/assets/images/aragog/1.png" alt="" /></p>
+
+<p>There is only a Harry Potter image available, and there’s no apparent user-server communication. At this point, we can begin fuzzing for directories and files.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Discovery/Web-Content/raft-large-files.txt <span class="nt">--hc</span> 404 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">"</span>
+
+<span class="o">=====================================================================</span>
+ID           Response   Lines    Word       Chars       Payload                                                                                        
+<span class="o">=====================================================================</span>
+
+000000069:   200        5 L      11 W       97 Ch       <span class="s2">"index.html"</span>                                                                                   
+000000157:   403        9 L      28 W       275 Ch      <span class="s2">".htaccess"</span>                                                                                    
+000000379:   200        5 L      11 W       97 Ch       <span class="s2">"."</span>                                                                                            
+000000537:   403        9 L      28 W       275 Ch      <span class="s2">".html"</span>                                                                                        
+000000806:   403        9 L      28 W       275 Ch      <span class="s2">".php"</span>                                                                                         
+000001564:   403        9 L      28 W       275 Ch      <span class="s2">".htpasswd"</span>                                                                                    
+000001830:   403        9 L      28 W       275 Ch      <span class="s2">".htm"</span>                                                                                         
+000002100:   403        9 L      28 W       275 Ch      <span class="s2">".htpasswds"</span>                                                                                   
+000004625:   403        9 L      28 W       275 Ch      <span class="s2">".htgroup"</span>                                                                                     
+000005172:   403        9 L      28 W       275 Ch      <span class="s2">"wp-forum.phps"</span>                                                                                
+000007079:   403        9 L      28 W       275 Ch      <span class="s2">".htaccess.bak"</span>                                                                                
+000008688:   403        9 L      28 W       275 Ch      <span class="s2">".htuser"</span>                                                                                      
+000011459:   403        9 L      28 W       275 Ch      <span class="s2">".ht"</span>                                                                                          
+000011460:   403        9 L      28 W       275 Ch      <span class="s2">".htc"</span>                                                                                         
+000017181:   403        9 L      28 W       275 Ch      <span class="s2">".htaccess.old"</span>                                                                                
+000017182:   403        9 L      28 W       275 Ch      <span class="s2">".htacess"</span>
+</code></pre></div></div>
+
+<p>File fuzzing didn’t yield anything interesting. However, during directory fuzzing, I discovered a ‘blog’ directory with a status code of 301. Let’s visit the directory manually.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz <span class="nt">-c</span> <span class="nt">-z</span> file,/usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt <span class="nt">--hc</span> 404 <span class="s2">"</span><span class="nv">$URL</span><span class="s2">"</span>
+
+<span class="o">=====================================================================</span>
+ID           Response   Lines    Word       Chars       Payload                                                                                        
+<span class="o">=====================================================================</span>
+000000050:   301        9 L      28 W       307 Ch      <span class="s2">"blog"</span>                                                                                         
+000000139:   301        9 L      28 W       313 Ch      <span class="s2">"javascript"</span>                                                                                   
+000004227:   403        9 L      28 W       275 Ch      <span class="s2">"server-status"</span>
+</code></pre></div></div>
+
+<p>The application did not load properly. When I hovered the mouse over a link, I found a domain name. Let’s add this to the hosts file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s1">'10.10.10.7 wordpress.aragog.hogwarts'</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/hosts
+
+10.10.10.7 wordpress.aragog.hogwarts
+</code></pre></div></div>
+
+<p>Now the application is loaded properly and this is a WordPress application.</p>
+
+<p><img src="/assets/images/aragog/2.png" alt="" /></p>
+
+<p>Always running some recon in the background is better. Since it’s a WordPress application, I would like to run WPScanner in the background to enumerate the themes and plugins used here.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--enumerate</span> ap <span class="nt">--plugins-detection</span> aggressive <span class="nt">--plugins-version-detection</span> aggressive <span class="nt">--url</span> http://wordpress.aragog.hogwarts/blog 
+
+<span class="o">[</span>+] URL: http://wordpress.aragog.hogwarts/blog/ <span class="o">[</span>10.10.10.7]
+<span class="o">[</span>+] Started: Tue Nov 14 20:14:07 2023
+
+Interesting Finding<span class="o">(</span>s<span class="o">)</span>:
+
+<span class="o">[</span>+] WordPress version 5.0.12 identified <span class="o">(</span>Insecure, released on 2021-04-15<span class="o">)</span><span class="nb">.</span>
+
+<span class="o">[</span>+] WordPress theme <span class="k">in </span>use: twentynineteen
+ | <span class="o">[!]</span> The version is out of <span class="nb">date</span>, the latest version is 2.7
+
+<span class="o">[</span>i] Plugin<span class="o">(</span>s<span class="o">)</span> Identified:
+
+<span class="o">[</span>+] akismet
+ | Location: http://wordpress.aragog.hogwarts/blog/wp-content/plugins/akismet/
+ | Latest Version: 5.3
+
+<span class="o">[</span>+] wp-file-manager
+ | Version: 6.0 <span class="o">(</span>100% confidence<span class="o">)</span>
+</code></pre></div></div>
+
+<p>WPScanner found the default themes and plugins, and it identified the presence of the wp-file-manager plugin. At this point, I would like to search for publicly available exploits. The Exploit Database has a cross-site scripting vulnerability exploit for the Akismet plugin and an unauthenticated arbitrary file upload leading to RCE exploit for wp-file-manager plugins.</p>
+
+<p><img src="/assets/images/aragog/3.png" alt="" /></p>
+
+<p>I copied the exploit into my current directory and ran it. Fortunately, it successfully exploited the vulnerability. It’s confirmed now that there is a file upload vulnerability leading to RCE. I attempted to take a reverse shell through RCE, but unfortunately, I failed.</p>
+
+<p><img src="/assets/images/aragog/4.png" alt="" /></p>
+
+<p>So, I planned to upload a reverse shell file. This payload helped me successfully upload the file to the server.</p>
+
+<p><img src="/assets/images/aragog/5.png" alt="" /></p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>I uploaded a PHP reverse shell payload file from PentesterMonkey.</p>
+
+<p><img src="/assets/images/aragog/6.png" alt="" /></p>
+
+<p>After successfully uploaded the file i just visited this URl with a listener on to catch the revers shell.</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">http</span><span class="p">:</span><span class="c1">//wordpress.aragog.hogwarts//blog/wp-content/plugins/wp-file-manager/lib/files/exp.php</span>
+</code></pre></div></div>
+
+<p>It gave me the initial foothold into the box by providing a reverse shell.</p>
+
+<p><img src="/assets/images/aragog/7.png" alt="" /></p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p>After obtaining the shell as www-data, I explored the file system and discovered the ‘.backup.sh’ file inside the ‘/opt’ directory. I only have execute and read permissions, and the owner of this file, ‘hagrid98,’ has full authority. Given the file name ‘backup’ and its function of copying files from the web server’s upload directory to the ‘tmp’ folder, there is a possibility of a cronjob. Since this is a WordPress installation, the config file may contain the MySQL credentials. Let’s find that.</p>
+
+<p><img src="/assets/images/aragog/8.png" alt="" /></p>
+
+<p>From the backup script, we observed that the WordPress folder is not present inside ‘/var/www/html.’ They configured this in a different way. I want to find all folders named ‘wordpress’ first and will check each one for critical information.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@Aragog:/var/www<span class="nv">$ </span>find / <span class="nt">-type</span> d <span class="nt">-name</span> wordpress 2&gt; /dev/null
+/var/lib/wordpress
+/var/lib/mysql/wordpress
+/usr/share/doc/wordpress
+/usr/share/wordpress
+/usr/share/wordpress/wp-includes/js/tinymce/skins/wordpress
+/usr/share/wordpress/wp-includes/js/tinymce/plugins/wordpress
+/etc/wordpress
+</code></pre></div></div>
+
+<p>However, from the ‘find’ command output, the first directory that caught my eye was the ‘/etc/wordpress’ folder. Inside the directory, I found the ‘config-default.php’ file containing the credentials.</p>
+
+<p><img src="/assets/images/aragog/9.png" alt="" /></p>
+
+<p>Inside the database i found hagrid98 user and password hash.</p>
+
+<p><img src="/assets/images/aragog/10.png" alt="" /></p>
+
+<p>John was so kind to decrypt the hash within a moment.</p>
+
+<p><img src="/assets/images/aragog/11.png" alt="" /></p>
+
+<p>Now that I have the credentials, I tried to log in through SSH, and it succeeded. I now have a proper SSH connection into the box.</p>
+
+<p><img src="/assets/images/aragog/12.png" alt="" /></p>
+
+<p>As the previous confusion about the cronjob persisted, I transferred pspy64 into the box and ran it to observe all the input and output activities inside the machine. Within a few moments, I got a hit from root to the ‘<a href="http://backup.sh/">backup.sh</a>’ file. Now, as the hagrid98 user, I have the ability to modify the file—I can put anything I want, and root will execute whatever I write into that file. Getting root is now just a piece of cake.</p>
+
+<p><img src="/assets/images/aragog/13.png" alt="" /></p>
+
+<p>I modified the file and added a reverse shell script. When the root user executes the file, I will get a reverse shell as root.</p>
+
+<p><img src="/assets/images/aragog/14.png" alt="" /></p>
+
+<p>I opened the listener and waited for root to execute the file. Within a minute, I got the shell, and I am now root.</p>
+
+<p><img src="/assets/images/aragog/15.png" alt="" /></p>

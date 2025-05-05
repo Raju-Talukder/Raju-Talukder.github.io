@@ -1,0 +1,146 @@
+<h1 id="mr-robot-1">Mr. Robot-1</h1>
+
+<p>For the initial foothold, we need to discover the underlying technology of the web application. Upon checking the hidden files or directories, I found that it’s a WordPress web application. Additionally, I found the robots.txt file along with two other files, one of which is a wordlist. We can scan the application through WPScan with the wordlist, which should give us valid administrative user credentials.</p>
+
+<p>After logging into the account, there are two ways to get a reverse shell: by adding a reverse shell plugin or by editing existing files. The privilege escalation is pretty straightforward; we need to identify the SUID binaries, where an older version of nmap is available with an interactive mode, which can lead to root privilege.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<p><strong>Nmap</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT    STATE SERVICE  VERSION
+80/tcp  open  http     Apache httpd
+|_http-title: Site doesn<span class="s1">'t have a title (text/html).
+|_http-server-header: Apache
+443/tcp open  ssl/http Apache httpd
+|_http-server-header: Apache
+| ssl-cert: Subject: commonName=www.example.com
+| Not valid before: 2015-09-16T10:45:03
+|_Not valid after:  2025-09-13T10:45:03
+|_http-title: Site doesn'</span>t have a title <span class="o">(</span>text/html<span class="o">)</span><span class="nb">.</span>
+</code></pre></div></div>
+
+<p>From the Nmap scan, we discovered only two open ports: 80 and 443, both of which are serving an Apache server. Additionally, we identified a domain name, <a href="http://www.example.com/"><code class="language-plaintext highlighter-rouge">www.example.com</code></a>. We can add this domain to our host file and interact with it. Let’s begin by visiting the web application through the browser.</p>
+
+<p><strong>Manual Inspection</strong></p>
+
+<p>Both ports are serving the same web application, which resembles a machine web console. However, the available commands are limited, and it appears to be a simulated command-line interface rather than an original one. Given the constraints, there doesn’t seem to be a way to abuse this functionality.</p>
+
+<p><img src="/assets/images/mr-robot-1/1.png" alt="" /></p>
+
+<p>Alright, let’s fire up Gobuster to perform directory and file fuzzing. This will help us uncover any hidden directories or files that might not be readily accessible through the web application interface. Gobuster is a powerful tool for this purpose, and it can help us gather more information about the web server and its directory structure.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gobuster <span class="nb">dir</span> <span class="nt">-u</span> http://192.168.197.146 <span class="nt">-w</span> /usr/share/wordlists/seclists/Discovery/Web-Content/raft-large-directories.txt
+<span class="o">===============================================================</span>
+Gobuster v3.6
+by OJ Reeves <span class="o">(</span>@TheColonial<span class="o">)</span> &amp; Christian Mehlmauer <span class="o">(</span>@firefart<span class="o">)</span>
+<span class="o">===============================================================</span>
+<span class="o">[</span>+] Url:                     http://192.168.197.146
+<span class="o">[</span>+] Method:                  GET
+<span class="o">[</span>+] Threads:                 10
+<span class="o">[</span>+] Wordlist:                /usr/share/wordlists/seclists/Discovery/Web-Content/raft-large-directories.txt
+<span class="o">[</span>+] Negative Status codes:   404
+<span class="o">[</span>+] User Agent:              gobuster/3.6
+<span class="o">[</span>+] Timeout:                 10s
+<span class="o">===============================================================</span>
+Starting gobuster <span class="k">in </span>directory enumeration mode
+<span class="o">===============================================================</span>
+/images               <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 238] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/images/]
+/js                   <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 234] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/js/]
+/admin                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 237] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/admin/]
+/wp-content           <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 242] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-content/]
+/css                  <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 235] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/css/]
+/wp-admin             <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 240] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-admin/]
+/wp-includes          <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 243] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-includes/]
+/xmlrpc               <span class="o">(</span>Status: 405<span class="o">)</span> <span class="o">[</span>Size: 42]
+/login                <span class="o">(</span>Status: 302<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-login.php]
+/blog                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 236] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/blog/]
+/feed                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/]
+/rss                  <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/]
+/video                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 237] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/video/]
+/sitemap              <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 0]
+/image                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/image/]
+/audio                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 237] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/audio/]
+/phpmyadmin           <span class="o">(</span>Status: 403<span class="o">)</span> <span class="o">[</span>Size: 94]
+/dashboard            <span class="o">(</span>Status: 302<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/wp-admin/]
+/wp-login             <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 2761]
+/0                    <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/0/]
+/atom                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/atom/]
+/robots               <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 41]
+/license              <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 19930]
+/intro                <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 516314]
+/Image                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/Image/]
+/IMAGE                <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/IMAGE/]
+/rss2                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/]
+/readme               <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 7334]
+/rdf                  <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/feed/rdf/]
+/0000                 <span class="o">(</span>Status: 301<span class="o">)</span> <span class="o">[</span>Size: 0] <span class="o">[</span><span class="nt">--</span><span class="o">&gt;</span> http://192.168.197.146/0000/]
+/wp-config            <span class="o">(</span>Status: 200<span class="o">)</span> <span class="o">[</span>Size: 0]
+</code></pre></div></div>
+
+<p>Upon checking the Gobuster output, we discovered some interesting URLs. The most intriguing aspect is that the application is built on WordPress. Additionally, from the robots.txt file, we found two more filenames: one is <code class="language-plaintext highlighter-rouge">first_key</code>, and the other is a <code class="language-plaintext highlighter-rouge">wordlist</code>.</p>
+
+<p><img src="/assets/images/mr-robot-1/2.png" alt="" /></p>
+
+<p>WordPress responds differently during login attempts depending on whether the username and password are correct or incorrect. To ensure accuracy, I ran Hydra using the file obtained from the application as a list of usernames and a simple password. After a short while, I received a valid username response. Now that I have a valid username, I can use Hydra again, this time with the username and the file as a password list to retrieve the password.</p>
+
+<p><img src="/assets/images/mr-robot-1/3.png" alt="" /></p>
+
+<p>I utilized WPScan to discover the password for the username I found using Hydra, and I successfully retrieved the password. While WPScan can comprehensively explore WordPress installations, including usernames, passwords, and other vulnerabilities, I chose to skip that part since I already obtained the necessary information through Hydra.</p>
+
+<p><img src="/assets/images/mr-robot-1/4.png" alt="" /></p>
+
+<p>I successfully logged into an administrative account. Given its administrative privileges, there are several methods to obtain a reverse shell. One option involves uploading a reverse shell plugin to acquire a reverse shell from there. Alternatively, we can edit an existing file to incorporate the reverse shell code and obtain a reverse shell from it.</p>
+
+<p><img src="/assets/images/mr-robot-1/5.png" alt="" /></p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>For now, I will edit the 404 page because it’s easy to generate a 404 response. I’ve copied a reverse shell, updated the IP and port, and then saved the file.</p>
+
+<p><img src="/assets/images/mr-robot-1/6.png" alt="" /></p>
+
+<p>Here, I’ve fired up a netcat listener to catch the reverse shell. From the browser, I generated a 404 response, and I successfully received the reverse shell from the machine.</p>
+
+<p><img src="/assets/images/mr-robot-1/7.png" alt="" /></p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p>I upgraded my shell using stty. From the robot user’s home directory, I obtained their username and password. The password was encrypted with MD5, as indicated in the filename. After cracking the hash, I changed the user to <code class="language-plaintext highlighter-rouge">robot</code>.</p>
+
+<p><img src="/assets/images/mr-robot-1/8.png" alt="" /></p>
+
+<p>Crackstation crack the password very easily.</p>
+
+<p><img src="/assets/images/mr-robot-1/8.png" alt="" /></p>
+
+<p>Now, I’ve searched for the SUID binaries and found nmap among them. The old version of nmap features an interactive mode through which we can potentially obtain a shell. Since nmap is listed as an SUID binary, there’s a possibility of escalating privileges to root from here.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>find / <span class="nt">-perm</span> <span class="nt">-u</span><span class="o">=</span>s <span class="nt">-type</span> f 2&gt;/dev/null
+
+/bin/ping
+/bin/umount
+/bin/mount
+/bin/ping6
+/bin/su
+/usr/bin/passwd
+/usr/bin/newgrp
+/usr/bin/chsh
+/usr/bin/chfn
+/usr/bin/gpasswd
+/usr/bin/sudo
+/usr/local/bin/nmap
+/usr/lib/openssh/ssh-keysign
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/vmware-tools/bin32/vmware-user-suid-wrapper
+/usr/lib/vmware-tools/bin64/vmware-user-suid-wrapper
+/usr/lib/pt_chown
+</code></pre></div></div>
+
+<p>I ran nmap in interactive mode and successfully received the shell with root privileges.</p>
+
+<p><img src="/assets/images/mr-robot-1/10.png" alt="" /></p>

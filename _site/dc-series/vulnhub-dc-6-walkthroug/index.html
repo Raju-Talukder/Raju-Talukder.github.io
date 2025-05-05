@@ -1,0 +1,127 @@
+<p>For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box’s author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run ‘nmap’ as root. Leveraging this, we created a simple script and executed it through ‘nmap’ as a superuser, ultimately achieving root access to the box.</p>
+
+<h1 id="information-gathering">Information Gathering</h1>
+<p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
+
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u6 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+| ssh-hostkey: 
+|   2048 3e:52:ce:ce:01:b6:94:eb:7b:03:7d:be:08:7f:5f:fd <span class="o">(</span>RSA<span class="o">)</span>
+|   256 3c:83:65:71:dd:73:d7:23:f8:83:0d:e3:46:bc:b5:6f <span class="o">(</span>ECDSA<span class="o">)</span>
+|_  256 41:89:9e:85:ae:30:5b:e0:8f:a4:68:71:06:b4:15:ee <span class="o">(</span>ED25519<span class="o">)</span>
+80/tcp open  http    Apache httpd 2.4.25 <span class="o">((</span>Debian<span class="o">))</span>
+|_http-title: Did not follow redirect to http://wordy/
+|_http-server-header: Apache/2.4.25 <span class="o">(</span>Debian<span class="o">)</span>
+Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
+</code></pre></div></div>
+
+<p>From the Nmap results, I found that this is a Debian-based Linux system with SSH and an Apache server installed. Apache is redirected to a domain called <code class="language-plaintext highlighter-rouge">wordy</code>. To visit the domain, you need to add an entry in the <code class="language-plaintext highlighter-rouge">/etc/hosts</code> file.</p>
+
+<p>Manual Inspection</p>
+
+<p><img src="/assets/images/dc-6/1.png" alt="" /></p>
+
+<p>Upon manual inspection of the site, I discovered it’s a WordPress web application. It would be a good idea to run a WordPress scanner to thoroughly scan the application.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--enumerate</span> <span class="nt">--url</span> <span class="nv">$URL</span>
+
+<span class="o">[</span>+] URL: http://wordy/ <span class="o">[</span>192.168.197.137]
+<span class="o">[</span>+] Started: Fri Oct 20 00:28:15 2023
+
+Interesting Finding<span class="o">(</span>s<span class="o">)</span>:
+<span class="o">[</span>+] WordPress version 5.1.1 identified <span class="o">(</span>Insecure, released on 2019-03-13<span class="o">)</span><span class="nb">.</span>
+<span class="o">[</span>+] WordPress theme <span class="k">in </span>use: twentyseventeen
+
+<span class="o">[</span>i] User<span class="o">(</span>s<span class="o">)</span> Identified:
+<span class="o">[</span>+] admin
+<span class="o">[</span>+] mark
+<span class="o">[</span>+] graham
+<span class="o">[</span>+] sarah
+<span class="o">[</span>+] jens
+</code></pre></div></div>
+
+<p>From the WPScanner output, I found the WordPress version, an outdated theme, but nothing significantly critical. Some users were revealed, but no passwords were disclosed. Now, let’s generate a password list with Cewl to conduct a password-based scan.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cewl <span class="nt">-d</span> 3 <span class="nt">-w</span> password.txt <span class="nv">$URL</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/dc-6/2.png" alt="" /></p>
+
+<p>I generated a password and ran the password-based scan.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--url</span> <span class="nv">$URL</span> <span class="nt">--passwords</span> password.txt
+
+<span class="o">[</span>+] Performing password attack on Xmlrpc against 5 user/s
+Trying graham / here Time: 00:00:07 &lt;<span class="o">=======&gt;</span> <span class="o">(</span>445 / 445<span class="o">)</span> 100.00% Time: 00:00:07
+
+<span class="o">[</span>i] No Valid Passwords Found.
+</code></pre></div></div>
+
+<p>I couldn’t find any passwords. After spending a considerable amount of time, I sought some help and discovered a clue from the author on the download page, which I had missed earlier. This experience serves as a valuable lesson in the importance of thorough reconnaissance.</p>
+
+<p><img src="/assets/images/dc-6/3.png" alt="" /></p>
+
+<p>Following the clue, I generated a new password list.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /usr/share/wordlists/rockyou.txt| <span class="nb">grep </span>k01 <span class="o">&gt;</span> password.txt
+</code></pre></div></div>
+
+<p><img src="/assets/images/dc-6/4.png" alt="" /></p>
+
+<p>Run the password scan again.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wpscan <span class="nt">--url</span> <span class="nv">$URL</span> <span class="nt">--passwords</span> password.txt
+
+<span class="o">[</span>+] Performing password attack on Xmlrpc against 5 user/s
+<span class="o">[</span>SUCCESS] - mark / helpdesk01                                                                                                                                               
+Trying sarah / <span class="o">!</span>lak019b Time: 00:03:55 &lt;<span class="o">===&gt;</span> <span class="o">(</span>15215 / 15215<span class="o">)</span> 100.00% Time: 00:03:55
+
+<span class="o">[</span>i] Valid Combinations Found:
+ | Username: mark, Password: helpdesk01
+</code></pre></div></div>
+
+<p>This time, I found one valid user credential. After logging into the portal, I discovered that this user is not an admin, so it’s not possible to manage a reverse shell using this dashboard. However, there is an activity monitor. Let’s try searching with this.</p>
+
+<p><img src="/assets/images/dc-6/5.png" alt="" /></p>
+
+<p>There are two exploit available, i want to use the python exploit.</p>
+
+<p><img src="/assets/images/dc-6/6.png" alt="" /></p>
+
+<p>Download the exploit to my local directory.</p>
+
+<p><img src="/assets/images/dc-6/7.png" alt="" /></p>
+
+<h1 id="initial-foothold">Initial Foothold</h1>
+
+<p>After running the exploit, it prompted for the IP, username, and password, and then provided the shell. Now, I’m in.</p>
+
+<p><img src="/assets/images/dc-6/8.png" alt="" /></p>
+
+<h1 id="privilege-escalation">Privilege Escalation</h1>
+
+<p>After obtaining the shell as www-data, I discovered that I have access to the /home directories. Inside the ‘mark’ directory, I found a file named ‘things_to_do’ containing the username ‘graham’ and password.</p>
+
+<p><img src="/assets/images/dc-6/9.png" alt="" /></p>
+
+<p>As there is an SSH server, I logged into the box as ‘graham’ and found that ‘graham’ can run ‘/home/jens/backup.sh’ as ‘jens’ without a password.</p>
+
+<p><img src="/assets/images/dc-6/10.png" alt="" /></p>
+
+<p>I discovered that graham also has the ability to write the file. By abusing the file permission it’s possible to get jens users privilege.</p>
+
+<p><img src="/assets/images/dc-6/11.png" alt="" /></p>
+
+<p>From the ‘jens’ user, I found that ‘jens’ can run ‘nmap’ with sudo privileges without entering a password. This is a very dangerous privilege that can be abused by anyone.</p>
+
+<p><img src="/assets/images/dc-6/12.png" alt="" /></p>
+
+<p>There are two types of techniques to escalate privileges with sudo access: through interactive mode and through script execution. However, the interactive mode is available only on versions 2.02 to 5.21. So, let’s check the version.</p>
+
+<p><img src="/assets/images/dc-6/13.png" alt="" /></p>
+
+<p>In the updated version, the interactive mode is no longer supported, so we need to explore the other option: executing a script. Here, I created a script that will execute the ‘/bin/bash’ command, stored it in the tmp directory as ‘root.nse’, and executed the script, granting me root access.</p>
+
+<p><img src="/assets/images/dc-6/14.png" alt="" /></p>
