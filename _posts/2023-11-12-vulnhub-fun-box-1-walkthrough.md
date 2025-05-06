@@ -3,6 +3,8 @@ layout: single
 author_profile: true
 title: Vulnhub Funbox 1 Walkthrough 
 date: 2023-11-12
+comments: true
+share: true
 categories: Funbox-Series
 tags: []
 header:

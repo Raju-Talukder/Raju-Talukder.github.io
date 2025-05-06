@@ -4,6 +4,8 @@ author_profile: true
 title: Vulnhub Funbox 2 Walkthrough 
 date: 2023-11-17
 categories: Funbox-Series 
+comments: true
+share: true
 tags: []
 header:
   overlay_image: /assets/images/funbox-2/cover.png

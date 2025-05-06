@@ -3,6 +3,8 @@ layout: single
 author_profile: true
 title: Vulnhub DC-5 Walkthrough 
 date: 2023-10-22
+comments: true
+share: true
 categories:
   - DC-Series
 tags: []

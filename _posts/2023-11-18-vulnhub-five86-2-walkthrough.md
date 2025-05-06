@@ -3,6 +3,8 @@ layout: single
 author_profile: true
 title: Vulnhub Five86 2 Walkthrough 
 date: 2023-11-11
+comments: true
+share: true
 categories: Five86-Series
 tags: []
 header:

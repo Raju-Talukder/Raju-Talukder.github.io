@@ -3,6 +3,8 @@ layout: single
 title: Vulnhub DC-2 Walkthrough 
 date: 2023-10-19
 author_profile: true
+comments: true
+share: true
 categories:
   - DC-Series
 tags: []

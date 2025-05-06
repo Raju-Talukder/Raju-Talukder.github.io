@@ -3,6 +3,8 @@ layout: single
 author_profile: true
 title: Vulnhub Aragog Walkthrough 
 date: 2023-11-10
+comments: true
+share: true
 categories:
   - Harry-Potter-Series
 tags: []

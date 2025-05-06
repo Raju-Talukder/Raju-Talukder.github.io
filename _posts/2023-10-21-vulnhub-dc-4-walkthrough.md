@@ -3,6 +3,8 @@ layout: single
 author_profile: true
 title: Vulnhub DC-4 Walkthrough 
 date: 2023-10-19
+comments: true
+share: true
 categories:
   - DC-Series
 tags: []
