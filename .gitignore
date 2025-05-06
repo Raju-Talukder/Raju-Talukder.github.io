@@ -1,6 +1,7 @@
 # Ignore build output and cache
 _site/
 .jekyll-cache/
+.bundle
 
 # Ignore Ruby dependencies
 vendor/
