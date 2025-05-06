@@ -1,11 +1,25 @@
 ---
-layout: post
-cover:  assets/images/funbox-2/cover.png
+layout: single
+author_profile: true
 title: Vulnhub Funbox 2 Walkthrough 
 date: 2023-11-17
 categories: Funbox-Series 
-author: raju
-featured: false
+tags: []
+header:
+  overlay_image: /assets/images/funbox-2/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "funbox-2 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the funbox-2 machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/funbox-2/cover.png
+    alt: "funbox-2 Cover"
+    title: "funbox-2 Walkthrough"
+    excerpt: "A practical guide to rooting the funbox-2 Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 This box is very straightforward; there is nothing complex that we need to know about some tools. From the FTP, we obtained numerous zip files encrypted with passwords. We decrypted one user's files password and found 'id_rsa' inside the zip, allowing SSH login into the box. To escalate privileges, we need to find out the users' passwords, which are stored inside a history file.

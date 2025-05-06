@@ -1,11 +1,25 @@
 ---
-layout: post
-cover:  assets/images/five86-2/cover.png
+layout: single
+author_profile: true
 title: Vulnhub Five86 2 Walkthrough 
 date: 2023-11-11
 categories: Five86-Series
-author: raju
-featured: false
+tags: []
+header:
+  overlay_image: /assets/images/five86-2/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "five86-2 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the five86-2 machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/five86-2/cover.png
+    alt: "five86-2 Cover"
+    title: "five86-2 Walkthrough"
+    excerpt: "A practical guide to rooting the five86-2 Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 

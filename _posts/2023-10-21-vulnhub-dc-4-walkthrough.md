@@ -1,11 +1,26 @@
 ---
 layout: single
 author_profile: true
-cover:  assets/images/dc-4/cover.png
 title: Vulnhub DC-4 Walkthrough 
-date: 2023-10-21
-categories: DC-Series
-featured: false
+date: 2023-10-19
+categories:
+  - DC-Series
+tags: []
+header:
+  overlay_image: /assets/images/dc-4/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "DC-4 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the DC-4 machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/dc-4/cover.png
+    alt: "DC-4 Cover"
+    title: "DC-4 Walkthrough"
+    excerpt: "A practical guide to rooting the DC-4 Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user's password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.

@@ -1,4 +1,334 @@
-<p>This box is very straightforward; there is nothing complex that we need to know about some tools. From the FTP, we obtained numerous zip files encrypted with passwords. We decrypted one user’s files password and found ‘id_rsa’ inside the zip, allowing SSH login into the box. To escalate privileges, we need to find out the users’ passwords, which are stored inside a history file.</p>
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.27.1 by Michael Rose
+  Copyright 2013-2025 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en-US" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Vulnhub Funbox 2 Walkthrough | Raju Talukder</title>
+<meta name="description" content="Step-by-step walkthrough of the funbox-2 machine from Vulnhub.">
+
+
+  <meta name="author" content="Raju Talukder">
+  
+  <meta property="article:author" content="Raju Talukder">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Raju Talukder">
+<meta property="og:title" content="Vulnhub Funbox 2 Walkthrough">
+<meta property="og:url" content="http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough/">
+
+
+  <meta property="og:description" content="Step-by-step walkthrough of the funbox-2 machine from Vulnhub.">
+
+
+
+  <meta property="og:image" content="http://localhost:4000/assets/images/funbox-2/cover.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2023-11-17T00:00:00+06:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single" dir="ltr">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Raju Talukder
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="/"
+                
+                
+              >Home</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/about/"
+                
+                
+              >About</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/blogs/"
+                
+                
+              >Blog</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/assets/images/funbox-2/cover.png');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Vulnhub Funbox 2 Walkthrough
+
+        
+      </h1>
+      
+        <p class="page__lead">Step-by-step walkthrough of the funbox-2 machine from Vulnhub.
+</p>
+      
+      
+
+
+      
+    </div>
+  
+  
+    <span class="page__hero-caption">funbox-2 Vulnhub Walkthrough
+</span>
+  
+</div>
+
+
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/author/avatar.jpeg" alt="Raju Talukder" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Raju Talukder</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>Cybersecurity Engineer, Red &amp; Blue Team Specialist</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Dhaka, Bangladesh</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://x.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i><span class="label">X</span></a></li>
+          
+        
+          
+            <li><a href="https://facebook.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i><span class="label">Facebook</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Vulnhub Funbox 2 Walkthrough">
+    <meta itemprop="description" content="Step-by-step walkthrough of the funbox-2 machine from Vulnhub.">
+    <meta itemprop="datePublished" content="2023-11-17T00:00:00+06:00">
+    
+
+    <div class="page__inner-wrap">
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#information-gathering">Information Gathering</a><ul><li><a href="#manual-inspection">Manual Inspection</a><ul><li><a href="#port-80">Port 80</a></li><li><a href="#fuzzing-directories">Fuzzing Directories</a></li><li><a href="#fuzzing-files">Fuzzing Files</a></li><li><a href="#port-21">Port 21</a></li></ul></li></ul></li><li><a href="#initial-foothold">Initial Foothold</a></li><li><a href="#post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</a></li></ul>
+            </nav>
+          </aside>
+        
+        <p>This box is very straightforward; there is nothing complex that we need to know about some tools. From the FTP, we obtained numerous zip files encrypted with passwords. We decrypted one user’s files password and found ‘id_rsa’ inside the zip, allowing SSH login into the box. To escalate privileges, we need to find out the users’ passwords, which are stored inside a history file.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 
@@ -132,3 +462,196 @@ ID           Response   Lines    Word       Chars       Payload
 <p>We can see that the ‘tom’ user has full sudo permission on this box, and now that we have the user’s password, we can simply switch the user to root, and we are now root.</p>
 
 <p><img src="/assets/images/funbox-2/13.png" alt="" /></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#funbox-series" class="page__taxonomy-item p-category" rel="tag">Funbox-Series</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2023-11-17T00:00:00+06:00">November 17, 2023</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/funbox-series/vulnhub-fun-box-1-walkthrough/" class="pagination--pager" title="Vulnhub Funbox 1 Walkthrough">Previous</a>
+    
+    
+      <a href="/funbox-series/vulnhub-Fun-Box-3-walkthrough/" class="pagination--pager" title="Vulnhub Funbox 3 Walkthrough">Next</a>
+    
+  </nav>
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+  
+        <!-- 
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+          <li><a href="https://x.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i> X</a></li>
+        
+      
+        
+          <li><a href="https://facebook.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+        
+      
+        
+          <li><a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 <a href="http://localhost:4000">Raju Talukder</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div> -->
+
+<div class="page__footer-follow text-center">
+  <ul class="social-icons d-inline-flex justify-content-center">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li class="mx-2">
+            <a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer">
+              <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://x.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i> X
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://facebook.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://instagram.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram
+            </a>
+          </li>
+        
+      
+    
+
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright text-center">
+  &copy; 2025 <a href="http://localhost:4000">Raju Talukder</a>.
+  Powered by
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp;
+  <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.
+</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+  </body>
+</html>

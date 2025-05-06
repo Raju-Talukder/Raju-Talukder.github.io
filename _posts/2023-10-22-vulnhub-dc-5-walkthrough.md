@@ -1,10 +1,26 @@
 ---
-layout: post
-cover:  assets/images/dc-5/cover.png
+layout: single
+author_profile: true
 title: Vulnhub DC-5 Walkthrough 
 date: 2023-10-22
-categories: DC-Series
-featured: false
+categories:
+  - DC-Series
+tags: []
+header:
+  overlay_image: /assets/images/dc-5/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "DC-5 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the DC-5 machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/dc-5/cover.png
+    alt: "DC-5 Cover"
+    title: "DC-5 Walkthrough"
+    excerpt: "A practical guide to rooting the DC-1 Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 This box proved to be quite engaging for me. The initial foothold presented an interesting challenge. Understanding the application's workflow and identifying a hidden parameter vulnerable to LFI with code execution capabilities was crucial. Since file uploads were not possible, I opted for a log poisoning attack to achieve command injection. This sequence, starting with log poisoning and leading to command injection, allowed for the initial foothold. The privilege escalation was straightforward, involving the exploitation of a SUID binary for which a publicly available exploit already exists.

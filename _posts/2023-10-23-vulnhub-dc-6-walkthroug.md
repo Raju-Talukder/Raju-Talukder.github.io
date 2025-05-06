@@ -1,11 +1,26 @@
 ---
-layout: post
-cover:  assets/images/dc-6/cover.png
+layout: single
 title: Vulnhub DC-6 Walkthrough 
 date: 2023-10-23
-categories: DC-Series
-author: raju
-featured: false
+author_profile: true
+categories:
+  - DC-Series
+tags: []
+header:
+  overlay_image: /assets/images/dc-6/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "DC-6 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the DC-6 machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/dc-6/cover.png
+    alt: "DC-6 Cover"
+    title: "DC-6 Walkthrough"
+    excerpt: "A practical guide to rooting the DC-1 Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box's author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run 'nmap' as root. Leveraging this, we created a simple script and executed it through 'nmap' as a superuser, ultimately achieving root access to the box.

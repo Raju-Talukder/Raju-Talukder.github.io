@@ -1,12 +1,26 @@
 ---
-layout: post
-cover:  assets/images/aragog/cover.png
+layout: single
+author_profile: true
 title: Vulnhub Aragog Walkthrough 
 date: 2023-11-10
-categories: Harry-Potter-Series
-author: raju
-featured: true
-
+categories:
+  - Harry-Potter-Series
+tags: []
+header:
+  overlay_image: /assets/images/aragog/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "Aragog Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the aragog machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/aragog/cover.png
+    alt: "Aragog Cover"
+    title: "Aragog Walkthrough"
+    excerpt: "A practical guide to rooting the aragog Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 

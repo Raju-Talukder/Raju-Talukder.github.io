@@ -1,11 +1,25 @@
 ---
-layout: post
-cover:  assets/images/fun-box-1/cover.png
+layout: single
+author_profile: true
 title: Vulnhub Funbox 1 Walkthrough 
 date: 2023-11-12
 categories: Funbox-Series
-author: raju
-featured: true
+tags: []
+header:
+  overlay_image: /assets/images/funbox-1/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "funbox-1 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the funbox-1 machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/funbox-1/cover.png
+    alt: "funbox-1 Cover"
+    title: "funbox-1 Walkthrough"
+    excerpt: "A practical guide to rooting the funbox-1 Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 I personally found this box quite interesting. To gain the initial foothold, I ran WPScan with a password list, using `rockyou.txt` which led to the discovery of two valid user credentials for the web console. One of these users also had SSH access to the box. However, obtaining the shell wasn't enough; there was an additional step to escape the rbash shell. For root access, post-enumeration was crucial, as there were multiple ways to achieve it. Some methods were relatively straightforward, while others required additional research. 

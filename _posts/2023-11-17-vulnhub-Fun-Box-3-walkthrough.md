@@ -1,11 +1,25 @@
 ---
-layout: post
-cover:  assets/images/funbox-3/cover.png
+layout: single
+author_profile: true
 title: Vulnhub Funbox 3 Walkthrough 
 date: 2023-11-17
 categories: Funbox-Series
-author: raju
-featured: false
+tags: []
+header:
+  overlay_image: /assets/images/funbox-3/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "funbox-3 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the funbox-3 machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/funbox-3/cover.png
+    alt: "funbox-3 Cover"
+    title: "funbox-3 Walkthrough"
+    excerpt: "A practical guide to rooting the funbox-3 Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 This box was quite interesting to me. I found lots of rabbit holes here. Initially, we discovered three applications. The admin application was vulnerable to SQL injection (SQLi), and we successfully bypassed the authentication, but I could not find any way to access the box from there. In the gym application, I did not find anything exploitable. However, the store application was also vulnerable to SQLi, and we successfully dumped the admin credentials and logged into the application.

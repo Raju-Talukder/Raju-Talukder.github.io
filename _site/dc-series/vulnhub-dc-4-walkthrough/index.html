@@ -11,7 +11,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>Vulnhub DC-4 Walkthrough | Raju Talukder</title>
-<meta name="description" content="This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user’s password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.">
+<meta name="description" content="Step-by-step walkthrough of the DC-4 machine from Vulnhub.">
 
 
   <meta name="author" content="Raju Talukder">
@@ -27,15 +27,17 @@
 <meta property="og:url" content="http://localhost:4000/dc-series/vulnhub-dc-4-walkthrough/">
 
 
-  <meta property="og:description" content="This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user’s password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.">
+  <meta property="og:description" content="Step-by-step walkthrough of the DC-4 machine from Vulnhub.">
+
+
+
+  <meta property="og:image" content="http://localhost:4000/assets/images/dc-4/cover.png">
 
 
 
 
 
-
-
-  <meta property="article:published_time" content="2023-10-21T00:00:00+05:30">
+  <meta property="article:published_time" content="2023-10-19T00:00:00+06:00">
 
 
 
@@ -142,6 +144,42 @@
 
     <div class="initial-content">
       
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/assets/images/dc-4/cover.png');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Vulnhub DC-4 Walkthrough
+
+        
+      </h1>
+      
+        <p class="page__lead">Step-by-step walkthrough of the DC-4 machine from Vulnhub.
+</p>
+      
+      
+
+
+      
+    </div>
+  
+  
+    <span class="page__hero-caption">DC-4 Vulnhub Walkthrough
+</span>
+  
+</div>
+
+
 
 
 
@@ -274,24 +312,21 @@
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
     <meta itemprop="headline" content="Vulnhub DC-4 Walkthrough">
-    <meta itemprop="description" content="This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user’s password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.">
-    <meta itemprop="datePublished" content="2023-10-21T00:00:00+05:30">
+    <meta itemprop="description" content="Step-by-step walkthrough of the DC-4 machine from Vulnhub.">
+    <meta itemprop="datePublished" content="2023-10-19T00:00:00+06:00">
     
 
     <div class="page__inner-wrap">
       
-        <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">
-            <a href="http://localhost:4000/dc-series/vulnhub-dc-4-walkthrough/" itemprop="url">Vulnhub DC-4 Walkthrough
-</a>
-          </h1>
-          
-
-
-        </header>
-      
 
       <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#information-gathering">Information Gathering</a></li><li><a href="#initial-foothold">Initial Foothold</a></li><li><a href="#privilege-escalation">Privilege Escalation</a></li></ul>
+            </nav>
+          </aside>
         
         <p>This box was so easy. There are only two ports open: SSH and the HTTP server. For the initial foothold, we need to attempt a brute force attack on the login form of the web application. After logging into the application, we can intercept the request and modify the commands. The lack of input validation will give us the command injection vulnerability, allowing us to gain the initial foothold into the box. The privilege escalation is also straightforward. We found a stored password list, and there was a valid password for one user, which allowed SSH login. Checking the mail revealed another user’s password who has some super permissions on a file editor. Using these super permissions, we can edit any file, leading to root access.</p>
 
@@ -418,7 +453,7 @@ Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2023-10-21T00:00:00+05:30">October 21, 2023</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2023-10-19T00:00:00+06:00">October 19, 2023</time></p>
 
       </footer>
 
@@ -427,10 +462,10 @@ Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel
       
   <nav class="pagination">
     
-      <a href="/dc-series/Vulnhub-dc-3-walkthrough/" class="pagination--pager" title="Vulnhub DC-3 Walkthrough">Previous</a>
+      <a href="/dc-series/vulnhub-DC-2-walkthrough/" class="pagination--pager" title="Vulnhub DC-2 Walkthrough">Previous</a>
     
     
-      <a href="/dc-series/vulnhub-dc-5-walkthrough/" class="pagination--pager" title="Vulnhub DC-5 Walkthrough">Next</a>
+      <a href="/dc-series/Vulnhub-dc-3-walkthrough/" class="pagination--pager" title="Vulnhub DC-3 Walkthrough">Next</a>
     
   </nav>
 

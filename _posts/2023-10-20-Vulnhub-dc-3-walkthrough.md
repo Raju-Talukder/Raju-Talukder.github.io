@@ -7,15 +7,15 @@ categories:
   - DC-Series
 tags: []
 header:
-  overlay_image: /assets/images/dc-1/cover.png
+  overlay_image: /assets/images/dc-3/cover.png
   overlay_filter: 0.3  # optional, darkens the image for readability
-  caption: "DC-1 Vulnhub Walkthrough"
-excerpt: "Step-by-step walkthrough of the DC-1 machine from Vulnhub."
+  caption: "DC-3 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the DC-3 machine from Vulnhub."
 feature_row:
-  - image_path: /assets/images/dc-1/cover.png
-    alt: "DC-1 Cover"
-    title: "DC-1 Walkthrough"
-    excerpt: "A practical guide to rooting the DC-1 Vulnhub machine."
+  - image_path: /assets/images/dc-3/cover.png
+    alt: "DC-3 Cover"
+    title: "DC-3 Walkthrough"
+    excerpt: "A practical guide to rooting the DC-3 Vulnhub machine."
     url: "#"
     btn_label: "Read More"
     btn_class: "btn--primary"

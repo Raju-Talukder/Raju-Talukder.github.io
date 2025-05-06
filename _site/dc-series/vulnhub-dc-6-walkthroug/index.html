@@ -1,4 +1,334 @@
-<p>For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box’s author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run ‘nmap’ as root. Leveraging this, we created a simple script and executed it through ‘nmap’ as a superuser, ultimately achieving root access to the box.</p>
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.27.1 by Michael Rose
+  Copyright 2013-2025 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en-US" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Vulnhub DC-6 Walkthrough | Raju Talukder</title>
+<meta name="description" content="Step-by-step walkthrough of the DC-6 machine from Vulnhub.">
+
+
+  <meta name="author" content="Raju Talukder">
+  
+  <meta property="article:author" content="Raju Talukder">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Raju Talukder">
+<meta property="og:title" content="Vulnhub DC-6 Walkthrough">
+<meta property="og:url" content="http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug/">
+
+
+  <meta property="og:description" content="Step-by-step walkthrough of the DC-6 machine from Vulnhub.">
+
+
+
+  <meta property="og:image" content="http://localhost:4000/assets/images/dc-6/cover.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2023-10-23T00:00:00+06:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/dc-series/vulnhub-dc-6-walkthroug/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single" dir="ltr">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Raju Talukder
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="/"
+                
+                
+              >Home</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/about/"
+                
+                
+              >About</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/blogs/"
+                
+                
+              >Blog</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/assets/images/dc-6/cover.png');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Vulnhub DC-6 Walkthrough
+
+        
+      </h1>
+      
+        <p class="page__lead">Step-by-step walkthrough of the DC-6 machine from Vulnhub.
+</p>
+      
+      
+
+
+      
+    </div>
+  
+  
+    <span class="page__hero-caption">DC-6 Vulnhub Walkthrough
+</span>
+  
+</div>
+
+
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/author/avatar.jpeg" alt="Raju Talukder" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Raju Talukder</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>Cybersecurity Engineer, Red &amp; Blue Team Specialist</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Dhaka, Bangladesh</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://x.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i><span class="label">X</span></a></li>
+          
+        
+          
+            <li><a href="https://facebook.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i><span class="label">Facebook</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Vulnhub DC-6 Walkthrough">
+    <meta itemprop="description" content="Step-by-step walkthrough of the DC-6 machine from Vulnhub.">
+    <meta itemprop="datePublished" content="2023-10-23T00:00:00+06:00">
+    
+
+    <div class="page__inner-wrap">
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#information-gathering">Information Gathering</a></li><li><a href="#initial-foothold">Initial Foothold</a></li><li><a href="#privilege-escalation">Privilege Escalation</a></li></ul>
+            </nav>
+          </aside>
+        
+        <p>For the initial foothold, we initiated a password brute-force attack based on a custom-generated password list, following a clue provided by the box’s author. After obtaining the password, we were able to log in to the web application and discovered the activity monitor. A search on Exploit-DB revealed a publicly available exploit that facilitated the initial foothold. While exploring the file system, we discovered a user credential with read, write, and execute permissions, along with the ability to run the file as a different user. Exploiting these permissions granted another user privilege. The new user gained the ability to run ‘nmap’ as root. Leveraging this, we created a simple script and executed it through ‘nmap’ as a superuser, ultimately achieving root access to the box.</p>
 
 <h1 id="information-gathering">Information Gathering</h1>
 <p>First, I want to start with Nmap to identify the open ports and their associated services. If possible, Nmap will also provide information about the service versions and the operating system. This is a good starting point when working with any assets.</p>
@@ -125,3 +455,196 @@ Trying sarah / <span class="o">!</span>lak019b Time: 00:03:55 &lt;<span class="o
 <p>In the updated version, the interactive mode is no longer supported, so we need to explore the other option: executing a script. Here, I created a script that will execute the ‘/bin/bash’ command, stored it in the tmp directory as ‘root.nse’, and executed the script, granting me root access.</p>
 
 <p><img src="/assets/images/dc-6/14.png" alt="" /></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#dc-series" class="page__taxonomy-item p-category" rel="tag">DC-Series</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2023-10-23T00:00:00+06:00">October 23, 2023</time></p>
+
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/dc-series/vulnhub-dc-5-walkthrough/" class="pagination--pager" title="Vulnhub DC-5 Walkthrough">Previous</a>
+    
+    
+      <a href="/harry-potter-series/vulnhub-aragog-walkthrough/" class="pagination--pager" title="Vulnhub Aragog Walkthrough">Next</a>
+    
+  </nav>
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+  
+        <!-- 
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+        
+      
+        
+          <li><a href="https://x.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i> X</a></li>
+        
+      
+        
+          <li><a href="https://facebook.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook</a></li>
+        
+      
+        
+          <li><a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 <a href="http://localhost:4000">Raju Talukder</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div> -->
+
+<div class="page__footer-follow text-center">
+  <ul class="social-icons d-inline-flex justify-content-center">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+          <li class="mx-2">
+            <a href="mailto:rajutalukder70@mail.com" rel="nofollow noopener noreferrer">
+              <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://x.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-brands fa-x-twitter" aria-hidden="true"></i> X
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://facebook.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-facebook-square" aria-hidden="true"></i> Facebook
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://github.com/Raju-Talukder" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+            </a>
+          </li>
+        
+      
+        
+          <li class="mx-2">
+            <a href="https://instagram.com/" rel="nofollow noopener noreferrer">
+              <i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram
+            </a>
+          </li>
+        
+      
+    
+
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright text-center">
+  &copy; 2025 <a href="http://localhost:4000">Raju Talukder</a>.
+  Powered by
+  <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp;
+  <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.
+</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+  </body>
+</html>

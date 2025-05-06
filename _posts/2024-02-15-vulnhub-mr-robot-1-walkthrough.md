@@ -1,11 +1,25 @@
 ---
-layout: post
-cover:  assets/images/mr-robot-1/cover.png
+layout: single
+author_profile: true
 title: Vulnhub Mr. Robot 1 Walkthrough 
 date: 2023-11-11
 categories: TJ-Null-OSCP
-author: raju
-featured: false
+tags: []
+header:
+  overlay_image: /assets/images/mr-robot-1/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "five86-2 Vulnhub Walkthrough"
+excerpt: "Step-by-step walkthrough of the mr-robot-1 machine from Vulnhub."
+feature_row:
+  - image_path: /assets/images/mr-robot-1/cover.png
+    alt: "mr-robot-1 Cover"
+    title: "mr-robot-1 Walkthrough"
+    excerpt: "A practical guide to rooting the mr-robot-1 Vulnhub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
 ---
 
 # Mr. Robot-1
