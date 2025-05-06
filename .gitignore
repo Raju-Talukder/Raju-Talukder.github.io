@@ -1,0 +1,20 @@
+# Ignore build output and cache
+_site/
+.jekyll-cache/
+
+# Ignore Ruby dependencies
+vendor/
+Gemfile.lock
+
+# OS-specific / editor-specific files
+.DS_Store
+*.log
+*.tmp
+*.swp
+*.bak
+*.swo
+
+# Temporary and unused config files
+temporary.txt
+staticman.yml
+
