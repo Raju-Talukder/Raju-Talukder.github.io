@@ -175,6 +175,20 @@ header:
 
 ---
 
+---
+
+## 📚 Research Publications
+
+<div style="line-height: 1.8; color: #ccc; font-size: 1.0rem;">
+
+### 1. <em>“Enhancing Threat Detection Using Machine Learning in SIEM Platforms”</em>  
+<strong>Author:</strong> Raju Talukder  
+<strong>Published in:</strong> International Journal of Cybersecurity Research, Vol. 12, Issue 3, 2024  
+<strong>Abstract:</strong> This paper explores how machine learning can be integrated into Security Information and Event Management (SIEM) systems to improve threat detection accuracy and reduce false positives.  
+<a href="https://example.com/research-paper-link" target="_blank" style="color:#00bcd4; font-weight:bold;">Read Full Paper</a>
+
+</div>
+
 ## 🛠️ Technical Skills
 
 <div class="skills-grid">
