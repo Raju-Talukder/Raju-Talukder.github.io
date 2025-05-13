@@ -95,6 +95,57 @@ header:
       margin-bottom: 0.5rem;
     }
   }
+
+  .publication-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.pub-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.2rem;
+  border-radius: 10px;
+  color: #ccc;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 0 0 transparent;
+}
+
+.pub-card:hover {
+  background-color: rgba(0, 191, 255, 0.1);
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+}
+
+.pub-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #00bcd4;
+  margin-bottom: 0.5rem;
+}
+
+.pub-meta {
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+
+.pub-abstract {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: #aaa;
+  line-height: 1.5;
+}
+
+.pub-link a {
+  color: #00bcd4;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.pub-link a:hover {
+  text-decoration: underline;
+}
 </style>
 
 ## 👨‍💻 About Me
@@ -177,15 +228,27 @@ header:
 
 ---
 
+---
+
 ## 📚 Research Publications
 
-<div style="line-height: 1.8; color: #ccc; font-size: 1.0rem;">
+<div class="publication-container">
 
-### 1. <em>“Enhancing Threat Detection Using Machine Learning in SIEM Platforms”</em>  
-<strong>Author:</strong> Raju Talukder  
-<strong>Published in:</strong> International Journal of Cybersecurity Research, Vol. 12, Issue 3, 2024  
-<strong>Abstract:</strong> This paper explores how machine learning can be integrated into Security Information and Event Management (SIEM) systems to improve threat detection accuracy and reduce false positives.  
-<a href="https://example.com/research-paper-link" target="_blank" style="color:#00bcd4; font-weight:bold;">Read Full Paper</a>
+  <div class="pub-card">
+    <div class="pub-title">
+      “Enhancing Threat Detection Using Machine Learning in SIEM Platforms”
+    </div>
+    <div class="pub-meta">
+      <strong>Author:</strong> Raju Talukder<br/>
+      <strong>Published in:</strong> International Journal of Cybersecurity Research, Vol. 12, Issue 3, 2024
+    </div>
+    <div class="pub-abstract">
+      This paper explores the integration of machine learning into SIEM systems to enhance real-time threat detection capabilities and reduce false positives. The approach significantly improves alert quality in complex enterprise environments.
+    </div>
+    <div class="pub-link">
+      <a href="https://example.com/research-paper-link" target="_blank">Read Full Paper</a>
+    </div>
+  </div>
 
 </div>
 
