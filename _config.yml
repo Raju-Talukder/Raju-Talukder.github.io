@@ -35,19 +35,20 @@ copyright                : # "copyright" name, defaults to site.title
 copyright_url            : # "copyright" URL, defaults to site.url
 
 comments:
-  provider            : "giscus"
+  provider: "giscus"
   giscus:
-    repo_id           : "R_kgDOOk683w"
-    category_name     : "General"
-    category_id       : "DIC_kwDOOk68384Cp0m5"
-    discussion_term   : "url"
-    reactions_enabled : '1'
-    theme             : "dark"
-    strict            : 0
-    input_position    : "top"
-    emit_metadata     : 0
-    lang              : "en"
-    lazy              : true
+    repo_id: "R_kgDOOk683w"                # ✅ Your repo ID from Giscus
+    category_name: "General"               # ✅ Category name from your repo's discussion categories
+    category_id: "DIC_kwDOOk68384Cp0m5"    # ✅ Corresponding category ID
+    discussion_term: "url"                 # ✅ Can be: pathname, url, title, og:title, or a specific string
+    reactions_enabled: '1'
+    theme: "dark"
+    strict: 0
+    input_position: "top"
+    emit_metadata: 0
+    lang: "en"
+    lazy: true
+
 
 reCaptcha:
   siteKey                :

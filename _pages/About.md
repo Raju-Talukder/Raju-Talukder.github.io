@@ -11,177 +11,262 @@ header:
   overlay_image: https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg
 ---
 
-## Who I Am
-
-I'm a passionate technology professional with expertise in web development, software engineering, and digital innovation. With over X years of experience in the industry, I've worked with a diverse range of technologies and platforms to create impactful digital solutions.
-
-My journey in technology began when I first discovered the power of coding to transform ideas into reality. Since then, I've been on a continuous learning path, staying updated with the latest trends and best practices in the ever-evolving tech landscape.
-
-## Professional Experience
-
-### Current Position
-**Senior Developer at XYZ Company** *(20XX - Present)*
-- Led the development of mission-critical applications that improved operational efficiency by X%
-- Mentored junior developers and conducted code reviews to ensure quality standards
-- Implemented agile methodologies that reduced delivery time by X weeks
-
-### Previous Experience
-**Full Stack Developer at ABC Tech** *(20XX - 20XX)*
-- Developed responsive web applications using modern JavaScript frameworks
-- Collaborated with UX/UI designers to implement intuitive user interfaces
-- Optimized database queries resulting in X% performance improvement
-
-**Web Developer at DEF Solutions** *(20XX - 20XX)*
-- Created custom WordPress themes and plugins for various client projects
-- Maintained and updated legacy applications to modern standards
-- Implemented automated testing strategies to improve code reliability
-
-## Education & Certifications
-
-- **Master of Science in Computer Science**  
-  University Name, 20XX
-
-- **Bachelor of Science in Information Technology**  
-  University Name, 20XX
-
-- **Certifications**
-  - AWS Certified Solutions Architect
-  - Google Cloud Professional Developer
-  - Microsoft Certified: Azure Developer Associate
-
-## Technical Skills
-
-<div class="skills-grid">
-  <div class="skill-category">
-    <h4>Programming Languages</h4>
-    <div class="skill-list">
-      <span class="skill-tag">JavaScript</span>
-      <span class="skill-tag">TypeScript</span>
-      <span class="skill-tag">Python</span>
-      <span class="skill-tag">PHP</span>
-      <span class="skill-tag">SQL</span>
-    </div>
-  </div>
-  
-  <div class="skill-category">
-    <h4>Frontend Technologies</h4>
-    <div class="skill-list">
-      <span class="skill-tag">React</span>
-      <span class="skill-tag">Vue.js</span>
-      <span class="skill-tag">Angular</span>
-      <span class="skill-tag">HTML5/CSS3</span>
-      <span class="skill-tag">SASS</span>
-    </div>
-  </div>
-  
-  <div class="skill-category">
-    <h4>Backend Technologies</h4>
-    <div class="skill-list">
-      <span class="skill-tag">Node.js</span>
-      <span class="skill-tag">Express</span>
-      <span class="skill-tag">Django</span>
-      <span class="skill-tag">Laravel</span>
-      <span class="skill-tag">Spring Boot</span>
-    </div>
-  </div>
-  
-  <div class="skill-category">
-    <h4>Databases</h4>
-    <div class="skill-list">
-      <span class="skill-tag">MongoDB</span>
-      <span class="skill-tag">PostgreSQL</span>
-      <span class="skill-tag">MySQL</span>
-      <span class="skill-tag">Redis</span>
-      <span class="skill-tag">Firebase</span>
-    </div>
-  </div>
-  
-  <div class="skill-category">
-    <h4>DevOps & Tools</h4>
-    <div class="skill-list">
-      <span class="skill-tag">Git</span>
-      <span class="skill-tag">Docker</span>
-      <span class="skill-tag">Kubernetes</span>
-      <span class="skill-tag">CI/CD</span>
-      <span class="skill-tag">AWS</span>
-    </div>
-  </div>
-</div>
-
-## My Approach
-
-I believe in a holistic approach to development that combines technical excellence with user-centered design principles. My work is guided by these core values:
-
-- **Quality**: Writing clean, maintainable code that stands the test of time
-- **Innovation**: Exploring new technologies and methodologies to solve complex problems
-- **Collaboration**: Working effectively with cross-functional teams to achieve shared goals
-- **Continuous Learning**: Staying curious and constantly expanding my knowledge and skills
-
-## Personal Projects
-
-Beyond my professional work, I enjoy building personal projects that allow me to experiment with new technologies and creative ideas. Some of my notable projects include:
-
-1. **Project Name** - A brief description of what it does and the technologies used
-2. **Project Name** - A brief description of what it does and the technologies used
-3. **Project Name** - A brief description of what it does and the technologies used
-
-You can find all my open-source work on my [GitHub profile](https://github.com/yourusername).
-
-## Beyond Coding
-
-When I'm not in front of a computer, you might find me:
-
-- Hiking in the mountains and exploring nature
-- Reading books on technology, business, and psychology
-- Practicing photography and capturing beautiful moments
-- Volunteering for local tech education initiatives
-
-## Let's Connect
-
-I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Feel free to reach out to me through any of the social platforms listed on this site or directly via [email](mailto:your.email@example.com).
-
 <style>
+  h2 {
+    color: #00bcd4 !important;
+  }
   .skills-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     grid-gap: 2rem;
-    margin: 2rem 0;
+    margin-top: 2rem;
   }
-  
-  .skill-category {
-    margin-bottom: 1.5rem;
-  }
-  
-  .skill-category h4 {
-    margin-bottom: 0.75rem;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .skill-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
   .skill-tag {
-    background-color: #f0f0f0;
-    color: #333;
-    padding: 0.5rem 1rem;
-    border-radius: 2rem;
+    background-color: #333;
+    color: #eee;
+    padding: 0.4rem 0.8rem;
+    margin: 0.2rem;
+    border-radius: 1.5rem;
     font-size: 0.85rem;
-    transition: all 0.3s ease;
+    display: inline-block;
   }
-  
-  .skill-tag:hover {
-    background-color: #007bff;
+  .resume-button {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.6rem 1.2rem;
+    background-color: #00bcd4;
     color: white;
-    transform: translateY(-2px);
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
   }
-  
-  @media (max-width: 768px) {
-    .skills-grid {
-      grid-template-columns: 1fr;
+  .resume-button:hover {
+    background-color: #0097a7;
+  }
+  .certifications-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .cert-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 0 0 transparent;
+  }
+
+  .cert-card:hover {
+    transform: scale(1.02);
+    background: rgba(0, 191, 255, 0.1);
+    box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+  }
+
+  .cert-logo {
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 8px;
+    padding: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .cert-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #eee;
+  }
+
+  @media (max-width: 500px) {
+    .cert-card {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .cert-logo {
+      margin-bottom: 0.5rem;
     }
   }
 </style>
+
+## 👨‍💻 About Me
+
+<div style="color: #ddd; line-height: 1.8; font-size: 1.0rem;">
+
+<h2 style="color:#00bfff;">Cybersecurity Engineer</h2>
+
+<p style="text-align: justify;">
+  I’m a <strong>Cybersecurity Engineer</strong> with over <strong>4 years of experience</strong> securing enterprise systems through <strong>vulnerability assessment</strong>, <strong>penetration testing</strong>, and <strong>hybrid red and blue teaming</strong>. My unique strength lies in combining an attacker mindset with defensive strategies to help organizations proactively reduce risk and build resilient infrastructures.
+</p>
+
+
+<h3 style="color:#00bfff;">✅ Areas of Expertise</h3>
+
+<ul>
+  <li><strong>Offensive Security:</strong> Network and web application pentesting, social engineering, and business logic exploitation</li>
+  <li><strong>Defensive Security:</strong> Threat detection, EDR/SIEM monitoring, behavioral analytics, and incident triage</li>
+  <li><strong>Threat Intelligence:</strong> Malware analysis, threat hunting, and adversary emulation</li>
+  <li><strong>Source Code Analysis:</strong> Manual and automated secure code review during SDLC</li>
+  <li><strong>Secure Architecture:</strong> Hardening Linux/Windows systems, Active Directory defenses, Zero Trust</li>
+  <li><strong>Log Analysis:</strong> Deep insights into system and security logs to detect anomalies</li>
+  <li><strong>Compliance:</strong> PCI DSS, ISO/IEC 27001, secure development frameworks</li>
+</ul>
+
+<a href="/assets/files/your_resume.pdf" class="resume-button" download>📄 Download My Resume</a>
+
+</div>
+
+---
+
+## 🔧 Core Expertise
+
+<ul>
+  <li>Red Teaming & Blue Teaming</li>
+  <li>SIEM, EDR & Incident Response</li>
+  <li>Malware & Threat Analysis</li>
+  <li>Log Correlation & Threat Hunting</li>
+  <li>CVE Research & Source Code Audit</li>
+  <li>Reverse Engineering & Forensics</li>
+  <li>PCI-DSS, ISO 27001, SOC2 Compliance</li>
+  <li>Fintech Security & Data Protection</li>
+</ul>
+
+---
+
+## 📜 Certifications
+
+<div class="certifications-container">
+  <div class="cert-card">
+    <div class="cert-logo">
+      <img src="{{ '/assets/images/certification/oscp.png' | relative_url }}" alt="OSCP" width="36" height="36">
+    </div>
+    <div class="cert-name">OSCP+</div>
+  </div>
+
+  <div class="cert-card">
+    <div class="cert-logo">
+      <img src="{{ '/assets/images/certification/la.png' | relative_url }}" alt="ISO LA" width="36" height="36">
+    </div>
+    <div class="cert-name">ISO 27001 Lead Auditor</div>
+  </div>
+
+  <div class="cert-card">
+    <div class="cert-logo">
+      <img src="{{ '/assets/images/certification/ceh.png' | relative_url }}" alt="CEH" width="36" height="36">
+    </div>
+    <div class="cert-name">CEH – Certified Ethical Hacker</div>
+  </div>
+
+  <div class="cert-card">
+    <div class="cert-logo">
+      <img src="{{ '/assets/images/certification/cva.png' | relative_url }}" alt="CVA" width="36" height="36">
+    </div>
+    <div class="cert-name">CVA1 Certified</div>
+  </div>
+</div>
+
+---
+
+## 🛠️ Technical Skills
+
+<div class="skills-grid">
+
+<div>
+<strong>Languages</strong><br/>
+<span class="skill-tag">Python</span>
+<span class="skill-tag">Bash</span>
+<span class="skill-tag">Java</span>
+<span class="skill-tag">C/C++</span>
+<span class="skill-tag">SQL</span>
+</div>
+
+<div>
+<strong>Web & Network Security</strong><br/>
+<span class="skill-tag">Burp Suite</span>
+<span class="skill-tag">Wireshark</span>
+<span class="skill-tag">Metasploit</span>
+<span class="skill-tag">Nmap</span>
+<span class="skill-tag">Netcat</span>
+</div>
+
+<div>
+<strong>Defensive Security</strong><br/>
+<span class="skill-tag">Wazuh</span>
+<span class="skill-tag">Trellix</span>
+<span class="skill-tag">Suricata</span>
+<span class="skill-tag">Sysmon</span>
+</div>
+
+<div>
+<strong>Cloud & Infra</strong><br/>
+<span class="skill-tag">AWS</span>
+<span class="skill-tag">Docker</span>
+<span class="skill-tag">Zabbix</span>
+<span class="skill-tag">Ubuntu Server</span>
+</div>
+
+<div>
+<strong>Development Tools</strong><br/>
+<span class="skill-tag">Git</span>
+<span class="skill-tag">VSCode</span>
+<span class="skill-tag">Jekyll</span>
+<span class="skill-tag">Flask</span>
+</div>
+
+</div>
+
+---
+
+## 🔍 What I Do
+
+- **Defend**: Actively monitor and respond to security incidents using EDR and SIEM.  
+- **Offend**: Simulate real-world attacks to assess and improve organizational security.  
+- **Analyze**: Correlate logs, uncover anomalies, and hunt threats across systems.  
+- **Automate**: Build security tools and scripts to streamline detection and response.  
+- **Educate**: Share insights through blogs and research on CVE discoveries.
+
+---
+
+## 📂 Featured GitHub Projects
+
+<div id="github-projects">
+  <p style="color: #ccc;">Loading GitHub repositories...</p>
+</div>
+
+<script>
+  fetch("https://api.github.com/users/Raju-Talukder/repos?sort=updated&per_page=5")
+    .then(response => response.json())
+    .then(repos => {
+      const container = document.getElementById("github-projects");
+      container.innerHTML = repos.map(repo => `
+        <div style="margin-bottom: 1.5rem;">
+          <h4><a href="${repo.html_url}" target="_blank">${repo.name}</a></h4>
+          <p>${repo.description || "No description provided."}</p>
+        </div>
+      `).join('');
+    })
+    .catch(() => {
+      document.getElementById("github-projects").innerHTML = "<p style='color: #f66;'>Unable to load GitHub projects.</p>";
+    });
+</script>
+
+---
+
+## 💬 Let's Connect
+
+I'm open to cybersecurity collaboration, freelance consulting, or technical partnerships. Reach out via 
+<a href="javascript:void(0);" onclick="document.getElementById('email').style.display='inline'; this.style.display='none';">email</a> 
+or any of the social media listed on this website.
+
+<span id="email" style="display:none;">
+  <a href="mailto:rajutalukder70@gmail.com">rajutalukder70@gmail.com</a>
+</span>
+

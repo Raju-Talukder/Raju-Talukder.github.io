@@ -1,5 +1,144 @@
 ---
-layout: home
+layout: splash
+title: "Raju Talukder"
+excerpt: "<div style='text-align:center;'>Cybersecurity Engineer | Penetration Tester | Security Consultant</div>"
 permalink: /
+classes: wide
 author_profile: false
+header:
+  overlay_image: /assets/images/cyber-security-hero.jpg
+  overlay_filter: 0.5
+  overlay_align: center
+  actions:
+    - label: "View My Services"
+      url: "/services/"
+    - label: "Read My Blog"
+      url: "/blogs/"
+specialties:
+  - title: "Penetration Testing"
+    icon: "fas fa-shield-alt"
+    description: "Identifying vulnerabilities before attackers do"
+  - title: "Security Compliance"
+    icon: "fas fa-clipboard-check"
+    description: "GDPR, HIPAA, PCI-DSS implementation"
+  - title: "Incident Response"
+    icon: "fas fa-bug"
+    description: "Rapid containment and remediation"
+  - title: "Security Operations"
+    icon: "fas fa-chalkboard-teacher"
+    description: "Building human firewalls"
 ---
+
+<style>
+/* Basic center-aligned layout */
+.page-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-content .tagline {
+  font-size: 1.25rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+.page__hero--overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  padding: 4rem 1rem; /* Keep some spacing */
+  min-height: 400px;  /* Optional: control vertical space */
+}
+
+.page__hero--overlay .page__title,
+.page__hero--overlay .page__lead {
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.page__hero--overlay .btn {
+  margin: 0.5rem;
+}
+
+
+.specialties-grid {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap; /* Prevents wrapping */
+  gap: 1rem;
+  margin-top: 2rem;
+  overflow-x: auto;  /* Optional: scroll if screen is too narrow */
+}
+
+.specialty-card {
+  padding: 1rem;
+}
+
+.specialty-card i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #007acc;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.text-center {
+  text-align: center;
+  margin-top: 1rem;
+}
+</style>
+
+<div class="page-wrapper">
+  <!-- Hero Section -->
+  <section class="hero-content">
+    <h1>Protecting Digital Assets Through <span class="highlight">Strategic Security</span></h1>
+    <p class="tagline">I help organizations identify and mitigate security risks before they become breaches.</p>
+  </section>
+
+  <!-- Specialties Section -->
+  <section>
+    <h2>Security Specialties</h2>
+    <div class="specialties-grid">
+      {% for item in page.specialties %}
+      <div class="specialty-card">
+        <i class="{{ item.icon }}"></i>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Blog Posts Section -->
+  <section>
+    <h2>Latest Security Insights</h2>
+    <div class="posts-grid">
+    {% assign categories = site.categories %}
+    {% for category in categories limit:6 %}
+    {% assign posts_in_category = category[1] | sort: 'date' | reverse %}
+    {% assign latest_post = posts_in_category[0] %}
+
+    <div class="post-card">
+      <h3><a href="{{ latest_post.url | relative_url }}">{{ latest_post.title }}</a></h3>
+      <p>{{ latest_post.excerpt | strip_html | truncate: 150 }}</p>
+      <p><strong>Category:</strong> {{ latest_post.categories[0] }}</p>
+      <a href="{{ latest_post.url | relative_url }}" class="btn btn--small">Read More</a>
+    </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
