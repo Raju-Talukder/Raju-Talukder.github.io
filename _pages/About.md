@@ -171,7 +171,7 @@ header:
   <li><strong>Compliance:</strong> PCI DSS, ISO/IEC 27001, secure development frameworks</li>
 </ul>
 
-<a href="assets/images/author/Raju_Talukder_CV.pdf" class="resume-button" download>📄 Download My Resume</a>
+<a href="{{ '/assets/images/author/Raju_Talukder_CV.pdf' | relative_url }}" class="resume-button" download>📄 Download My Resume</a>
 
 </div>
 
