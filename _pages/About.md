@@ -171,7 +171,7 @@ header:
   <li><strong>Compliance:</strong> PCI DSS, ISO/IEC 27001, secure development frameworks</li>
 </ul>
 
-<a href="/assets/files/your_resume.pdf" class="resume-button" download>📄 Download My Resume</a>
+<a href="Raju-Talukder/Raju-Talukder.github.io/assets/images/author/Raju Talukder CV.pdf" class="resume-button" download>📄 Download My Resume</a>
 
 </div>
 
@@ -226,27 +226,22 @@ header:
 
 ---
 
----
-
----
-
 ## 📚 Research Publications
 
 <div class="publication-container">
 
   <div class="pub-card">
     <div class="pub-title">
-      “Enhancing Threat Detection Using Machine Learning in SIEM Platforms”
+      “Car makes and model recognition using convolutional neural network: fine-tune AlexNet architecture”
     </div>
     <div class="pub-meta">
-      <strong>Author:</strong> Raju Talukder<br/>
-      <strong>Published in:</strong> International Journal of Cybersecurity Research, Vol. 12, Issue 3, 2024
+      <strong>Published in:</strong> The Indonesian Journal of Electrical Engineering and Computer Science (IJEECS) · Jan 12, 2024
     </div>
     <div class="pub-abstract">
-      This paper explores the integration of machine learning into SIEM systems to enhance real-time threat detection capabilities and reduce false positives. The approach significantly improves alert quality in complex enterprise environments.
+      Artificial intelligence (AI) has significantly contributed to car make and model recognition in this current era of intelligent technology. By using AI, it is much easier to identify car models from any picture or video. This paper introduces a new model by fine-tuning the AlexNet architecture to determine the car model from images. First of all, our car image dataset has been created. 
     </div>
     <div class="pub-link">
-      <a href="https://example.com/research-paper-link" target="_blank">Read Full Paper</a>
+      <a href="https://www.researchgate.net/publication/377340576_Car_make_and_model_recognition_using_convolutional_neural_network_fine-tune_AlexNet_architecture" target="_blank">Read Full Paper</a>
     </div>
   </div>
 
@@ -309,31 +304,6 @@ header:
 - **Analyze**: Correlate logs, uncover anomalies, and hunt threats across systems.  
 - **Automate**: Build security tools and scripts to streamline detection and response.  
 - **Educate**: Share insights through blogs and research on CVE discoveries.
-
----
-
-## 📂 Featured GitHub Projects
-
-<div id="github-projects">
-  <p style="color: #ccc;">Loading GitHub repositories...</p>
-</div>
-
-<script>
-  fetch("https://api.github.com/users/Raju-Talukder/repos?sort=updated&per_page=5")
-    .then(response => response.json())
-    .then(repos => {
-      const container = document.getElementById("github-projects");
-      container.innerHTML = repos.map(repo => `
-        <div style="margin-bottom: 1.5rem;">
-          <h4><a href="${repo.html_url}" target="_blank">${repo.name}</a></h4>
-          <p>${repo.description || "No description provided."}</p>
-        </div>
-      `).join('');
-    })
-    .catch(() => {
-      document.getElementById("github-projects").innerHTML = "<p style='color: #f66;'>Unable to load GitHub projects.</p>";
-    });
-</script>
 
 ---
 
