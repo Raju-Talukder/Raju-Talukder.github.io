@@ -250,47 +250,54 @@ header:
 ## 🛠️ Technical Skills
 
 <div class="skills-grid">
-
+<!-- Scripting & Automation -->
 <div>
-<strong>Languages</strong><br/>
-<span class="skill-tag">Python</span>
-<span class="skill-tag">Bash</span>
-<span class="skill-tag">Java</span>
-<span class="skill-tag">C/C++</span>
-<span class="skill-tag">SQL</span>
+  <strong>Scripting & Automation</strong><br/>
+  <span class="skill-tag">Python</span>
+  <span class="skill-tag">PowerShell</span>
+  <span class="skill-tag">Bash</span>
+  <span class="skill-tag">Ansible</span>
+  <span class="skill-tag">Java</span>
+  <span class="skill-tag">C/C++</span>
+  <span class="skill-tag">YAML</span>
 </div>
-
+<!-- Offensive Security -->
 <div>
-<strong>Web & Network Security</strong><br/>
-<span class="skill-tag">Burp Suite</span>
-<span class="skill-tag">Wireshark</span>
-<span class="skill-tag">Metasploit</span>
-<span class="skill-tag">Nmap</span>
-<span class="skill-tag">Netcat</span>
+  <strong>Offensive Security</strong><br/>
+  <span class="skill-tag">Burp Suite</span>
+  <span class="skill-tag">Metasploit</span>
+  <span class="skill-tag">Nmap</span>
+  <span class="skill-tag">Netcat</span>
+  <span class="skill-tag">Hydra</span>
+  <span class="skill-tag">Nikto</span>
+  <span class="skill-tag">Responder</span>
+  <span class="skill-tag">CrackMapExec</span>
+  <span class="skill-tag">Impacket</span>
+  <span class="skill-tag">BloodHound</span>
+  <span class="skill-tag">Empire</span>
 </div>
-
+<!-- Defensive Security -->
 <div>
-<strong>Defensive Security</strong><br/>
-<span class="skill-tag">Wazuh</span>
-<span class="skill-tag">Trellix</span>
-<span class="skill-tag">Suricata</span>
-<span class="skill-tag">Sysmon</span>
+  <strong>Defensive Security</strong><br/>
+  <span class="skill-tag">Wazuh</span>
+  <span class="skill-tag">Splunk</span>
+  <span class="skill-tag">Trellix</span>
+  <span class="skill-tag">Suricata</span>
+  <span class="skill-tag">Sysmon</span>
+  <span class="skill-tag">Sigma</span>
+  <span class="skill-tag">OSQuery</span>
+  <span class="skill-tag">Velociraptor</span>
+  <span class="skill-tag">ELK Stack</span>
+  <span class="skill-tag">AlienVault OSSIM</span>
 </div>
-
+<!-- Security Frameworks -->
 <div>
-<strong>Cloud & Infra</strong><br/>
-<span class="skill-tag">AWS</span>
-<span class="skill-tag">Docker</span>
-<span class="skill-tag">Zabbix</span>
-<span class="skill-tag">Ubuntu Server</span>
-</div>
-
-<div>
-<strong>Development Tools</strong><br/>
-<span class="skill-tag">Git</span>
-<span class="skill-tag">VSCode</span>
-<span class="skill-tag">Jekyll</span>
-<span class="skill-tag">Flask</span>
+  <strong>Security Frameworks</strong><br/>
+  <span class="skill-tag">MITRE ATT&CK</span>
+  <span class="skill-tag">NIST 800-53</span>
+  <span class="skill-tag">OWASP Top 10</span>
+  <span class="skill-tag">CIS Benchmarks</span>
+  <span class="skill-tag">PCI-DSS</span>
 </div>
 
 </div>
