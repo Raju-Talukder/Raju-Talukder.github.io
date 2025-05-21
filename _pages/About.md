@@ -250,17 +250,6 @@ header:
 ## 🛠️ Technical Skills
 
 <div class="skills-grid">
-<!-- Scripting & Automation -->
-<div>
-  <strong>Scripting & Automation</strong><br/>
-  <span class="skill-tag">Python</span>
-  <span class="skill-tag">PowerShell</span>
-  <span class="skill-tag">Bash</span>
-  <span class="skill-tag">Ansible</span>
-  <span class="skill-tag">Java</span>
-  <span class="skill-tag">C/C++</span>
-  <span class="skill-tag">YAML</span>
-</div>
 <!-- Offensive Security -->
 <div>
   <strong>Offensive Security</strong><br/>
@@ -289,6 +278,17 @@ header:
   <span class="skill-tag">Velociraptor</span>
   <span class="skill-tag">ELK Stack</span>
   <span class="skill-tag">AlienVault OSSIM</span>
+</div>
+<!-- Scripting & Automation -->
+<div>
+  <strong>Scripting & Automation</strong><br/>
+  <span class="skill-tag">Python</span>
+  <span class="skill-tag">PowerShell</span>
+  <span class="skill-tag">Bash</span>
+  <span class="skill-tag">Ansible</span>
+  <span class="skill-tag">Java</span>
+  <span class="skill-tag">C/C++</span>
+  <span class="skill-tag">YAML</span>
 </div>
 <!-- Security Frameworks -->
 <div>
