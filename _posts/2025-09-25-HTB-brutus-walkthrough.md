@@ -1,17 +1,16 @@
 ---
 layout: single
-title: "Brutus"
+title: "Step-by-step walkthrough of the Brutus Sherlock from HTB"
 date: 2025-09-25
 author_profile: true
 comments: true
 share: true
-categories:
-  - HTB-sherlocks
+categories: HTB-sherlocks
 tags: []
 header:
   overlay_image: /assets/images/brutus/cover.png
   overlay_filter: 0.3  # optional, darkens the image for readability
-  caption: "DC-1 Vulnhub Walkthrough"
+  caption: "Brutus Sherlock Walkthrough"
 excerpt: "Step-by-step walkthrough of the Brutus Sherlock from HTB."
 feature_row:
   - image_path: /assets/images/brutus/cover.png
@@ -24,6 +23,7 @@ feature_row:
 toc: true
 toc_sticky: true
 ---
+# Brutus
 
 After unzipping the provided evidence, two key artifacts were available for analysis:
 
@@ -36,9 +36,9 @@ Additionally, custom tools were provided to parse the `wtmp` file, as the defa
 
 To ensure time consistency, the `TZ=UTC` environment variable was set before analyzing the logs. This prevents timezone mismatches that could lead to incorrect timestamps during the investigation. By utilizing Python tools, I obtained nicely formatted JSON-converted data.
 
-![](/assets/images/brutus/image 1.png)
+![](/assets/images/brutus/image1.png)
 
-![](/assets/images/brutus/image 2.png)
+![](/assets/images/brutus/image2.png)
 
 Let's examine the auth.log file. It contains log timestamps, source IP addresses, service names with PIDs, messages, and a variety of other information.
 
@@ -85,7 +85,7 @@ User creation, user information changes, password changes, sudo commands, login 
 
 Lets remove all the lines contains `pam_unix` for more clear view.  We can do it by utilizing the `-v` flag with the grep command. Multiple failed login attempt from same ip address and same time indicates brute-force attack. 
 
-![](/assets/images/brutus/image 4.png)
+![](/assets/images/brutus/image4.png)
 
 Lets proceed the analysis now based on the questions.
 
@@ -165,7 +165,7 @@ Mar  6 06:35:15 ip-172-31-35-28 usermod[2628]: add 'cyberjunkie' to shadow group
 
 `Solution` Review the Persistence → Create Account technique on the MITRE ATT&CK site. The attacker created a local useron the host and granted it high privileges, so the correct classification is Local Account (T1136.001).
 
-![](/assets/images/brutus/image 5.png)
+![](/assets/images/brutus/image5.png)
 
 `Ans` T1136.001
 
