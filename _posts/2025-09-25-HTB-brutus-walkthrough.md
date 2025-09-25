@@ -89,7 +89,7 @@ Lets remove all the lines contains `pam_unix` for more clear view.  We can do it
 
 Lets proceed the analysis now based on the questions.
 
-**`Question` Analyze the auth.log. What is the IP address used by the attacker to carry out a brute force attack?**
+## `Question` Analyze the auth.log. What is the IP address used by the attacker to carry out a brute force attack?
 
 `Solution` Lets grab all the Ip address in this file and how many time a IP appeared in this file.
 
@@ -104,7 +104,7 @@ The IP addresses 172.31.35.28 and 203.101.190.9 each appear only once in this fi
 
 `Ans` 65.2.161.68
 
-**`Question` The bruteforce attempts were successful and attacker gained access to an account on the server. What is the username of the account?**
+## `Question` The bruteforce attempts were successful and attacker gained access to an account on the server. What is the username of the account?
 
 `Solution` Since the brute-force attack was successful, there should be an 'Accepted' message. The attacker’s IP was 65.2.161.68. Let’s filter the SSH logs based on this condition.
 
@@ -119,7 +119,7 @@ Based on the timestamp, the account appears to be `root`. `cyberjunkie` logge
 
 `Ans` root
 
-**Question: Identify the UTC timestamp when the attacker logged in manually to the server and established a terminal session to carry out their objectives. The login time will be different than the authentication time, and can be found in the wtmp artifact.**
+## `Question` Identify the UTC timestamp when the attacker logged in manually to the server and established a terminal session to carry out their objectives. The login time will be different than the authentication time, and can be found in the wtmp artifact.
 
 `Solution`: We already know the attacker IP address & the compromised user account was root.
 
@@ -130,7 +130,7 @@ kali:~$ cat wtmp.out| grep 65.2.161.68 | grep root
 
 `Ans` 2024-03-06 06:32:45
 
-**`Question` SSH login sessions are tracked and assigned a session number upon login. What is the session number assigned to the attacker's session for the user account from Question 2?**
+## `Question` SSH login sessions are tracked and assigned a session number upon login. What is the session number assigned to the attacker's session for the user account from Question 2?
 
 `Solution`: Login data should be handled by `systemd-logind`. Let’s filter the logs based on this program.
 
@@ -146,9 +146,9 @@ Mar  6 06:37:24 ip-172-31-35-28 systemd-logind[411]: Removed session 37.
 Mar  6 06:37:34 ip-172-31-35-28 systemd-logind[411]: New session 49 of user cyberjunkie.
 ```
 
-Ans:- 37
+`Ans` 37
 
-**`Question`The attacker added a new user as part of their persistence strategy on the server and gave this new user account higher privileges. What is the name of this account?**
+## `Question`The attacker added a new user as part of their persistence strategy on the server and gave this new user account higher privileges. What is the name of this account?
 
 `Solution` We can filter logs based on new user creation and higher privileges, and only one user account has come up.
 
@@ -161,7 +161,7 @@ Mar  6 06:35:15 ip-172-31-35-28 usermod[2628]: add 'cyberjunkie' to shadow group
 
 `Ans` cyberjunkie
 
-**`Question` What is the MITRE ATT&CK sub-technique ID used for persistence by creating a new account?**
+## `Question` What is the MITRE ATT&CK sub-technique ID used for persistence by creating a new account?
 
 `Solution` Review the Persistence → Create Account technique on the MITRE ATT&CK site. The attacker created a local useron the host and granted it high privileges, so the correct classification is Local Account (T1136.001).
 
@@ -169,7 +169,7 @@ Mar  6 06:35:15 ip-172-31-35-28 usermod[2628]: add 'cyberjunkie' to shadow group
 
 `Ans` T1136.001
 
-**`Question` What time did the attacker's first SSH session end according to auth.log?**
+## `Question` What time did the attacker's first SSH session end according to auth.log?
 
 `Solution` Session **34** started and ended at the same second (**06:31:40**), which indicates the attacker’s initial successful brute-force login attempt terminated immediately. In contrast, Session **37** lasted **4 minutes 40 seconds** (06:32:44 → 06:37:24), which is consistent with a manual/interactive login.
 
@@ -187,7 +187,7 @@ Mar  6 06:37:34 ip-172-31-35-28 systemd-logind[411]: New session 49 of user cybe
 
 `Ans` 2024-03-06 06:37:24
 
-**`Question` The attacker logged into their backdoor account and utilized their higher privileges to download a script. What is the full command executed using sudo?**
+## `Question` The attacker logged into their backdoor account and utilized their higher privileges to download a script. What is the full command executed using sudo?
 
 `Solution` Auth.log normally does *not* record every command a user runs. However, when a command is executed with `sudo`, it is recorded in `auth.log` because `sudo` performs an authentication step and the system logs that privileged action (including the invoking user, TTY, working directory, target user, and the full command).
 
