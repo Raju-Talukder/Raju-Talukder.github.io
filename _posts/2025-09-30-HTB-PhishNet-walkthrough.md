@@ -53,11 +53,11 @@ Email headers add `Received` lines in reverse order. The top-most `Received` lin
 
 ## `Question` What is the sender's email address?
 
-`Solution` The header clearly shows the `Form:` field as: “From: "Finance Dept" [finance@business-finance.com](mailto:finance@business-finance.com)” So the sender’s email address is **finance@business-finance.com.**
+`Solution` The header clearly shows the `Form:` field as: “From: "Finance Dept" finance@business-finance.com” So the sender’s email address is **finance@business-finance.com.**
 
 ![](/assets/images/phisnet/image2.png)
 
-`Ans` [finance@business-finance.com](mailto:finance@business-finance.com)
+`Ans` finance@business-finance.com
 
 ## `Question` What is the 'Reply-To' email address specified in the email?
 
@@ -65,7 +65,7 @@ Email headers add `Received` lines in reverse order. The top-most `Received` lin
 
 ![](/assets/images/phisnet/image3.png)
 
-`Ans` [support@business-finance.com](mailto:support@business-finance.com)
+`Ans` support@business-finance.com
 
 ## `Question` What is the SPF (Sender Policy Framework) result for this email?
 
