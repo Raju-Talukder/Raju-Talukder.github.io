@@ -43,9 +43,7 @@ Open safely → Check headers → Inspect body/links → Analyze attachments →
 
 ## `Question` Which mail server relayed this email before reaching the victim?
 
-`Solution` 
-
-Email headers add `Received` lines in reverse order. The top-most `Received` line shows the last server that handed the mail to the victim. Here it is: “Received: from mail.business-finance.com ([203.0.113.25])”
+`Solution` Email headers add `Received` lines in reverse order. The top-most `Received` line shows the last server that handed the mail to the victim. Here it is: “Received: from mail.business-finance.com ([203.0.113.25])”
 
 ![](/assets/images/phisnet/image1.png)
 
@@ -78,6 +76,9 @@ Email headers add `Received` lines in reverse order. The top-most `Received` lin
 ## `Question` What is the domain used in the phishing URL inside the email?
 
 `Solution` We extracted all the URLs from the file and only one URL appear. 
+```code
+grep -Eo 'https?://[^ >"]+' email.eml || echo "no http/https URL found"
+```
 
 ![](/assets/images/phisnet/image5.png)
 
@@ -94,6 +95,9 @@ Email headers add `Received` lines in reverse order. The top-most `Received` lin
 ## `Question` What is the name of the attachment included in the email?
 
 `Solution` There are multiple ways to extract the attachment from email. In this case i found `ripmime` tools useful. We ectracted the attachments inside a folder called “extracted”.
+```code
+ripmime -i email.eml -d extracted
+```
 
 ![](/assets/images/phisnet/image7.png)
 
