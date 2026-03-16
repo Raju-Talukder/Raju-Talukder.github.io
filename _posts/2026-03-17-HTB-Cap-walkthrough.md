@@ -5,7 +5,7 @@ date: 2026-03-17
 author_profile: true
 comments: true
 share: true
-categories: HTB
+categories: HTB-sherlocks
 tags: []
 header:
   overlay_image: /assets/images/Cap/cover.png
