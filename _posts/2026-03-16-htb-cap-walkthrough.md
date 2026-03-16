@@ -1,7 +1,7 @@
 ---
 layout: single
 title: "HackTheBox Cap Walkthrough: Exploiting IDOR and Python CAP_SETUID for Root Access"
-date: 2026-03-17
+date: 2026-03-16
 author_profile: true
 comments: true
 share: true
