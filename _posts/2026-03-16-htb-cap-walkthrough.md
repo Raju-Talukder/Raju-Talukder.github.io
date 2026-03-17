@@ -5,7 +5,7 @@ date: 2026-03-16
 author_profile: true
 comments: true
 share: true
-categories: HTB
+categories: HTB-Machine
 tags: []
 header:
   overlay_image: /assets/images/Cap/cover.png
