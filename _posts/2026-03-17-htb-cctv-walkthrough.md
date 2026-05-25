@@ -29,7 +29,7 @@ toc_sticky: true
 
 # Summary
 
-This challenge demonstrates how multiple security weaknesses can be chained together to achieve full system compromise. Unchanged default credentials provided initial access to **ZoneMinder**, while a known **SQL injection vulnerability** enabled credential extraction. Post-exploitation enumeration revealed an internally exposed **motionEye** service, which was accessed through **SSH tunneling**. Finally, exploitation of a known **RCE vulnerability** in motionEye resulted in **root-level access**.
+<div align="justify"> This challenge demonstrates how multiple security weaknesses can be chained together to achieve full system compromise. Unchanged default credentials provided initial access to **ZoneMinder**, while a known **SQL injection vulnerability** enabled credential extraction. Post-exploitation enumeration revealed an internally exposed **motionEye** service, which was accessed through **SSH tunneling**. Finally, exploitation of a known **RCE vulnerability** in motionEye resulted in **root-level access**.</div>
 
 # Information Gathering
 
