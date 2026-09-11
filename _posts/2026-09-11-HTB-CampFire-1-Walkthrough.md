@@ -62,14 +62,14 @@ Kerberoasting typically involves requesting service tickets for service accounts
 
 Therefore, the `all_events.json` file was first filtered for **Event ID 4769**, and then further narrowed down to events where the `TicketEncryptionType` was **`0x17`**. This allowed the suspicious Kerberos ticket request associated with the Kerberoasting activity to be identified.
 
-{% highlight bash %}
+```bash
 jq -r '
 .[] |
 select(.Event.System.EventID == 4769) |
 select(.Event.EventData.TicketEncryptionType == "0x17") |
 .Event.System.TimeCreated_attributes.SystemTime
 ' all_events.json
-{% endhighlight %}
+```
 
 **`Ans:`** 2024-05-21 03:18:09
 
