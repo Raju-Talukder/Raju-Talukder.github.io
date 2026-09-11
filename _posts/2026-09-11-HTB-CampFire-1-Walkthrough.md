@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Hack The Box Campfire-1 Sherlock Walkthrough | Kerberoasting Detection with Windows Event Logs and Prefetch "
+title: "Hack The Box Campfire-1 Sherlock Walkthrough: Kerberoasting Detection with Windows Event Logs and Prefetch "
 date: 2026-09-11
 author_profile: true
 comments: true
@@ -63,7 +63,12 @@ Kerberoasting typically involves requesting service tickets for service accounts
 Therefore, the `all_events.json` file was first filtered for **Event ID 4769**, and then further narrowed down to events where the `TicketEncryptionType` was **`0x17`**. This allowed the suspicious Kerberos ticket request associated with the Kerberoasting activity to be identified.
 
 ```bash
-jq -r '.[] | select(.Event.System.EventID == 4769) | select(.Event.EventData.TicketEncryptionType == "0x17") | .Event.System.TimeCreated_attributes.SystemTime' all_events.json
+jq -r '
+.[] |
+select(.Event.System.EventID == 4769) |
+select(.Event.EventData.TicketEncryptionType == "0x17") |
+.Event.System.TimeCreated_attributes.SystemTime
+' all_events.json
 ```
 
 **`Ans:`** 2024-05-21 03:18:09
@@ -73,7 +78,12 @@ jq -r '.[] | select(.Event.System.EventID == 4769) | select(.Event.EventData.Tic
 **`Analysis / Investigation:`** To identify the **Service Name targeted during the Kerberoasting activity**, the same suspicious Kerberos event was examined. Previously, we extracted the **creation time** of the event to determine when the activity occurred. This time, we extracted the **ServiceName** field instead. The filtering criteria remain the same; only the field being displayed is different.
 
 ```bash
-jq -r '.[] | select(.Event.System.EventID == 4769) | select(.Event.EventData.TicketEncryptionType == "0x17") | .Event.EventData.ServiceName' all_events.json
+jq -r '
+.[] |
+select(.Event.System.EventID == 4769) |
+select(.Event.EventData.TicketEncryptionType == "0x17") |
+.Event.EventData.ServiceName
+' all_events.json
 ```
 
 **`Ans:`** MSSQLService
@@ -85,7 +95,12 @@ jq -r '.[] | select(.Event.System.EventID == 4769) | select(.Event.EventData.Tic
 The filtering criteria remain unchanged: **Event ID 4769** is used to identify Kerberos Service Ticket requests, and `TicketEncryptionType` **`0x17`** is used to isolate the suspicious RC4-HMAC ticket request. The only difference is that the `IpAddress` field is displayed to determine the source workstation involved in the activity.
 
 ```bash
-jq -r '.[] | select(.Event.System.EventID == 4769) | select(.Event.EventData.TicketEncryptionType == "0x17") | .Event.EventData.IpAddress' all_events.json
+jq -r '
+.[] |
+select(.Event.System.EventID == 4769) |
+select(.Event.EventData.TicketEncryptionType == "0x17") |
+.Event.EventData.IpAddress
+' all_events.json
 ```
 
 **`Ans:`** 172.17.79.129
@@ -107,7 +122,10 @@ This produced `powershell.json`, allowing the PowerShell events to be searched a
 Since the exact script name was not known beforehand, all available `Path` values were extracted from the PowerShell events using the following command:
 
 ```bash
-jq -r '.[] | .Event.EventData.Path? // empty' powershell.json | sort -u
+jq -r '
+.[] |
+.Event.EventData.Path? // empty
+' powershell.json | sort -u
 ```
 
 The `.Event.EventData.Path` field contains the path of a PowerShell script when that information is recorded in the event. The `// empty` portion ignores events where no path is present, while `sort -u` removes duplicate entries and displays only unique script paths.
@@ -123,7 +141,16 @@ The output revealed the script `powerview.ps1`. PowerView is a PowerShell-based 
 The same PowerShell Operational log was filtered for Event ID 4104 records PowerShell Script Block Logging events, providing visibility into PowerShell code that was executed. The `SystemTime` associated with the matching `powerview.ps1` event was extracted to determine when the script activity was recorded.
 
 ```bash
-jq -r '.[] | select(.Event.System.EventID == 4104) | select((.Event.EventData.Path // "") | ascii_downcase | contains("powerview.ps1")) | .Event.System.TimeCreated_attributes.SystemTime' powershell.json | sort -u
+jq -r '
+.[] |
+select(.Event.System.EventID == 4104) |
+select(
+  (.Event.EventData.Path // "") |
+  ascii_downcase |
+  contains("powerview.ps1")
+) |
+.Event.System.TimeCreated_attributes.SystemTime
+' powershell.json | sort -u
 ```
 
 Here, `EventID == 4104` isolates PowerShell script block events, while the second filter ensures that only events related to `powerview.ps1` are selected. Finally, `SystemTime` provides the execution timestamp recorded in the event log.
