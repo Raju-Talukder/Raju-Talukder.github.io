@@ -1,12 +1,31 @@
+---
+layout: single
+title: "HackTheBox DevHub Walkthrough: Exploiting MCPJam Inspector RCE (CVE-2026-23744) and OPSMCP for Root Access"
+date: 2026-10-11
+author_profile: true
+comments: true
+share: true
+categories: HTB-Machine
+tags: []
+header:
+  overlay_image: /assets/images/DevHub/cover.png
+  overlay_filter: 0.3  # optional, darkens the image for readability
+  caption: "HackTheBox DevHub Walkthrough: Exploiting MCPJam Inspector RCE (CVE-2026-23744) and OPSMCP for Root Access"
+excerpt: "HackTheBox DevHub Walkthrough: Exploiting MCPJam Inspector RCE (CVE-2026-23744) and OPSMCP for Root Access"
+feature_row:
+  - image_path: /assets/images/DevHub/cover.png
+    alt: "HackTheBox DevHub Walkthrough: Exploiting MCPJam Inspector RCE (CVE-2026-23744) and OPSMCP for Root Access"
+    title: "HackTheBox DevHub Walkthrough: Exploiting MCPJam Inspector RCE (CVE-2026-23744) and OPSMCP for Root Access"
+    excerpt: "A practical guide to solving the HTB DevHub machine."
+    url: "#"
+    btn_label: "Read More"
+    btn_class: "btn--primary"
+toc: true
+toc_sticky: true
+---
+
 # DevHub
 
-OS Info: Linux
-Platform: HTB
-Status: Published
-
-# DevHub
-
-HackTheBox DevHub Walkthrough: Exploiting MCPJam Inspector RCE (CVE-2026-23744) and OPSMCP for Root Access
 
 ## Summary
 
@@ -82,7 +101,7 @@ From the Nmap results, I already knew that port 80 was hosting an Nginx web serv
 
 When I tried accessing `http://10.129.245.216:80`, the browser automatically redirected me to `http://devhub.htb`. However, the page failed to load because my machine could not resolve the hostname `devhub.htb` to an IP address.
 
-![image.png](DevHub/image.png)
+![image.png](/assets/images/DevHub/image.png)
 
 To fix this, I added an entry to my local `/etc/hosts` file, mapping the hostname to the target's IP address.
 
@@ -94,13 +113,13 @@ With the hostname now resolving correctly, I was able to access the website at `
 
 The homepage introduced DevHub as an internal development and analytics platform. It listed three services: an MCP Inspector running on port `6274`, a Jupyter-based Analytics Dashboard available internally on `localhost:8888`, and a Code Repository that was currently under maintenance.
 
-![image.png](DevHub/image%201.png)
+![image.png](/assets/images/DevHub/image%201.png)
 
 The homepage gave me a better picture of the environment. The Analytics Dashboard was restricted to localhost, meaning it wasn't directly accessible from my machine, while the Code Repository was marked as unavailable. The MCP Inspector, on the other hand, was active on port `6274`, which matched the service I had already identified during the Nmap scan.
 
 Since the Inspector was accessible over the network, I decided to investigate it first. I opened `http://devhub.htb:6274` and explored the application. Under the Settings page, I found that it was running **MCPJam Inspector version 1.4.2**.
 
-![image.png](DevHub/image%202.png)
+![image.png](/assets/images/DevHub/image%202.png)
 
 Now that I had identified both the application and its exact version, I searched for known vulnerabilities affecting MCPJam Inspector 1.4.2 to see whether it could provide a way into the machine.
 
@@ -110,9 +129,9 @@ My search led me to **CVE-2026-23744**, a critical unauthenticated Remote Code E
 
 According to the GitHub Security Advisory, the vulnerability affects MCPJam Inspector versions **1.4.2 and earlier**, while version **1.4.3** contains the fix. Since DevHub was running an affected version, I decided to investigate how the vulnerability worked and whether it could be exploited to gain initial access.
 
-![image.png](DevHub/image%203.png)
+![image.png](/assets/images/DevHub/image%203.png)
 
-![image.png](DevHub/image%204.png)
+![image.png](/assets/images/DevHub/image%204.png)
 
 MCPJam Inspector is a development tool used to connect to and test MCP (Model Context Protocol) servers. One of its features allows users to start an MCP server by specifying the command and arguments needed to run it.
 
@@ -134,7 +153,7 @@ I used this PoC to attempt a reverse shell on the target. First, I started a Net
 
 [GitHub - d3vn0mi/CVE-2026-23744-POC: Python PoC for CVE-2026-23744, unauthenticated RCE in MCP servers via the /api/mcp/connect serverConfig command field (default port 6274)](https://github.com/d3vn0mi/CVE-2026-23744-POC)
 
-![image.png](DevHub/image%205.png)
+![image.png](/assets/images/DevHub/image%205.png)
 
 The exploit reported a request timeout, but the Netcat listener successfully received a connection from DevHub. This confirmed that the payload had executed despite the timeout. Running `whoami` in the reverse shell returned `mcp-dev`, indicating that I had gained command execution under the account running the MCPJam Inspector service.
 
@@ -144,15 +163,15 @@ Although I had successfully gained an initial foothold, the reverse shell lacked
 
 To establish SSH access without knowing the `mcp-dev` user's password, I generated a new Ed25519 SSH key pair on my attacking machine using `ssh-keygen`.
 
-![image.png](DevHub/image%206.png)
+![image.png](/assets/images/DevHub/image%206.png)
 
-![image.png](DevHub/image%207.png)
+![image.png](/assets/images/DevHub/image%207.png)
 
 This created two files: `devhub_key`, which contains the private key, and `devhub_key.pub`, which contains the corresponding public key. SSH allows a user to authenticate with a private key if its matching public key is present in the user's `~/.ssh/authorized_keys` file.
 
 Since the earlier exploit had already given me command execution as `mcp-dev`, I could use the same vulnerability to add my public key to that account. I ran the PoC again, but this time the payload created the `/home/mcp-dev/.ssh` directory, appended my public key to the `authorized_keys` file, and set the required permissions.
 
-![image.png](DevHub/image%208.png)
+![image.png](/assets/images/DevHub/image%208.png)
 
 The exploit returned an HTTP 500 error, but it also reported that the payload had been delivered. To verify whether the public key had been added successfully, I attempted to connect through SSH using the private key I had generated earlier.
 
@@ -190,7 +209,7 @@ I started by examining the JupyterLab process more closely. Its command-line arg
 
 I also attempted to read the OPSMCP application's source code from my current shell, but the system returned a `Permission denied` error.
 
-![image.png](DevHub/image%209.png)
+![image.png](/assets/images/DevHub/image%209.png)
 
 Although I could identify the OPSMCP process, my current `mcp-dev` account did not have permission to read its source code. However, JupyterLab was running under a different user, `analyst`, which made it worth investigating.
 
@@ -200,7 +219,7 @@ The next step was to determine how I could access the internal JupyterLab servic
 
 From the previous enumeration, I knew that JupyterLab was running on `127.0.0.1:8888`. To check for other internal services, I examined the listening ports using `ss` and `netstat`.
 
-![image.png](DevHub/image%2010.png)
+![image.png](/assets/images/DevHub/image%2010.png)
 
 The results confirmed that two services were listening on localhost: JupyterLab on port `8888` and another service on port `5000`.
 
@@ -224,7 +243,7 @@ http://127.0.0.1:8888/lab?token=a7**********************************a7
 
 JupyterLab accepted the token and opened the dashboard without requiring a separate login.
 
-![image.png](DevHub/image%2011.png)
+![image.png](/assets/images/DevHub/image%2011.png)
 
 The JupyterLab dashboard provided several options, including Python notebooks and a terminal. Since the application was running under the `analyst` account, I decided to investigate its terminal functionality to see whether I could gain access as that user.
 
@@ -232,7 +251,7 @@ The JupyterLab dashboard provided several options, including Python notebooks an
 
 From the JupyterLab dashboard, I opened a terminal and ran `whoami` to check which user the terminal was running as. The command returned `analyst`, confirming that I now had command execution under that account. Listing the home directory also revealed `user.txt`, indicating that I had reached the user-level objective of the machine.
 
-![image.png](DevHub/image%2012.png)
+![image.png](/assets/images/DevHub/image%2012.png)
 
 Although my SSH session was still running as `mcp-dev`, the JupyterLab terminal gave me access as `analyst`. This was possible because JupyterLab itself was running under that account, and its terminal inherited the same permissions.
 
@@ -244,13 +263,13 @@ From the JupyterLab terminal, I returned to the OPSMCP application that I had di
 
 Unlike `mcp-dev`, the `analyst` user could access the file, so I opened it to examine how the application worked and whether it contained anything useful for privilege escalation.
 
-![image.png](DevHub/image%2013.png)
+![image.png](/assets/images/DevHub/image%2013.png)
 
 The source code revealed that OPSMCP was a Flask-based application used for internal system management. While reviewing it, I found a **hardcoded API key** stored in the `VALID_API_KEY` variable, which the application used to authenticate incoming API requests.
 
 Further down in the source code, I also came across a hidden administrative function named `ops._admin_dump`. Unlike the regular tools, this function was excluded from the `/tools/list` response but could still be invoked through the `/tools/call` endpoint with a valid API key.
 
-![image.png](DevHub/image%2014.png)
+![image.png](/assets/images/DevHub/image%2014.png)
 
 Looking at the function more closely, I noticed that it accepted two arguments: `target` and `confirm`. When `target` was set to `ssh_keys` and `confirm` was set to `true`, the application would attempt to read `/root/.ssh/id_rsa` and return its contents in a JSON field named `root_private_key`.
 
@@ -258,7 +277,7 @@ This was a potential privilege escalation path. Although `server.py` was owned b
 
 Since I had already forwarded port `5000` through SSH, I opened `http://127.0.0.1:5000` in my browser to examine the service.
 
-![image.png](DevHub/image%2015.png)
+![image.png](/assets/images/DevHub/image%2015.png)
 
 The response confirmed that OPSMCP version `2.1.0` was running on port `5000`. It also showed that API requests required an `X-API-Key` header and listed three available endpoints: `/tools/list`, `/tools/call`, and `/health`.
 
@@ -270,11 +289,11 @@ From the source code review, I already knew that `ops._admin_dump` could retriev
 
 I sent an authenticated POST request to the `/tools/call` endpoint using `curl`. The request included the recovered API key in the `X-API-Key` header and specified `ops._admin_dump` as the function to execute. I also piped the JSON response into a short Python command to extract the `root_private_key` value and save it to a file named `root_key` on my attacking machine.
 
-![image.png](DevHub/image%2016.png)
+![image.png](/assets/images/DevHub/image%2016.png)
 
 The request completed successfully, and checking my working directory confirmed that a new file named `root_key` had been created.
 
-![image.png](DevHub/image%2017.png)
+![image.png](/assets/images/DevHub/image%2017.png)
 
 This confirmed that the OPSMCP API could expose sensitive credentials through its administrative functionality. Although the API required authentication, its hardcoded key was accessible to the lower-privileged `analyst` user, while the service itself ran with root privileges.
 
@@ -286,7 +305,7 @@ ssh -i root_key root@10.129.245.216
 
 The authentication was successful, and I gained an SSH session as `root`. To verify my access, I executed `whoami`, which returned `root`. I also found the `root.txt` file in the root user's home directory.
 
-![image.png](DevHub/image%2018.png)
+![image.png](/assets/images/DevHub/image%2018.png)
 
 With root access obtained, I had successfully completed the DevHub machine.
 
